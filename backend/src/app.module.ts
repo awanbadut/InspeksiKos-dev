@@ -17,6 +17,9 @@ import { AuthModule } from './auth/auth.module';
 import { PropertiesModule } from './properties/properties.module';
 import { InspectionsModule } from './inspections/inspections.module';
 import { StorageModule } from './storage/storage.module';
+import { AuditModule } from './audit/audit.module';
+import { GeminiModule } from './gemini/gemini.module';
+import { PdfModule } from './pdf/pdf.module';
 
 @Module({
   imports: [
@@ -47,6 +50,9 @@ import { StorageModule } from './storage/storage.module';
     PropertiesModule,
     InspectionsModule,
     StorageModule,
+    AuditModule,
+    GeminiModule,
+    PdfModule,
   ],
   controllers: [AppController],
   providers: [AppService],
