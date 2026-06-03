@@ -13,6 +13,8 @@ import { AuditReport } from './audit/entities/audit-report.entity';
 import { AuditRule } from './audit/entities/audit-rule.entity';
 import { AuditRuleItem } from './audit/entities/audit-rule-item.entity';
 
+import { AuthModule } from './auth/auth.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -38,6 +40,7 @@ import { AuditRuleItem } from './audit/entities/audit-rule-item.entity';
         logging: configService.get<string>('NODE_ENV') === 'development',
       }),
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
