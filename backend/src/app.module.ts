@@ -20,6 +20,7 @@ import { StorageModule } from './storage/storage.module';
 import { AuditModule } from './audit/audit.module';
 import { GeminiModule } from './gemini/gemini.module';
 import { PdfModule } from './pdf/pdf.module';
+import { RiwayatModule } from './riwayat/riwayat.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { PdfModule } from './pdf/pdf.module';
     AuditModule,
     GeminiModule,
     PdfModule,
+    RiwayatModule,
   ],
   controllers: [AppController],
   providers: [AppService],
