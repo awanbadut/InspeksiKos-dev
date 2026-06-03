@@ -14,6 +14,7 @@ import { AuditRule } from './audit/entities/audit-rule.entity';
 import { AuditRuleItem } from './audit/entities/audit-rule-item.entity';
 
 import { AuthModule } from './auth/auth.module';
+import { PropertiesModule } from './properties/properties.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AuthModule } from './auth/auth.module';
       }),
     }),
     AuthModule,
+    PropertiesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
