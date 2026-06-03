@@ -15,6 +15,8 @@ import { AuditRuleItem } from './audit/entities/audit-rule-item.entity';
 
 import { AuthModule } from './auth/auth.module';
 import { PropertiesModule } from './properties/properties.module';
+import { InspectionsModule } from './inspections/inspections.module';
+import { StorageModule } from './storage/storage.module';
 
 @Module({
   imports: [
@@ -43,6 +45,8 @@ import { PropertiesModule } from './properties/properties.module';
     }),
     AuthModule,
     PropertiesModule,
+    InspectionsModule,
+    StorageModule,
   ],
   controllers: [AppController],
   providers: [AppService],
