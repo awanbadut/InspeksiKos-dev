@@ -1,6 +1,12 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import * as ws from 'ws';
+
+// Polyfill WebSocket for Node.js < 22 (required by Supabase Realtime client)
+if (typeof global !== 'undefined' && !(global as any).WebSocket) {
+  (global as any).WebSocket = ws;
+}
 
 @Injectable()
 export class StorageService {
