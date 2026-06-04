@@ -16,7 +16,7 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<{ message: string; user: Omit<User, 'password_hash'> }> {
-    const { email, password, first_name, last_name, role } = registerDto;
+    const { email, password, first_name, last_name, phone_number, role } = registerDto;
 
     // Check if email already exists
     const existingUser = await this.userRepository.findOne({ where: { email } });
@@ -34,6 +34,7 @@ export class AuthService {
       password_hash,
       first_name,
       last_name,
+      phone_number,
       role: role || UserRole.MAHASISWA,
     });
 

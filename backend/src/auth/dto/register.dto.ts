@@ -10,6 +10,10 @@ export class RegisterDto {
   @IsOptional()
   last_name?: string;
 
+  @IsString()
+  @IsOptional()
+  phone_number?: string;
+
   @IsEmail({}, { message: 'Format email tidak valid' })
   email: string;
 
