@@ -25,3 +25,6 @@ pnpm-debug.log*
 # System Files
 .DS_Store
 Thumbs.db
+
+# Documentation with Secrets
+ci_cd_deployment_guide.md
