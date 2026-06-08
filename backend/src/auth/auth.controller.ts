@@ -1,7 +1,11 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, UnauthorizedException } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, UnauthorizedException, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RolesGuard } from './guards/roles.guard';
+import { Roles } from './decorators/roles.decorator';
+import { UserRole } from './entities/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -32,5 +36,19 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async logout() {
     return { message: 'Logout berhasil' };
+  }
+
+  @Get('inspectors')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async getInspectors() {
+    return this.authService.findInspectors();
+  }
+
+  @Get('users')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async getUsers() {
+    return this.authService.findAllUsers();
   }
 }

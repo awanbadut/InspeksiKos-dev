@@ -109,4 +109,17 @@ export class AuthService {
     }
     return user;
   }
+
+  async findInspectors(): Promise<User[]> {
+    return this.userRepository.find({
+      where: { role: UserRole.INSPEKTUR },
+      select: ['user_id', 'email', 'first_name', 'last_name', 'phone_number', 'role', 'created_at'],
+    });
+  }
+
+  async findAllUsers(): Promise<User[]> {
+    return this.userRepository.find({
+      select: ['user_id', 'email', 'first_name', 'last_name', 'phone_number', 'role', 'created_at'],
+    });
+  }
 }
