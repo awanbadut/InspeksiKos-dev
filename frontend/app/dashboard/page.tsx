@@ -79,6 +79,8 @@ export default function DashboardPage() {
   const [techSaving, setTechSaving] = useState(false);
   const [auditRunning, setAuditRunning] = useState(false);
   const [auditError, setAuditError] = useState('');
+  const [currentStep, setCurrentStep] = useState(0);
+  const [evaluations, setEvaluations] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -277,6 +279,25 @@ export default function DashboardPage() {
     setTdsInput(inspection.tds_value !== null ? String(inspection.tds_value) : '');
     setInternetInput(inspection.internet_speed !== null ? String(inspection.internet_speed) : '');
     setAuditError('');
+    setCurrentStep(0);
+
+    // Initialize evaluations from saved inspector_data
+    const initialEval: Record<string, boolean> = {};
+    if (inspection.inspector_data?.fasilitas) {
+      Object.keys(inspection.inspector_data.fasilitas).forEach((key) => {
+        initialEval[key] = inspection.inspector_data.fasilitas[key]?.ada === true;
+      });
+    } else {
+      // Default to student's claimed data
+      const claimFasilitas = inspection.property?.claim_data?.fasilitas || {};
+      Object.keys(claimFasilitas).forEach((key) => {
+        if (claimFasilitas[key]?.ada !== undefined) {
+          initialEval[key] = claimFasilitas[key].ada;
+        }
+      });
+    }
+    setEvaluations(initialEval);
+
     // Load photos
     try {
       const res = await api.get(`/inspections/${inspection.inspection_id}/photos`);
@@ -321,6 +342,66 @@ export default function DashboardPage() {
     }
   };
 
+  const handleUploadVideoForCategory = async (category: string, file: File) => {
+    if (!activeTask) return;
+    const videoCategory = category + '_video';
+    setUploadLoadingState((prev) => ({ ...prev, [videoCategory]: true }));
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('room_type', videoCategory);
+
+    try {
+      await api.post(`/inspections/${activeTask.inspection_id}/photos`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      // Refresh photos
+      const res = await api.get(`/inspections/${activeTask.inspection_id}/photos`);
+      setTaskPhotos(res.data);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.message || 'Gagal mengunggah video');
+    } finally {
+      setUploadLoadingState((prev) => ({ ...prev, [videoCategory]: false }));
+    }
+  };
+
+  const handleSaveStepProgress = async (nextStepIndex?: number) => {
+    if (!activeTask) return;
+    setTechSaving(true);
+    setAuditError('');
+
+    // Format inspector data payload
+    const payloadInspectorData = {
+      fasilitas: Object.keys(evaluations).reduce((acc, key) => {
+        acc[key] = { ada: evaluations[key] };
+        return acc;
+      }, {} as Record<string, any>),
+    };
+
+    try {
+      const updated = await api.patch(`/inspections/${activeTask.inspection_id}/teknis`, {
+        tds_value: Number(tdsInput || 0),
+        internet_speed: Number(internetInput || 0),
+        inspector_data: payloadInspectorData,
+      });
+      
+      // Update local task data
+      setActiveTask(updated.data);
+      
+      if (nextStepIndex !== undefined) {
+        setCurrentStep(nextStepIndex);
+      } else {
+        alert('Data progres berhasil disimpan!');
+      }
+    } catch (err: any) {
+      console.error(err);
+      setAuditError(err.response?.data?.message || 'Gagal menyimpan progres data.');
+    } finally {
+      setTechSaving(false);
+    }
+  };
+
   const handleSaveTechnicalData = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeTask) return;
@@ -347,11 +428,19 @@ export default function DashboardPage() {
     setAuditRunning(true);
     setAuditError('');
 
+    const payloadInspectorData = {
+      fasilitas: Object.keys(evaluations).reduce((acc, key) => {
+        acc[key] = { ada: evaluations[key] };
+        return acc;
+      }, {} as Record<string, any>),
+    };
+
     try {
       // First save current inputs in case they forgot to save
       await api.patch(`/inspections/${activeTask.inspection_id}/teknis`, {
-        tds_value: Number(tdsInput),
-        internet_speed: Number(internetInput),
+        tds_value: Number(tdsInput || 0),
+        internet_speed: Number(internetInput || 0),
+        inspector_data: payloadInspectorData,
       });
 
       // Run AI and Rule evaluation
@@ -390,6 +479,12 @@ export default function DashboardPage() {
       alert('Laporan audit belum siap atau tidak ditemukan.');
     }
   };
+
+  const activeSteps = checkPoints.filter((cp) => {
+    if (cp.type === 'technical') return true;
+    return activeTask?.property?.claim_data?.fasilitas?.[cp.key]?.ada === true;
+  });
+  const currentActiveStep = activeSteps[currentStep];
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-gray-900 font-sans flex flex-col">
@@ -627,102 +722,146 @@ export default function DashboardPage() {
                         </div>
                       )}
 
-                      {/* Technical Inputs */}
-                      <div>
-                        <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                          <Layers className="h-3.5 w-3.5 text-indigo-500" />
-                          1. Pengukuran Teknis
-                        </h4>
-                        <form onSubmit={handleSaveTechnicalData} className="space-y-3.5">
-                          <div className="grid grid-cols-2 gap-3">
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-gray-500 flex items-center gap-1">
-                                <Droplets className="h-3.5 w-3.5 text-blue-500" />
-                                TDS Air (ppm)
-                              </label>
-                              <input
-                                type="number"
-                                required
-                                value={tdsInput}
-                                onChange={(e) => setTdsInput(e.target.value)}
-                                placeholder="Contoh: 120"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs"
-                              />
-                            </div>
-                            <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-gray-500 flex items-center gap-1">
-                                <Wifi className="h-3.5 w-3.5 text-orange-500" />
-                                Internet (Mbps)
-                              </label>
-                              <input
-                                type="number"
-                                required
-                                value={internetInput}
-                                onChange={(e) => setInternetInput(e.target.value)}
-                                placeholder="Contoh: 35"
-                                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs"
-                              />
-                            </div>
-                          </div>
+                      {/* Step-by-Step Wizard Stepper */}
+                      <div className="flex items-center gap-1.5 mb-5 overflow-x-auto pb-2 border-b border-gray-100">
+                        {activeSteps.map((step, idx) => (
                           <button
-                            type="submit"
-                            disabled={techSaving}
-                            className="w-full py-2 text-xs font-bold border border-gray-300 hover:bg-gray-50 rounded-lg transition-all flex items-center justify-center gap-1"
+                            key={step.key}
+                            type="button"
+                            onClick={() => setCurrentStep(idx)}
+                            className={`text-[9px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
+                              idx === currentStep
+                                ? 'bg-blue-600 text-white shadow-sm'
+                                : idx < currentStep
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                            }`}
                           >
-                            {techSaving && <Loader2 className="h-3 w-3 animate-spin text-gray-400" />}
-                            Simpan Data Teknis
+                            {idx + 1}. {step.label}
                           </button>
-                        </form>
+                        ))}
                       </div>
 
-                      {/* Checkpoint Photo Uploads */}
-                      <div>
-                        <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                          <Upload className="h-3.5 w-3.5 text-blue-500" />
-                          2. Bukti Foto Aktual Per Poin Pengecekan
-                        </h4>
-                        
-                        <div className="space-y-4">
-                          {checkPoints.map((cp) => {
-                            const claimed = activeTask.property?.claim_data?.fasilitas?.[cp.key];
-                            const isClaimed = cp.type === 'boolean' ? claimed?.ada : true;
-                            const expectationVal = cp.type === 'technical' ? claimed?.nilai : null;
+                      {/* Active Step Panel */}
+                      {currentActiveStep && (
+                        <div className="p-5 bg-gray-50/50 rounded-2xl border border-gray-100 space-y-4">
+                          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                            <div>
+                              <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
+                                Langkah {currentStep + 1} dari {activeSteps.length}: {currentActiveStep.label}
+                              </h4>
+                              <p className="text-[10px] text-gray-500 mt-0.5">{currentActiveStep.desc}</p>
+                            </div>
+                            <div>
+                              {currentActiveStep.type === 'boolean' ? (
+                                <span className="text-[9px] font-bold px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
+                                  Klaim Iklan: ADA
+                                </span>
+                              ) : (
+                                <span className="text-[9px] font-bold px-2 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-100">
+                                  Ekspektasi: {activeTask.property?.claim_data?.fasilitas?.[currentActiveStep.key]?.nilai} {currentActiveStep.key === 'kualitas_air' ? 'ppm' : 'Mbps'}
+                                </span>
+                              )}
+                            </div>
+                          </div>
 
-                            // Find uploaded photo for this category/checkpoint
-                            const uploadedPhoto = taskPhotos.find((p: any) => p.room_type === cp.key);
-                            const isUploading = uploadLoadingState[cp.key];
-
-                            return (
-                              <div key={cp.key} className="p-4 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                <div className="space-y-1 flex-1">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs font-bold text-gray-900">{cp.label}</span>
-                                    {cp.type === 'boolean' ? (
-                                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
-                                        isClaimed ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'
-                                      }`}>
-                                        {isClaimed ? 'Diklaim: Ada' : 'Diklaim: Tidak'}
-                                      </span>
-                                    ) : (
-                                      <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
-                                        Ekspektasi: {expectationVal} {cp.key === 'kualitas_air' ? 'ppm' : 'Mbps'}
-                                      </span>
-                                    )}
+                          {/* Pilihan Penilaian */}
+                          <div className="space-y-2">
+                            <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider block">
+                              Hasil Penilaian Aktual Lapangan
+                            </label>
+                            {currentActiveStep.type === 'boolean' ? (
+                              <div className="grid grid-cols-2 gap-3">
+                                <button
+                                  type="button"
+                                  onClick={() => setEvaluations(prev => ({ ...prev, [currentActiveStep.key]: true }))}
+                                  className={`p-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                                    evaluations[currentActiveStep.key] === true
+                                      ? 'border-emerald-500 bg-emerald-50 text-emerald-800 ring-2 ring-emerald-500'
+                                      : 'border-gray-200 bg-white text-gray-500 hover:bg-gray-50'
+                                  }`}
+                                >
+                                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                                  Ada (Tersedia)
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setEvaluations(prev => ({ ...prev, [currentActiveStep.key]: false }))}
+                                  className={`p-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                                    evaluations[currentActiveStep.key] === false
+                                      ? 'border-red-500 bg-red-50 text-red-800 ring-2 ring-red-500'
+                                      : 'border-gray-200 bg-white text-gray-500 hover:bg-gray-50'
+                                  }`}
+                                >
+                                  <XCircle className="h-4 w-4 text-red-600" />
+                                  Tidak Ada
+                                </button>
+                              </div>
+                            ) : (
+                              <div>
+                                {currentActiveStep.key === 'kualitas_air' ? (
+                                  <div className="space-y-1">
+                                    <div className="relative">
+                                      <Droplets className="absolute left-3 top-2.5 h-4 w-4 text-blue-500" />
+                                      <input
+                                        type="number"
+                                        required
+                                        value={tdsInput}
+                                        onChange={(e) => setTdsInput(e.target.value)}
+                                        placeholder="Masukkan nilai kualitas air TDS (contoh: 120)"
+                                        className="w-full pl-9 pr-12 py-2 border border-gray-300 rounded-xl text-xs"
+                                      />
+                                      <span className="absolute right-3 top-2.5 text-[10px] font-bold text-gray-400">ppm</span>
+                                    </div>
                                   </div>
-                                  <p className="text-[10px] text-gray-400">{cp.desc}</p>
-                                </div>
+                                ) : (
+                                  <div className="space-y-1">
+                                    <div className="relative">
+                                      <Wifi className="absolute left-3 top-2.5 h-4 w-4 text-orange-500" />
+                                      <input
+                                        type="number"
+                                        required
+                                        value={internetInput}
+                                        onChange={(e) => setInternetInput(e.target.value)}
+                                        placeholder="Masukkan kecepatan internet Speedtest (contoh: 35)"
+                                        className="w-full pl-9 pr-12 py-2 border border-gray-300 rounded-xl text-xs"
+                                      />
+                                      <span className="absolute right-3 top-2.5 text-[10px] font-bold text-gray-400">Mbps</span>
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
 
-                                <div className="flex items-center gap-3">
-                                  {uploadedPhoto ? (
-                                    <div className="flex items-center gap-3">
-                                      <div className="relative h-12 w-12 rounded-lg border border-gray-200 overflow-hidden bg-white group cursor-pointer" onClick={() => window.open(uploadedPhoto.photo_url, '_blank')}>
-                                        <img src={uploadedPhoto.photo_url} alt={cp.label} className="h-full w-full object-cover" />
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                          <Eye className="h-4 w-4 text-white" />
+                          {/* Unggah Bukti Media */}
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                            {/* 1. Foto Aktual */}
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1">
+                                <Upload className="h-3.5 w-3.5 text-blue-500" />
+                                Foto Bukti Aktual
+                              </label>
+                              {(() => {
+                                const uploadedPhoto = taskPhotos.find(p => p.room_type === currentActiveStep.key);
+                                const isUploading = uploadLoadingState[currentActiveStep.key];
+                                
+                                if (uploadedPhoto) {
+                                  return (
+                                    <div className="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between gap-3 shadow-xs">
+                                      <div className="flex items-center gap-3">
+                                        <div className="relative h-12 w-12 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 group cursor-pointer" onClick={() => window.open(uploadedPhoto.photo_url, '_blank')}>
+                                          <img src={uploadedPhoto.photo_url} alt={currentActiveStep.label} className="h-full w-full object-cover" />
+                                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <Eye className="h-4 w-4 text-white" />
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <p className="text-[9px] font-bold text-gray-900 truncate max-w-[80px]">Foto Tersimpan</p>
+                                          <p className="text-[8px] text-gray-400">Format gambar</p>
                                         </div>
                                       </div>
-                                      
-                                      <label className="cursor-pointer px-3 py-1.5 text-[10px] font-bold border border-gray-300 hover:bg-gray-100 rounded-lg transition-all">
+                                      <label className="cursor-pointer px-2.5 py-1.5 text-[9px] font-bold border border-gray-300 hover:bg-gray-50 rounded-lg transition-all">
                                         {isUploading ? 'Mengunggah...' : 'Ubah Foto'}
                                         <input
                                           type="file"
@@ -730,23 +869,26 @@ export default function DashboardPage() {
                                           disabled={isUploading}
                                           onChange={(e) => {
                                             const file = e.target.files?.[0];
-                                            if (file) handleUploadPhotoForCategory(cp.key, file);
+                                            if (file) handleUploadPhotoForCategory(currentActiveStep.key, file);
                                           }}
                                           className="hidden"
                                         />
                                       </label>
                                     </div>
-                                  ) : (
-                                    <label className="cursor-pointer inline-flex items-center gap-1 px-3.5 py-2 text-[10px] font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all shadow-sm">
+                                  );
+                                } else {
+                                  return (
+                                    <label className="cursor-pointer flex flex-col items-center justify-center p-4 border border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50/10 rounded-xl transition-all h-20 text-center">
                                       {isUploading ? (
                                         <>
-                                          <Loader2 className="h-3 w-3 animate-spin" />
-                                          Mengunggah...
+                                          <Loader2 className="h-4 w-4 animate-spin text-blue-500 mb-1" />
+                                          <span className="text-[9px] font-bold text-gray-500">Mengunggah...</span>
                                         </>
                                       ) : (
                                         <>
-                                          <Upload className="h-3 w-3" />
-                                          Unggah Foto
+                                          <Upload className="h-4 w-4 text-gray-400 mb-1" />
+                                          <span className="text-[9px] font-bold text-gray-700">Pilih & Unggah Foto</span>
+                                          <span className="text-[8px] text-gray-400">JPEG, PNG, WEBP</span>
                                         </>
                                       )}
                                       <input
@@ -755,48 +897,156 @@ export default function DashboardPage() {
                                         disabled={isUploading}
                                         onChange={(e) => {
                                           const file = e.target.files?.[0];
-                                          if (file) handleUploadPhotoForCategory(cp.key, file);
+                                          if (file) handleUploadPhotoForCategory(currentActiveStep.key, file);
                                         }}
                                         className="hidden"
                                       />
                                     </label>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
+                                  );
+                                }
+                              })()}
+                            </div>
+
+                            {/* 2. Video Aktual */}
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1">
+                                <Upload className="h-3.5 w-3.5 text-purple-500" />
+                                Video Bukti Aktual
+                              </label>
+                              {(() => {
+                                const videoKey = currentActiveStep.key + '_video';
+                                const uploadedVideo = taskPhotos.find(p => p.room_type === videoKey);
+                                const isUploading = uploadLoadingState[videoKey];
+
+                                if (uploadedVideo) {
+                                  return (
+                                    <div className="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between gap-3 shadow-xs">
+                                      <div className="flex items-center gap-3">
+                                        <div className="relative h-12 w-12 rounded-lg border border-gray-200 overflow-hidden bg-black group cursor-pointer" onClick={() => window.open(uploadedVideo.photo_url, '_blank')}>
+                                          <video src={uploadedVideo.photo_url} className="h-full w-full object-cover" />
+                                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <Eye className="h-4 w-4 text-white" />
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <p className="text-[9px] font-bold text-gray-900 truncate max-w-[80px]">Video Tersimpan</p>
+                                          <p className="text-[8px] text-gray-400">Format video</p>
+                                        </div>
+                                      </div>
+                                      <label className="cursor-pointer px-2.5 py-1.5 text-[9px] font-bold border border-gray-300 hover:bg-gray-50 rounded-lg transition-all">
+                                        {isUploading ? 'Mengunggah...' : 'Ubah Video'}
+                                        <input
+                                          type="file"
+                                          accept="video/*"
+                                          disabled={isUploading}
+                                          onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) handleUploadVideoForCategory(currentActiveStep.key, file);
+                                          }}
+                                          className="hidden"
+                                        />
+                                      </label>
+                                    </div>
+                                  );
+                                } else {
+                                  return (
+                                    <label className="cursor-pointer flex flex-col items-center justify-center p-4 border border-dashed border-gray-300 hover:border-purple-500 hover:bg-purple-50/10 rounded-xl transition-all h-20 text-center">
+                                      {isUploading ? (
+                                        <>
+                                          <Loader2 className="h-4 w-4 animate-spin text-purple-500 mb-1" />
+                                          <span className="text-[9px] font-bold text-gray-500">Mengunggah...</span>
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Upload className="h-4 w-4 text-gray-400 mb-1" />
+                                          <span className="text-[9px] font-bold text-gray-700">Pilih & Unggah Video</span>
+                                          <span className="text-[8px] text-gray-400">MP4, MOV, WebM</span>
+                                        </>
+                                      )}
+                                      <input
+                                        type="file"
+                                        accept="video/*"
+                                        disabled={isUploading}
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) handleUploadVideoForCategory(currentActiveStep.key, file);
+                                        }}
+                                        className="hidden"
+                                      />
+                                    </label>
+                                  );
+                                }
+                              })()}
+                            </div>
+                          </div>
+
+                          {/* Tombol Navigasi Wizard */}
+                          <div className="flex items-center justify-between pt-4 border-t border-gray-100 gap-3">
+                            <button
+                              type="button"
+                              disabled={currentStep === 0 || techSaving}
+                              onClick={() => handleSaveStepProgress(currentStep - 1)}
+                              className="px-4 py-2 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-xs font-bold disabled:opacity-50 transition-all cursor-pointer"
+                            >
+                              Sebelumnya
+                            </button>
+
+                            {currentStep < activeSteps.length - 1 ? (
+                              <button
+                                type="button"
+                                disabled={techSaving}
+                                onClick={() => handleSaveStepProgress(currentStep + 1)}
+                                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                              >
+                                {techSaving && <Loader2 className="h-3 w-3 animate-spin" />}
+                                Simpan & Lanjut
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                disabled={techSaving}
+                                onClick={() => handleSaveStepProgress()}
+                                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                              >
+                                {techSaving && <Loader2 className="h-3 w-3 animate-spin" />}
+                                Simpan Progres Final
+                              </button>
+                            )}
+                          </div>
                         </div>
-                      </div>
+                      )}
 
                       {/* Run AI Scorecard Audit */}
-                      <div className="border-t border-gray-100 pt-5 space-y-3">
-                        <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                          3. Evaluasi Platform
-                        </h4>
-                        <p className="text-[10px] text-gray-500 leading-relaxed">
-                          Menjalankan ekstraksi Gemini AI Vision untuk mengecek foto aktual dengan klaim mahasiswa, kemudian mengomparasi data air dan wifi menggunakan Rule-Based Engine.
-                        </p>
-                        {auditError && (
-                          <div className="p-3 text-[10px] text-red-600 bg-red-50 border border-red-200 rounded-lg">
-                            {auditError}
-                          </div>
-                        )}
-                        <button
-                          onClick={handleRunAudit}
-                          disabled={auditRunning}
-                          className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-emerald-500/10"
-                        >
-                          {auditRunning ? (
-                            <>
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                              Memproses AI & Rules...
-                            </>
-                          ) : (
-                            'Jalankan Audit AI & Hitung Skor'
+                      {currentStep === activeSteps.length - 1 && (
+                        <div className="border-t border-gray-100 pt-5 space-y-3">
+                          <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                            3. Evaluasi Platform
+                          </h4>
+                          <p className="text-[10px] text-gray-500 leading-relaxed">
+                            Menjalankan ekstraksi Gemini AI Vision untuk mengecek foto aktual dengan klaim mahasiswa, kemudian mengomparasi data air dan wifi menggunakan Rule-Based Engine.
+                          </p>
+                          {auditError && (
+                            <div className="p-3 text-[10px] text-red-600 bg-red-50 border border-red-200 rounded-lg">
+                              {auditError}
+                            </div>
                           )}
-                        </button>
-                      </div>
+                          <button
+                            onClick={handleRunAudit}
+                            disabled={auditRunning || techSaving}
+                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-emerald-500/10 cursor-pointer"
+                          >
+                            {auditRunning ? (
+                              <>
+                                <Loader2 className="h-4 w-4 animate-spin" />
+                                Memproses AI & Rules...
+                              </>
+                            ) : (
+                              'Jalankan Audit AI & Hitung Skor'
+                            )}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

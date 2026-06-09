@@ -53,7 +53,9 @@ export class AuditService {
     }
 
     // 2. Call Gemini AI to extract features
-    const photoData = photos.map((p) => ({ url: p.photo_url, category: p.room_type }));
+    const photoData = photos
+      .filter((p) => !p.room_type.endsWith('_video'))
+      .map((p) => ({ url: p.photo_url, category: p.room_type }));
     const extractedData = await this.geminiService.extractFasilitas(photoData);
 
     // Save extracted JSON back to inspection

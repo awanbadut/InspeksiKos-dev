@@ -1,4 +1,4 @@
-import { IsNumber, Min } from 'class-validator';
+import { IsNumber, Min, IsOptional, IsObject } from 'class-validator';
 
 export class InputTechnicalDataDto {
   @IsNumber({}, { message: 'Nilai TDS harus berupa angka' })
@@ -8,4 +8,8 @@ export class InputTechnicalDataDto {
   @IsNumber({}, { message: 'Kecepatan internet harus berupa angka' })
   @Min(0, { message: 'Kecepatan internet tidak boleh negatif' })
   internet_speed: number;
+
+  @IsOptional()
+  @IsObject()
+  inspector_data?: Record<string, any>;
 }

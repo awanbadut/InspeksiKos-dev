@@ -39,6 +39,9 @@ export class Inspection {
   @Column({ type: 'jsonb', nullable: true })
   extracted_data: Record<string, any>;
 
+  @Column({ type: 'jsonb', nullable: true })
+  inspector_data: Record<string, any>;
+
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   tds_value: number;
 
