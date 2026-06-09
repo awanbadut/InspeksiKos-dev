@@ -54,6 +54,12 @@ export default function DashboardPage() {
   const [requestLoading, setRequestLoading] = useState(false);
   const [requestError, setRequestError] = useState('');
 
+  // Leaflet map states
+  const [mapReady, setMapReady] = useState(false);
+  const [selectedLat, setSelectedLat] = useState<number | null>(null);
+  const [selectedLng, setSelectedLng] = useState<number | null>(null);
+  const [showMapPicker, setShowMapPicker] = useState(false);
+
   // Inspector Execution State
   const [activeTask, setActiveTask] = useState<any | null>(null);
   const [roomType, setRoomType] = useState('kamar_tidur');
@@ -83,6 +89,101 @@ export default function DashboardPage() {
     }
   }, []);
 
+  // Dynamically load Leaflet CDN scripts/CSS
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    if (!document.getElementById('leaflet-css')) {
+      const link = document.createElement('link');
+      link.id = 'leaflet-css';
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+    }
+
+    if (!document.getElementById('leaflet-js')) {
+      const script = document.createElement('script');
+      script.id = 'leaflet-js';
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.onload = () => setMapReady(true);
+      document.head.appendChild(script);
+    } else {
+      setMapReady(true);
+    }
+  }, []);
+
+  // Map Picker initialization
+  useEffect(() => {
+    if (mapReady && showMapPicker) {
+      const timer = setTimeout(() => {
+        const L = (window as any).L;
+        if (!L) return;
+
+        const defaultLat = -0.9471;
+        const defaultLng = 100.4172;
+
+        const initialLat = selectedLat || defaultLat;
+        const initialLng = selectedLng || defaultLng;
+
+        const mapInstance = L.map('map-picker-container').setView([initialLat, initialLng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapInstance);
+
+        let markerInstance = L.marker([initialLat, initialLng]).addTo(mapInstance);
+
+        mapInstance.on('click', (e: any) => {
+          const { lat, lng } = e.latlng;
+          setSelectedLat(lat);
+          setSelectedLng(lng);
+          markerInstance.setLatLng([lat, lng]);
+        });
+
+        (window as any).currentMapPicker = mapInstance;
+      }, 100);
+
+      return () => {
+        const mapInst = (window as any).currentMapPicker;
+        if (mapInst) {
+          mapInst.remove();
+          (window as any).currentMapPicker = null;
+        }
+      };
+    }
+  }, [mapReady, showMapPicker]);
+
+  // Inspector Task Map initialization
+  useEffect(() => {
+    if (mapReady && activeTask && activeTask.property?.claim_data?.location) {
+      const { latitude, longitude } = activeTask.property.claim_data.location;
+      if (!latitude || !longitude) return;
+
+      const timer = setTimeout(() => {
+        const L = (window as any).L;
+        if (!L) return;
+
+        const mapInstance = L.map('task-map-container').setView([latitude, longitude], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapInstance);
+
+        L.marker([latitude, longitude]).addTo(mapInstance);
+
+        (window as any).currentTaskMap = mapInstance;
+      }, 100);
+
+      return () => {
+        const mapInst = (window as any).currentTaskMap;
+        if (mapInst) {
+          mapInst.remove();
+          (window as any).currentTaskMap = null;
+        }
+      };
+    }
+  }, [mapReady, activeTask]);
+
   const handleLogout = () => {
     localStorage.clear();
     router.push('/login');
@@ -108,6 +209,10 @@ export default function DashboardPage() {
     try {
       // 1. Structure the claim data
       const claim_data = {
+        location: selectedLat && selectedLng ? {
+          latitude: selectedLat,
+          longitude: selectedLng
+        } : null,
         fasilitas: {
           kasur: { ada: claims.kasur },
           lemari: { ada: claims.lemari },
@@ -147,6 +252,9 @@ export default function DashboardPage() {
       });
       setTdsExpectation(500);
       setInternetExpectation(10);
+      setSelectedLat(null);
+      setSelectedLng(null);
+      setShowMapPicker(false);
     } catch (err: any) {
       console.error(err);
       setRequestError(err.response?.data?.message || 'Gagal mengirim permintaan inspeksi');
@@ -491,6 +599,31 @@ export default function DashboardPage() {
                     </div>
                   ) : (
                     <div className="space-y-6">
+                      {/* Navigation Map */}
+                      {activeTask.property?.claim_data?.location && (
+                        <div className="border-b border-gray-100 pb-5">
+                          <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2.5 flex items-center justify-between">
+                            <span className="flex items-center gap-1.5">
+                              <MapPin className="h-3.5 w-3.5 text-red-500 animate-bounce" />
+                              Lokasi Rute Lapangan
+                            </span>
+                            <a
+                              href={`https://www.google.com/maps/dir/?api=1&destination=${activeTask.property.claim_data.location.latitude},${activeTask.property.claim_data.location.longitude}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[9px] text-blue-600 hover:underline font-bold flex items-center gap-0.5"
+                            >
+                              🚀 Buka Rute Navigasi
+                            </a>
+                          </h4>
+                          <div
+                            id="task-map-container"
+                            className="w-full h-32 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 z-10"
+                            style={{ minHeight: '128px' }}
+                          />
+                        </div>
+                      )}
+
                       {/* Technical Inputs */}
                       <div>
                         <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
@@ -704,6 +837,53 @@ export default function DashboardPage() {
                   placeholder="Jl. Limau Manis Kec. Pauh No. 40, Kota Padang"
                   className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs"
                 />
+              </div>
+
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-gray-700 uppercase flex items-center justify-between">
+                  <span>Lokasi Koordinat Kos (Maps)</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowMapPicker(!showMapPicker)}
+                    className="text-[9px] text-blue-600 hover:underline font-bold flex items-center gap-1"
+                  >
+                    📍 {showMapPicker ? 'Tutup Peta' : 'Pilih di Peta'}
+                  </button>
+                </label>
+                
+                {showMapPicker && (
+                  <div className="border border-gray-200 rounded-2xl p-2 bg-gray-50 space-y-2">
+                    <div
+                      id="map-picker-container"
+                      className="w-full h-48 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 z-10"
+                      style={{ minHeight: '192px' }}
+                    />
+                    <p className="text-[8px] text-gray-400 text-center font-medium">
+                      Klik pada peta untuk memindahkan pin lokasi.
+                    </p>
+                  </div>
+                )}
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Latitude"
+                      readOnly
+                      value={selectedLat !== null ? selectedLat.toFixed(6) : ''}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-500 font-semibold"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Longitude"
+                      readOnly
+                      value={selectedLng !== null ? selectedLng.toFixed(6) : ''}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-500 font-semibold"
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-1">
