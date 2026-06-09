@@ -26,6 +26,16 @@ import {
 } from 'lucide-react';
 import api from '@/lib/api';
 
+const checkPoints = [
+  { key: 'kasur', label: 'Kasur', type: 'boolean', desc: 'Kasur yang disediakan' },
+  { key: 'lemari', label: 'Lemari Pakaian', type: 'boolean', desc: 'Lemari pakaian untuk mahasiswa' },
+  { key: 'ac', label: 'Pendingin Ruangan (AC)', type: 'boolean', desc: 'Unit AC di dalam kamar' },
+  { key: 'wifi', label: 'Router WiFi', type: 'boolean', desc: 'Perangkat router WiFi kos' },
+  { key: 'kamar_mandi_dalam', label: 'Kamar Mandi Dalam', type: 'boolean', desc: 'Fasilitas kamar mandi dalam' },
+  { key: 'kualitas_air', label: 'Kualitas Air (TDS)', type: 'technical', desc: 'Pengukuran kualitas air bersih' },
+  { key: 'kecepatan_internet', label: 'Kecepatan Internet', type: 'technical', desc: 'Hasil uji kecepatan internet (Speedtest)' },
+];
+
 export default function DashboardPage() {
   const router = useRouter();
   const [role, setRole] = useState<string | null>(null);
@@ -62,9 +72,7 @@ export default function DashboardPage() {
 
   // Inspector Execution State
   const [activeTask, setActiveTask] = useState<any | null>(null);
-  const [roomType, setRoomType] = useState('kamar_tidur');
-  const [uploadingFile, setUploadingFile] = useState<File | null>(null);
-  const [uploadLoading, setUploadLoading] = useState(false);
+  const [uploadLoadingState, setUploadLoadingState] = useState<Record<string, boolean>>({});
   const [taskPhotos, setTaskPhotos] = useState<any[]>([]);
   const [tdsInput, setTdsInput] = useState('');
   const [internetInput, setInternetInput] = useState('');
@@ -290,14 +298,13 @@ export default function DashboardPage() {
     }
   };
 
-  const handleUploadPhoto = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!uploadingFile || !activeTask) return;
-    setUploadLoading(true);
+  const handleUploadPhotoForCategory = async (category: string, file: File) => {
+    if (!activeTask) return;
+    setUploadLoadingState((prev) => ({ ...prev, [category]: true }));
 
     const formData = new FormData();
-    formData.append('file', uploadingFile);
-    formData.append('room_type', roomType);
+    formData.append('file', file);
+    formData.append('room_type', category);
 
     try {
       await api.post(`/inspections/${activeTask.inspection_id}/photos`, formData, {
@@ -306,15 +313,11 @@ export default function DashboardPage() {
       // Refresh photos
       const res = await api.get(`/inspections/${activeTask.inspection_id}/photos`);
       setTaskPhotos(res.data);
-      setUploadingFile(null);
-      // Reset input element
-      const fileInput = document.getElementById('photo-upload-input') as HTMLInputElement;
-      if (fileInput) fileInput.value = '';
     } catch (err: any) {
       console.error(err);
       alert(err.response?.data?.message || 'Gagal mengunggah foto');
     } finally {
-      setUploadLoading(false);
+      setUploadLoadingState((prev) => ({ ...prev, [category]: false }));
     }
   };
 
@@ -672,75 +675,97 @@ export default function DashboardPage() {
                         </form>
                       </div>
 
-                      {/* Photo Upload Form */}
+                      {/* Checkpoint Photo Uploads */}
                       <div>
                         <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                           <Upload className="h-3.5 w-3.5 text-blue-500" />
-                          2. Unggah Foto Fasilitas
+                          2. Bukti Foto Aktual Per Poin Pengecekan
                         </h4>
-                        <form onSubmit={handleUploadPhoto} className="space-y-3">
-                          <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-gray-500">
-                              Jenis Ruangan/Fasilitas
-                            </label>
-                            <select
-                              value={roomType}
-                              onChange={(e) => setRoomType(e.target.value)}
-                              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs"
-                            >
-                              <option value="kamar_tidur">Kamar Tidur</option>
-                              <option value="kamar_mandi">Kamar Mandi</option>
-                              <option value="ac">Pendingin AC</option>
-                              <option value="wifi">Router Wifi</option>
-                              <option value="lemari">Lemari</option>
-                              <option value="umum">Fasilitas Umum</option>
-                            </select>
-                          </div>
-                          <div className="space-y-1.5">
-                            <input
-                              type="file"
-                              id="photo-upload-input"
-                              accept="image/*"
-                              required
-                              onChange={(e) => setUploadingFile(e.target.files?.[0] || null)}
-                              className="w-full text-xs text-gray-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-[10px] file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer"
-                            />
-                          </div>
-                          <button
-                            type="submit"
-                            disabled={uploadLoading || !uploadingFile}
-                            className="w-full py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold rounded-lg text-xs transition-all flex items-center justify-center gap-1"
-                          >
-                            {uploadLoading && <Loader2 className="h-3 w-3 animate-spin text-white" />}
-                            Unggah Foto Bukti
-                          </button>
-                        </form>
+                        
+                        <div className="space-y-4">
+                          {checkPoints.map((cp) => {
+                            const claimed = activeTask.property?.claim_data?.fasilitas?.[cp.key];
+                            const isClaimed = cp.type === 'boolean' ? claimed?.ada : true;
+                            const expectationVal = cp.type === 'technical' ? claimed?.nilai : null;
 
-                        {/* Thumbnails of uploaded photos */}
-                        {taskPhotos.length > 0 && (
-                          <div className="mt-4">
-                            <p className="text-[10px] font-bold text-gray-500 mb-2">
-                              Foto Terunggah ({taskPhotos.length})
-                            </p>
-                            <div className="grid grid-cols-4 gap-2">
-                              {taskPhotos.map((photo: any) => (
-                                <div
-                                  key={photo.photo_id}
-                                  className="relative aspect-square rounded-lg border border-gray-200 overflow-hidden bg-gray-50"
-                                >
-                                  <img
-                                    src={photo.photo_url}
-                                    alt={photo.room_type}
-                                    className="w-full h-full object-cover"
-                                  />
-                                  <div className="absolute bottom-0 inset-x-0 bg-black/60 text-[8px] text-white py-0.5 text-center truncate">
-                                    {photo.room_type}
+                            // Find uploaded photo for this category/checkpoint
+                            const uploadedPhoto = taskPhotos.find((p: any) => p.room_type === cp.key);
+                            const isUploading = uploadLoadingState[cp.key];
+
+                            return (
+                              <div key={cp.key} className="p-4 rounded-2xl border border-gray-100 bg-gray-50/50 hover:bg-gray-50 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                <div className="space-y-1 flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-bold text-gray-900">{cp.label}</span>
+                                    {cp.type === 'boolean' ? (
+                                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                                        isClaimed ? 'bg-emerald-100 text-emerald-800' : 'bg-gray-100 text-gray-600'
+                                      }`}>
+                                        {isClaimed ? 'Diklaim: Ada' : 'Diklaim: Tidak'}
+                                      </span>
+                                    ) : (
+                                      <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800">
+                                        Ekspektasi: {expectationVal} {cp.key === 'kualitas_air' ? 'ppm' : 'Mbps'}
+                                      </span>
+                                    )}
                                   </div>
+                                  <p className="text-[10px] text-gray-400">{cp.desc}</p>
                                 </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
+
+                                <div className="flex items-center gap-3">
+                                  {uploadedPhoto ? (
+                                    <div className="flex items-center gap-3">
+                                      <div className="relative h-12 w-12 rounded-lg border border-gray-200 overflow-hidden bg-white group cursor-pointer" onClick={() => window.open(uploadedPhoto.photo_url, '_blank')}>
+                                        <img src={uploadedPhoto.photo_url} alt={cp.label} className="h-full w-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                          <Eye className="h-4 w-4 text-white" />
+                                        </div>
+                                      </div>
+                                      
+                                      <label className="cursor-pointer px-3 py-1.5 text-[10px] font-bold border border-gray-300 hover:bg-gray-100 rounded-lg transition-all">
+                                        {isUploading ? 'Mengunggah...' : 'Ubah Foto'}
+                                        <input
+                                          type="file"
+                                          accept="image/*"
+                                          disabled={isUploading}
+                                          onChange={(e) => {
+                                            const file = e.target.files?.[0];
+                                            if (file) handleUploadPhotoForCategory(cp.key, file);
+                                          }}
+                                          className="hidden"
+                                        />
+                                      </label>
+                                    </div>
+                                  ) : (
+                                    <label className="cursor-pointer inline-flex items-center gap-1 px-3.5 py-2 text-[10px] font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all shadow-sm">
+                                      {isUploading ? (
+                                        <>
+                                          <Loader2 className="h-3 w-3 animate-spin" />
+                                          Mengunggah...
+                                        </>
+                                      ) : (
+                                        <>
+                                          <Upload className="h-3 w-3" />
+                                          Unggah Foto
+                                        </>
+                                      )}
+                                      <input
+                                        type="file"
+                                        accept="image/*"
+                                        disabled={isUploading}
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) handleUploadPhotoForCategory(cp.key, file);
+                                        }}
+                                        className="hidden"
+                                      />
+                                    </label>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
 
                       {/* Run AI Scorecard Audit */}

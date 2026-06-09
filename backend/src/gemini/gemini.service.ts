@@ -10,33 +10,48 @@ export class GeminiService {
 
   constructor(private configService: ConfigService) {}
 
-  async extractFasilitas(imageUrls: string[]): Promise<Record<string, any>> {
+  async extractFasilitas(photos: { url: string; category: string }[]): Promise<Record<string, any>> {
     const apiKey = this.configService.get<string>('GEMINI_API_KEY');
     if (!apiKey) {
       throw new InternalServerErrorException('GEMINI_API_KEY belum terkonfigurasi');
     }
+
+    const categoryLabels: Record<string, string> = {
+      kasur: 'Kasur',
+      lemari: 'Lemari',
+      ac: 'Pendingin Ruangan (AC)',
+      wifi: 'Router WiFi',
+      kamar_mandi_dalam: 'Kamar Mandi Dalam',
+      kualitas_air: 'Hasil Ukur Kualitas Air (TDS Meter)',
+      kecepatan_internet: 'Hasil Speedtest Kecepatan Internet',
+      umum: 'Fasilitas Umum',
+    };
 
     let attempt = 0;
     while (attempt < this.MAX_RETRY) {
       try {
         const prompt = this.buildPrompt();
 
-        // Convert image URLs to base64 inline_data
-        const imageParts = await Promise.all(
-          imageUrls.map(async (url) => {
+        // Convert image URLs to base64 inline_data with category context
+        const photoParts = await Promise.all(
+          photos.map(async (photo) => {
             try {
-              const response = await axios.get(url, { responseType: 'arraybuffer' });
+              const response = await axios.get(photo.url, { responseType: 'arraybuffer' });
               const base64Data = Buffer.from(response.data, 'binary').toString('base64');
-              // Detect content type from headers or fallback to image/jpeg
               const mimeType = response.headers['content-type'] || 'image/jpeg';
-              return {
-                inline_data: {
-                  mime_type: mimeType,
-                  data: base64Data,
+              
+              const label = categoryLabels[photo.category] || photo.category;
+              return [
+                { text: `Gambar berikut adalah foto aktual dari pengecekan fasilitas "${label}":` },
+                {
+                  inline_data: {
+                    mime_type: mimeType,
+                    data: base64Data,
+                  },
                 },
-              };
+              ];
             } catch (err) {
-              console.error(`Gagal mendownload atau mengonversi gambar dari URL: ${url}`, err.message);
+              console.error(`Gagal mendownload atau mengonversi gambar dari URL: ${photo.url}`, err.message);
               throw err;
             }
           }),
@@ -44,7 +59,7 @@ export class GeminiService {
 
         const parts = [
           { text: prompt },
-          ...imageParts,
+          ...photoParts.flat(),
         ];
 
         const response = await axios.post(

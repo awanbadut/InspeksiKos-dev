@@ -139,6 +139,22 @@ export class InspectionsService {
       throw new ForbiddenException('Anda tidak memiliki akses untuk mengunggah foto untuk inspeksi ini');
     }
 
+    // Check if there is already a photo for this room_type/checkpoint in the inspection
+    const existingPhoto = await this.photoRepository.findOne({
+      where: { inspection_id: inspectionId, room_type: roomType },
+    });
+
+    if (existingPhoto) {
+      // Delete old file from Supabase
+      try {
+        await this.storageService.deleteFile(existingPhoto.photo_url);
+      } catch (err) {
+        console.error('Gagal menghapus file lama di Supabase:', err.message);
+      }
+      // Remove database entry
+      await this.photoRepository.remove(existingPhoto);
+    }
+
     // Upload to Supabase Storage
     const folder = `inspections/${inspectionId}`;
     const photoUrl = await this.storageService.uploadFile(file, folder);
