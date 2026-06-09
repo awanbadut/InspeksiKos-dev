@@ -18,6 +18,7 @@ import {
   Eye,
   Download,
   XCircle,
+  Settings,
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -26,7 +27,7 @@ export default function AdminDashboardPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [role, setRole] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'inspections' | 'inspectors' | 'users'>('inspections');
+  const [activeTab, setActiveTab] = useState<'inspections' | 'inspectors' | 'users' | 'rules'>('inspections');
 
   // Data
   const [inspections, setInspections] = useState<any[]>([]);
@@ -52,6 +53,13 @@ export default function AdminDashboardPage() {
   const [selectedInspection, setSelectedInspection] = useState<any | null>(null);
   const [showReportModal, setShowReportModal] = useState(false);
 
+  // Audit rules states
+  const [rules, setRules] = useState<any[]>([]);
+  const [rulesLoading, setRulesLoading] = useState(false);
+  const [rulesSaving, setRulesSaving] = useState(false);
+  const [rulesSuccess, setRulesSuccess] = useState('');
+  const [rulesError, setRulesError] = useState('');
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const userRole = localStorage.getItem('user_role');
@@ -76,6 +84,7 @@ export default function AdminDashboardPage() {
         fetchInspections(),
         fetchInspectors(),
         fetchUsers(),
+        fetchRules(),
       ]);
     } catch (err) {
       console.error('Failed to load dashboard data:', err);
@@ -92,6 +101,18 @@ export default function AdminDashboardPage() {
   const fetchInspectors = async () => {
     const res = await api.get('/auth/inspectors');
     setInspectors(res.data);
+  };
+
+  const fetchRules = async () => {
+    try {
+      setRulesLoading(true);
+      const res = await api.get('/audit/rules');
+      setRules(res.data.items || []);
+    } catch (err) {
+      console.error('Failed to fetch rules:', err);
+    } finally {
+      setRulesLoading(false);
+    }
   };
 
   const fetchUsers = async () => {
@@ -155,6 +176,24 @@ export default function AdminDashboardPage() {
       setCreateError(err.response?.data?.message || 'Registrasi gagal, coba lagi nanti');
     } finally {
       setCreateLoading(false);
+    }
+  };
+
+  const handleSaveRules = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setRulesSaving(true);
+    setRulesError('');
+    setRulesSuccess('');
+
+    try {
+      await api.post('/audit/rules', { items: rules });
+      setRulesSuccess('Konfigurasi aturan evaluasi berhasil diperbarui!');
+      await fetchRules();
+    } catch (err: any) {
+      console.error(err);
+      setRulesError(err.response?.data?.message || 'Gagal menyimpan konfigurasi aturan.');
+    } finally {
+      setRulesSaving(false);
     }
   };
 
@@ -255,6 +294,17 @@ export default function AdminDashboardPage() {
           >
             <Users className="h-4 w-4" />
             Semua Pengguna ({users.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('rules')}
+            className={`py-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all flex items-center gap-1.5 ${
+              activeTab === 'rules'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-400 hover:text-gray-900'
+            }`}
+          >
+            <Settings className="h-4 w-4" />
+            Aturan Evaluasi
           </button>
         </div>
       </div>
@@ -539,6 +589,127 @@ export default function AdminDashboardPage() {
                     </tbody>
                   </table>
                 </div>
+              </div>
+            )}
+
+            {/* Tab 4: Evaluation Rules */}
+            {activeTab === 'rules' && (
+              <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                    <Settings className="h-4 w-4 text-blue-600" />
+                    Manajemen Aturan Evaluasi (Weights & Penalties)
+                  </h2>
+                </div>
+                <p className="text-[10px] text-gray-500 mb-6 leading-relaxed">
+                  Sesuaikan bobot kontribusi nilai (Weight) dan denda pengurangan nilai (Penalty) untuk setiap fasilitas. Bobot yang lebih besar memberikan pengaruh lebih tinggi terhadap skor validitas akhir kosan.
+                </p>
+
+                {rulesSuccess && (
+                  <div className="mb-4 p-3 text-xs text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-xl">
+                    ✅ {rulesSuccess}
+                  </div>
+                )}
+
+                {rulesError && (
+                  <div className="mb-4 p-3 text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl">
+                    ⚠️ {rulesError}
+                  </div>
+                )}
+
+                {rulesLoading ? (
+                  <div className="flex justify-center py-10">
+                    <Loader2 className="h-6 w-6 text-blue-600 animate-spin" />
+                  </div>
+                ) : (
+                  <form onSubmit={handleSaveRules} className="space-y-6">
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-left border-collapse text-xs">
+                        <thead>
+                          <tr className="border-b border-gray-100 text-gray-400 font-bold">
+                            <th className="pb-3 pr-4">NAMA FASILITAS</th>
+                            <th className="pb-3 px-4">TIPE BATAS</th>
+                            <th className="pb-3 px-4">AMBANG BATAS</th>
+                            <th className="pb-3 px-4 w-28">BOBOT (WEIGHT)</th>
+                            <th className="pb-3 px-4 w-28">DENDA (PENALTY)</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-50">
+                          {rules.map((ruleItem, index) => (
+                            <tr key={index} className="hover:bg-gray-50/50 transition-all">
+                              <td className="py-3 pr-4 font-bold text-gray-900 capitalize">
+                                {ruleItem.facility_name.replace(/_/g, ' ')}
+                              </td>
+                              <td className="py-3 px-4 text-gray-500">
+                                <span className="px-2 py-0.5 bg-gray-100 rounded text-[9px] font-semibold uppercase">
+                                  {ruleItem.threshold_type}
+                                </span>
+                              </td>
+                              <td className="py-3 px-4">
+                                {ruleItem.threshold_type === 'numeric' ? (
+                                  <input
+                                    type="text"
+                                    required
+                                    value={ruleItem.threshold_value || ''}
+                                    onChange={(e) => {
+                                      const updated = [...rules];
+                                      updated[index].threshold_value = e.target.value;
+                                      setRules(updated);
+                                    }}
+                                    className="w-20 px-2 py-1 border border-gray-300 rounded text-xs font-semibold"
+                                  />
+                                ) : (
+                                  <span className="text-gray-400 italic">Boolean Yes/No</span>
+                                )}
+                              </td>
+                              <td className="py-3 px-4">
+                                <input
+                                  type="number"
+                                  step="0.1"
+                                  min="0"
+                                  required
+                                  value={ruleItem.weight}
+                                  onChange={(e) => {
+                                    const updated = [...rules];
+                                    updated[index].weight = Number(e.target.value);
+                                    setRules(updated);
+                                  }}
+                                  className="w-20 px-2 py-1 border border-gray-300 rounded text-xs font-semibold text-blue-600"
+                                />
+                              </td>
+                              <td className="py-3 px-4">
+                                <input
+                                  type="number"
+                                  step="0.1"
+                                  min="0"
+                                  required
+                                  value={ruleItem.penalty}
+                                  onChange={(e) => {
+                                    const updated = [...rules];
+                                    updated[index].penalty = Number(e.target.value);
+                                    setRules(updated);
+                                  }}
+                                  className="w-20 px-2 py-1 border border-gray-300 rounded text-xs font-semibold text-red-600"
+                                />
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div className="flex justify-end pt-4 border-t border-gray-100">
+                      <button
+                        type="submit"
+                        disabled={rulesSaving}
+                        className="px-6 py-2.5 bg-[#232936] hover:bg-[#181d26] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 shadow-md"
+                      >
+                        {rulesSaving && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                        Simpan Aturan Evaluasi
+                      </button>
+                    </div>
+                  </form>
+                )}
               </div>
             )}
           </div>

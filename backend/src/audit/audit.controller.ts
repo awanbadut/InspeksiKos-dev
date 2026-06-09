@@ -1,11 +1,27 @@
-import { Controller, Post, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Post, Get, Param, Body, UseGuards } from '@nestjs/common';
 import { AuditService } from './audit.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../auth/entities/user.entity';
+import { GetUser } from '../auth/decorators/get-user.decorator';
 
 @Controller('audit')
 @UseGuards(JwtAuthGuard)
 export class AuditController {
   constructor(private readonly auditService: AuditService) {}
+
+  @Get('rules')
+  async getActiveRule() {
+    return this.auditService.getActiveRule();
+  }
+
+  @Post('rules')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
+  async saveActiveRule(@Body('items') items: any[], @GetUser('user_id') userId: string) {
+    return this.auditService.saveActiveRule(items, userId);
+  }
 
   @Post(':inspection_id/run')
   async runAudit(@Param('inspection_id') inspectionId: string) {

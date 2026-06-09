@@ -18,6 +18,8 @@ export class AuditService {
     private reportRepository: Repository<AuditReport>,
     @InjectRepository(AuditRule)
     private ruleRepository: Repository<AuditRule>,
+    @InjectRepository(AuditRuleItem)
+    private ruleItemRepository: Repository<AuditRuleItem>,
     @InjectRepository(Inspection)
     private inspectionRepository: Repository<Inspection>,
     @InjectRepository(Property)
@@ -27,6 +29,64 @@ export class AuditService {
     private pdfService: PdfService,
     private storageService: StorageService,
   ) {}
+
+  async getActiveRule(): Promise<AuditRule & { items: AuditRuleItem[] }> {
+    const activeRule = await this.ruleRepository.findOne({
+      where: { is_active: true },
+      relations: { items: true },
+    });
+
+    if (activeRule) {
+      return activeRule;
+    }
+
+    // Fallback: create mock default rule in-memory
+    const defaultRule = new AuditRule();
+    defaultRule.rule_id = 'default-rule-id';
+    defaultRule.name = 'Aturan Default Platform';
+    defaultRule.version = '1.0';
+    defaultRule.is_active = true;
+    defaultRule.items = this.getDefaultRules();
+    return defaultRule as any;
+  }
+
+  async saveActiveRule(itemsDto: any[], userId: string): Promise<AuditRule> {
+    // 1. Deactivate existing rules
+    await this.ruleRepository.update({ is_active: true }, { is_active: false });
+
+    // 2. Create new active rule
+    const newRule = this.ruleRepository.create({
+      name: 'Aturan Kustom Platform',
+      version: `1.${Date.now().toString().slice(-4)}`,
+      is_active: true,
+      created_by_id: userId,
+    });
+    const savedRule = await this.ruleRepository.save(newRule);
+
+    // 3. Create items
+    const newItems = itemsDto.map((item) => {
+      const ruleItem = new AuditRuleItem();
+      ruleItem.rule_id = savedRule.rule_id;
+      ruleItem.facility_name = item.facility_name;
+      ruleItem.weight = Number(item.weight);
+      ruleItem.penalty = Number(item.penalty);
+      ruleItem.threshold_type = item.threshold_type;
+      ruleItem.threshold_value = item.threshold_value ? String(item.threshold_value) : null as any;
+      return ruleItem;
+    });
+    await this.ruleItemRepository.save(newItems);
+
+    const rule = await this.ruleRepository.findOne({
+      where: { rule_id: savedRule.rule_id },
+      relations: { items: true },
+    });
+
+    if (!rule) {
+      throw new Error('Gagal memuat aturan kustom yang baru dibuat');
+    }
+
+    return rule;
+  }
 
   async runAudit(inspectionId: string): Promise<AuditReport> {
     // 1. Fetch inspection details
