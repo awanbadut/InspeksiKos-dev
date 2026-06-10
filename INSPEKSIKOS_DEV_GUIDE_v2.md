@@ -428,7 +428,7 @@ Authorization: Bearer <your_access_token>
 
 ##### 🔑 1. Autentikasi (`/auth`)
 
-##### 📌 A. Registrasi Pengguna Baru (`POST /auth/register`)
+##### 📌 A. Registrasi Pengguna Baru (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/auth/register`)
 Mendaftarkan akun baru. Secara default, pendaftaran publik ditujukan untuk role `mahasiswa`. Admin dapat mendaftarkan akun dengan role lain.
 
 *   **Role Akses:** Publik (Semua Pengguna)
@@ -468,7 +468,7 @@ Mendaftarkan akun baru. Secara default, pendaftaran publik ditujukan untuk role 
     }
     ```
 
-##### 📌 B. Login Pengguna (`POST /auth/login`)
+##### 📌 B. Login Pengguna (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/auth/login`)
 Melakukan autentikasi menggunakan email dan password untuk mendapatkan access token dan refresh token.
 
 *   **Role Akses:** Publik (Semua Pengguna)
@@ -497,7 +497,7 @@ Melakukan autentikasi menggunakan email dan password untuk mendapatkan access to
     }
     ```
 
-##### 📌 C. Refresh Access Token (`POST /auth/refresh`)
+##### 📌 C. Refresh Access Token (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/auth/refresh`)
 Memperbarui access token yang telah kedaluwarsa menggunakan refresh token yang valid.
 
 *   **Role Akses:** Publik (Semua Pengguna)
@@ -514,7 +514,7 @@ Memperbarui access token yang telah kedaluwarsa menggunakan refresh token yang v
     }
     ```
 
-##### 📌 D. Logout (`POST /auth/logout`)
+##### 📌 D. Logout (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/auth/logout`)
 Membersihkan session/token (dihandle di client dengan menghapus token dari storage).
 
 *   **Role Akses:** Publik (Semua Pengguna)
@@ -525,7 +525,7 @@ Membersihkan session/token (dihandle di client dengan menghapus token dari stora
     }
     ```
 
-##### 📌 E. Ambil Daftar Inspektur (`GET /auth/inspectors`)
+##### 📌 E. Ambil Daftar Inspektur (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/auth/inspectors`)
 Mengambil list seluruh inspektur kos yang aktif. Digunakan oleh Admin untuk penugasan inspeksi.
 
 *   **Role Akses:** `admin`
@@ -544,7 +544,7 @@ Mengambil list seluruh inspektur kos yang aktif. Digunakan oleh Admin untuk penu
     ]
     ```
 
-##### 📌 F. Ambil Daftar Seluruh Pengguna (`GET /auth/users`)
+##### 📌 F. Ambil Daftar Seluruh Pengguna (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/auth/users`)
 Mengambil seluruh akun yang terdaftar dalam platform.
 
 *   **Role Akses:** `admin`
@@ -576,7 +576,7 @@ Mengambil seluruh akun yang terdaftar dalam platform.
 
 ##### 🏠 2. Pengelolaan Kos/Properti (`/properties`)
 
-##### 📌 A. Tambah Properti Baru (`POST /properties`)
+##### 📌 A. Tambah Properti Baru (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/properties`)
 Mahasiswa mendaftarkan properti kos miliknya beserta klaim iklan fasilitas (WiFi, AC, Air Bersih, dll.) beserta koordinat peta.
 
 *   **Role Akses:** `mahasiswa`, `admin`
@@ -649,7 +649,7 @@ Mahasiswa mendaftarkan properti kos miliknya beserta klaim iklan fasilitas (WiFi
     }
     ```
 
-##### 📌 B. Ambil Daftar Properti (`GET /properties`)
+##### 📌 B. Ambil Daftar Properti (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/properties`)
 Melihat daftar properti. Mahasiswa hanya melihat properti miliknya sendiri. Admin melihat semua properti di platform.
 
 *   **Role Akses:** `mahasiswa`, `admin`
@@ -679,7 +679,7 @@ Melihat daftar properti. Mahasiswa hanya melihat properti miliknya sendiri. Admi
     ]
     ```
 
-##### 📌 C. Ambil Detail Properti (`GET /properties/:id`)
+##### 📌 C. Ambil Detail Properti (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/properties/:id`)
 Mengambil rincian data properti berdasarkan ID.
 
 *   **Role Akses:** Semua role yang terautentikasi
@@ -707,7 +707,7 @@ Mengambil rincian data properti berdasarkan ID.
     }
     ```
 
-##### 📌 D. Update Properti (`PATCH /properties/:id`)
+##### 📌 D. Update Properti (`PATCH https://inspeksikos-backend-391757769207.asia-southeast2.run.app/properties/:id`)
 Memperbarui rincian kos (misal: nama, alamat, atau klaim fasilitas).
 
 *   **Role Akses:** Pemilik properti (`mahasiswa`) atau `admin`
@@ -739,7 +739,7 @@ Memperbarui rincian kos (misal: nama, alamat, atau klaim fasilitas).
     }
     ```
 
-##### 📌 E. Hapus Properti (`DELETE /properties/:id`)
+##### 📌 E. Hapus Properti (`DELETE https://inspeksikos-backend-391757769207.asia-southeast2.run.app/properties/:id`)
 Menghapus data kos secara permanen dari platform.
 
 *   **Role Akses:** Pemilik properti (`mahasiswa`) atau `admin`
@@ -754,7 +754,7 @@ Menghapus data kos secara permanen dari platform.
 
 ##### 🔍 3. Alur Inspeksi Fisik (`/inspections`)
 
-##### 📌 A. Ajukan Inspeksi Kos (`POST /inspections`)
+##### 📌 A. Ajukan Inspeksi Kos (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections`)
 Mengajukan permohonan inspeksi untuk properti tertentu agar divalidasi fisik oleh inspektur.
 
 *   **Role Akses:** `mahasiswa` (pemilik kos), `admin`
@@ -780,7 +780,7 @@ Mengajukan permohonan inspeksi untuk properti tertentu agar divalidasi fisik ole
     }
     ```
 
-##### 📌 B. Ambil Daftar Inspeksi (`GET /inspections`)
+##### 📌 B. Ambil Daftar Inspeksi (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections`)
 Melihat daftar antrian inspeksi. 
 *   `mahasiswa` melihat inspeksi kos miliknya.
 *   `inspektur` melihat inspeksi yang didelegasikan kepadanya.
@@ -813,7 +813,7 @@ Melihat daftar antrian inspeksi.
     ]
     ```
 
-##### 📌 C. Update Status Inspeksi / Penunjukan Inspektur (`PATCH /inspections/:id/status`)
+##### 📌 C. Update Status Inspeksi / Penunjukan Inspektur (`PATCH https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/status`)
 Mengubah status inspeksi (`assigned`, `in_progress`, `completed`). Admin juga menggunakan ini untuk menugaskan seorang `inspektur` ke inspeksi tersebut.
 
 *   **Role Akses:** `admin`, `inspektur` (hanya jika ditugaskan kepadanya)
@@ -835,7 +835,7 @@ Mengubah status inspeksi (`assigned`, `in_progress`, `completed`). Admin juga me
     }
     ```
 
-##### 📌 D. Input Data Teknis Kos (`PATCH /inspections/:id/teknis`)
+##### 📌 D. Input Data Teknis Kos (`PATCH https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/teknis`)
 Menginputkan nilai TDS (kualitas air), kecepatan internet nyata (speedtest), dan evaluasi checklist manual oleh inspektur.
 
 *   **Role Akses:** `inspektur`, `admin`
@@ -872,7 +872,7 @@ Menginputkan nilai TDS (kualitas air), kecepatan internet nyata (speedtest), dan
     }
     ```
 
-##### 📌 E. Upload Foto Inspeksi Kamar/Fasilitas (`POST /inspections/:id/photos`)
+##### 📌 E. Upload Foto Inspeksi Kamar/Fasilitas (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/photos`)
 Mengunggah foto fisik objek kos untuk dianalisis oleh Vision AI (Gemini). API ini menggunakan format `multipart/form-data`.
 
 *   **Role Akses:** `inspektur`, `admin`
@@ -892,7 +892,7 @@ Mengunggah foto fisik objek kos untuk dianalisis oleh Vision AI (Gemini). API in
     }
     ```
 
-##### 📌 F. Ambil Foto-Foto Inspeksi (`GET /inspections/:id/photos`)
+##### 📌 F. Ambil Foto-Foto Inspeksi (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/photos`)
 Mengambil seluruh daftar bukti foto yang diunggah untuk satu sesi inspeksi.
 
 *   **Role Akses:** Semua role terautentikasi
@@ -913,7 +913,7 @@ Mengambil seluruh daftar bukti foto yang diunggah untuk satu sesi inspeksi.
 
 ##### 🧠 4. Engine Evaluasi Kepatuhan & AI (`/audit`)
 
-##### 📌 A. Ambil Aturan Evaluasi Aktif (`GET /audit/rules`)
+##### 📌 A. Ambil Aturan Evaluasi Aktif (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/audit/rules`)
 Mendapatkan kriteria evaluasi (bobot dan penalti) yang sedang digunakan platform untuk penilaian AI saat ini.
 
 *   **Role Akses:** Semua role terautentikasi
@@ -970,7 +970,7 @@ Mendapatkan kriteria evaluasi (bobot dan penalti) yang sedang digunakan platform
     }
     ```
 
-##### 📌 B. Simpan/Ubah Aturan Evaluasi (`POST /audit/rules`)
+##### 📌 B. Simpan/Ubah Aturan Evaluasi (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/audit/rules`)
 Memperbarui aturan pembobotan dan penalti evaluasi untuk platform. Endpoint ini otomatis menonaktifkan aturan lama dan mengaktifkan aturan baru.
 
 *   **Role Akses:** `admin`
@@ -1028,7 +1028,7 @@ Memperbarui aturan pembobotan dan penalti evaluasi untuk platform. Endpoint ini 
     }
     ```
 
-##### 📌 C. Picu/Jalankan Audit AI Kepatuhan (`POST /audit/:inspection_id/run`)
+##### 📌 C. Picu/Jalankan Audit AI Kepatuhan (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/audit/:inspection_id/run`)
 Menjalankan Gemini AI Vision untuk mengekstrak data dari bukti foto fisik, membandingkannya dengan data klaim mahasiswa berdasarkan logika pembobotan aturan aktif, menghitung skor kepatuhan, serta membuat laporan PDF otomatis.
 
 *   **Role Akses:** Semua role terautentikasi (biasanya dipicu oleh `inspektur` atau `admin` saat inspeksi siap)
@@ -1077,7 +1077,7 @@ Menjalankan Gemini AI Vision untuk mengekstrak data dari bukti foto fisik, memba
     }
     ```
 
-##### 📌 D. Dapatkan Detail Laporan Audit (`GET /audit/:inspection_id/report`)
+##### 📌 D. Dapatkan Detail Laporan Audit (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/audit/:inspection_id/report`)
 Mengambil laporan audit kepatuhan final hasil pengolahan AI.
 
 *   **Role Akses:** Semua role terautentikasi
@@ -1106,7 +1106,7 @@ Mengambil laporan audit kepatuhan final hasil pengolahan AI.
     }
     ```
 
-##### 📌 E. Dapatkan URL Laporan PDF (`GET /audit/:inspection_id/pdf`)
+##### 📌 E. Dapatkan URL Laporan PDF (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/audit/:inspection_id/pdf`)
 Mengambil link unduhan file PDF Scorecard Kepatuhan yang disimpan di cloud storage.
 
 *   **Role Akses:** Semua role terautentikasi
@@ -1121,7 +1121,7 @@ Mengambil link unduhan file PDF Scorecard Kepatuhan yang disimpan di cloud stora
 
 ##### 📜 5. Panel Riwayat Kepatuhan (`/riwayat`)
 
-##### 📌 A. Ambil Riwayat Kepatuhan Kos (`GET /riwayat`)
+##### 📌 A. Ambil Riwayat Kepatuhan Kos (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/riwayat`)
 Mengambil log riwayat seluruh sesi inspeksi dan audit yang telah berstatus `completed` (selesai divalidasi). 
 Mendukung filter berdasarkan tanggal hari ini (`date`) maupun bulan tertentu (`month`).
 
