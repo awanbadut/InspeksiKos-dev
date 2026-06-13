@@ -252,7 +252,7 @@ export default function DashboardPage() {
     }
   }, [mapReady, showMapPicker]);
 
-  // Inspector Task Map initialization
+  // Inspector Task Map initialization with live routing and user location tracking
   useEffect(() => {
     if (mapReady && activeTask && activeTask.property?.claim_data?.location) {
       const { latitude, longitude } = activeTask.property.claim_data.location;
@@ -268,15 +268,123 @@ export default function DashboardPage() {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         }).addTo(mapInstance);
 
-        const customIcon = L.icon({
-          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
+        // Custom pulsing blue dot for inspector's GPS location
+        const userIcon = L.divIcon({
+          className: 'custom-gps-marker',
+          html: `
+            <div class="relative flex h-5 w-5 items-center justify-center">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-3 w-3 bg-blue-500 border-2 border-white shadow-md"></span>
+            </div>
+          `,
+          iconSize: [20, 20],
+          iconAnchor: [10, 10],
         });
 
-        L.marker([latitude, longitude], { icon: customIcon }).addTo(mapInstance);
+        // Custom glowing red pin for property destination
+        const destinationIcon = L.divIcon({
+          className: 'custom-destination-marker',
+          html: `
+            <div class="relative flex h-8 w-8 items-center justify-center">
+              <span class="animate-pulse absolute inline-flex h-6 w-6 rounded-full bg-red-500/30"></span>
+              <div class="relative flex items-center justify-center bg-red-500 text-white rounded-full p-1.5 shadow-lg border border-red-400">
+                <svg xmlns="http://www.w3.org/2005/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.54 20.193 4 14.99 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+            </div>
+          `,
+          iconSize: [32, 32],
+          iconAnchor: [16, 32],
+        });
+
+        const drawOnlyDestination = () => {
+          mapInstance.setView([latitude, longitude], 15);
+          L.marker([latitude, longitude], { icon: destinationIcon })
+            .addTo(mapInstance)
+            .bindPopup(`<div class="p-1 font-sans"><h5 class="font-bold text-[11px] text-gray-900">${activeTask.property.name}</h5><p class="text-[9px] text-gray-500">${activeTask.property.address}</p></div>`);
+        };
+
+        const drawFallback = (currentLat: number, currentLng: number) => {
+          // Draw dashed red line connecting positions if routing API fails
+          L.polyline([[currentLat, currentLng], [latitude, longitude]], {
+            color: '#ef4444',
+            weight: 3,
+            dashArray: '5, 5',
+            opacity: 0.7
+          }).addTo(mapInstance);
+
+          L.marker([currentLat, currentLng], { icon: userIcon })
+            .addTo(mapInstance)
+            .bindPopup('<span class="text-xs font-bold text-gray-800">Posisi Anda</span>');
+
+          L.marker([latitude, longitude], { icon: destinationIcon })
+            .addTo(mapInstance)
+            .bindPopup(`<div class="p-1 font-sans"><h5 class="font-bold text-[11px] text-gray-900">${activeTask.property.name}</h5><p class="text-[9px] text-gray-500">${activeTask.property.address}</p></div>`);
+
+          const bounds = L.latLngBounds([
+            [currentLat, currentLng],
+            [latitude, longitude]
+          ]);
+          mapInstance.fitBounds(bounds, { padding: [30, 30] });
+        };
+
+        // Try to obtain current position for routing
+        if (typeof navigator !== 'undefined' && navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const currentLat = position.coords.latitude;
+              const currentLng = position.coords.longitude;
+
+              try {
+                // Fetch driving route coordinates from OSRM
+                const response = await fetch(
+                  `https://router.project-osrm.org/route/v1/driving/${currentLng},${currentLat};${longitude},${latitude}?overview=full&geometries=geojson`
+                );
+                const data = await response.json();
+
+                if (data.code === 'Ok' && data.routes && data.routes.length > 0) {
+                  const coords = data.routes[0].geometry.coordinates.map(
+                    (c: number[]) => [c[1], c[0]] // Swap to [lat, lng]
+                  );
+
+                  // Draw driving route polyline
+                  L.polyline(coords, {
+                    color: '#3b82f6',
+                    weight: 4,
+                    opacity: 0.85,
+                    lineJoin: 'round'
+                  }).addTo(mapInstance);
+
+                  // Add user and destination markers
+                  L.marker([currentLat, currentLng], { icon: userIcon })
+                    .addTo(mapInstance)
+                    .bindPopup('<span class="text-xs font-bold text-gray-800">Posisi Anda</span>');
+
+                  L.marker([latitude, longitude], { icon: destinationIcon })
+                    .addTo(mapInstance)
+                    .bindPopup(`<div class="p-1 font-sans"><h5 class="font-bold text-[11px] text-gray-900">${activeTask.property.name}</h5><p class="text-[9px] text-gray-500">${activeTask.property.address}</p></div>`);
+
+                  const bounds = L.latLngBounds([
+                    [currentLat, currentLng],
+                    [latitude, longitude]
+                  ]);
+                  mapInstance.fitBounds(bounds, { padding: [35, 35] });
+                } else {
+                  drawFallback(currentLat, currentLng);
+                }
+              } catch (err) {
+                console.warn('Failed to fetch OSRM route, fallback to straight line:', err);
+                drawFallback(currentLat, currentLng);
+              }
+            },
+            (err) => {
+              console.warn('Geolocation denied or failed, showing destination only:', err);
+              drawOnlyDestination();
+            },
+            { enableHighAccuracy: true, timeout: 5000 }
+          );
+        } else {
+          drawOnlyDestination();
+        }
 
         mapInstance.invalidateSize();
         setTimeout(() => mapInstance.invalidateSize(), 150);
@@ -895,8 +1003,8 @@ export default function DashboardPage() {
                           </h4>
                           <div
                             id="task-map-container"
-                            className="w-full h-32 rounded-xl overflow-hidden bg-gray-900 border border-gray-850 z-10"
-                            style={{ minHeight: '128px' }}
+                            className="w-full h-56 rounded-xl overflow-hidden bg-gray-900 border border-gray-850 z-10 shadow-inner"
+                            style={{ minHeight: '224px' }}
                           />
                         </div>
                       )}
