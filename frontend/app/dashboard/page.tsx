@@ -106,6 +106,7 @@ export default function DashboardPage() {
 
   const [customFacilitySingle, setCustomFacilitySingle] = useState('');
   const [customFacilityMulti, setCustomFacilityMulti] = useState<Record<number, string>>({});
+  const [activeRequestInspectionIds, setActiveRequestInspectionIds] = useState<string[]>([]);
 
   // Leaflet map states
   const [mapReady, setMapReady] = useState(false);
@@ -164,6 +165,51 @@ export default function DashboardPage() {
       return () => clearInterval(checkInterval);
     }
   }, []);
+
+  // Real-time polling for inspector assignment (Gojek-Style Matchmaking)
+  useEffect(() => {
+    if (matchingStatus !== 'searching' || activeRequestInspectionIds.length === 0) return;
+
+    const intervalId = setInterval(async () => {
+      try {
+        const res = await api.get('/inspections');
+        const list: any[] = res.data;
+
+        // Find if any of our activeRequestInspectionIds has been assigned
+        const matchingInsps = list.filter((i) => activeRequestInspectionIds.includes(i.inspection_id));
+        
+        // Find the first inspection that has an inspector assigned
+        const assignedInsp = matchingInsps.find((i) => i.inspector !== null && i.inspector !== undefined);
+
+        if (assignedInsp) {
+          // Found a real inspector!
+          clearInterval(intervalId);
+          setMockInspector({
+            name: `${assignedInsp.inspector.first_name || ''} ${assignedInsp.inspector.last_name || ''}`.trim() || assignedInsp.inspector.email,
+            phone: assignedInsp.inspector.phone_number || 'Tidak Ada Telepon',
+            rating: '5.0',
+            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100',
+          });
+          setMatchingStatus('found');
+          // Clear active IDs so we don't trigger again
+          setActiveRequestInspectionIds([]);
+        }
+      } catch (err) {
+        console.error('Error polling matching status:', err);
+      }
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [matchingStatus, activeRequestInspectionIds]);
+
+  // Dynamic dashboard background polling (every 10s)
+  useEffect(() => {
+    if (!role) return;
+    const interval = setInterval(() => {
+      fetchInspections(true);
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [role]);
 
   // Interactive All-Audited-Properties Map for Students
   useEffect(() => {
@@ -525,15 +571,15 @@ export default function DashboardPage() {
     router.push('/login');
   };
 
-  const fetchInspections = async () => {
+  const fetchInspections = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const response = await api.get('/inspections');
       setInspections(response.data);
     } catch (err) {
       console.error('Failed to fetch inspections:', err);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -544,6 +590,7 @@ export default function DashboardPage() {
     try {
       const comparisonId = `comp_${Date.now()}`;
 
+      const createdIds: string[] = [];
       if (orderCategory === 'single') {
         const fasilitasPayload: Record<string, any> = {};
         Object.keys(claims).forEach((key) => {
@@ -568,7 +615,8 @@ export default function DashboardPage() {
         });
 
         const { property_id } = propResponse.data;
-        await api.post('/inspections', { property_id });
+        const resInsp = await api.post('/inspections', { property_id });
+        createdIds.push(resInsp.data.inspection_id);
       } else {
         // Multi-Kos
         for (const p of multiProperties) {
@@ -596,25 +644,15 @@ export default function DashboardPage() {
           });
 
           const { property_id } = propResponse.data;
-          await api.post('/inspections', { property_id });
+          const resInsp = await api.post('/inspections', { property_id });
+          createdIds.push(resInsp.data.inspection_id);
         }
       }
 
       await fetchInspections();
-      
-      // Move to matching search step
+      setActiveRequestInspectionIds(createdIds);
       setCurrentStepModal(4);
       setMatchingStatus('searching');
-      
-      setTimeout(() => {
-        setMatchingStatus('found');
-        setMockInspector({
-          name: 'Rian Hidayat',
-          phone: '0812-3456-7890',
-          rating: '4.9',
-          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100',
-        });
-      }, 3000);
 
     } catch (err: any) {
       console.error(err);
