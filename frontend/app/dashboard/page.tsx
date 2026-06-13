@@ -23,6 +23,7 @@ import {
   MapPin,
   ClipboardList,
   RefreshCw,
+  Sparkles,
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -81,6 +82,12 @@ export default function DashboardPage() {
   const [auditError, setAuditError] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
   const [evaluations, setEvaluations] = useState<Record<string, boolean>>({});
+
+  // Chatbot states
+  const [chatMessage, setChatMessage] = useState('');
+  const [chatHistory, setChatHistory] = useState<any[]>([]);
+  const [chatLoading, setChatLoading] = useState(false);
+  const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -473,10 +480,39 @@ export default function DashboardPage() {
         ...inspection,
         audit_report: res.data,
       });
+      setChatHistory([]);
+      setShowChat(false);
+      setChatMessage('');
       setShowReportModal(true);
     } catch (err) {
       console.error(err);
       alert('Laporan audit belum siap atau tidak ditemukan.');
+    }
+  };
+
+  const handleSendChatMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!chatMessage.trim() || chatLoading || !selectedInspection) return;
+
+    const userMsg = { role: 'user', parts: [{ text: chatMessage }] };
+    const newHistory = [...chatHistory, userMsg];
+    setChatHistory(newHistory);
+    const msgToSend = chatMessage;
+    setChatMessage('');
+    setChatLoading(true);
+
+    try {
+      const res = await api.post(`/audit/${selectedInspection.inspection_id}/chat`, {
+        message: msgToSend,
+        history: chatHistory,
+      });
+
+      const modelMsg = { role: 'model', parts: [{ text: res.data.reply }] };
+      setChatHistory([...newHistory, modelMsg]);
+    } catch (err) {
+      console.error('Failed to send chat message:', err);
+    } finally {
+      setChatLoading(false);
     }
   };
 
@@ -485,6 +521,29 @@ export default function DashboardPage() {
     return activeTask?.property?.claim_data?.fasilitas?.[cp.key]?.ada === true;
   });
   const currentActiveStep = activeSteps[currentStep];
+
+  // Analytics calculations
+  const auditedInspections = inspections.filter(i => i.status === 'completed' && i.audit_report);
+  const totalAudited = auditedInspections.length;
+  
+  const validCount = auditedInspections.filter(i => i.audit_report.confidence_level === 'VALID').length;
+  const partialCount = auditedInspections.filter(i => i.audit_report.confidence_level === 'PARTIAL_VALID').length;
+  const fraudCount = auditedInspections.filter(i => i.audit_report.confidence_level === 'FATAL_FRAUD').length;
+
+  const validPct = totalAudited > 0 ? (validCount / totalAudited) * 100 : 0;
+  const partialPct = totalAudited > 0 ? (partialCount / totalAudited) * 100 : 0;
+  const fraudPct = totalAudited > 0 ? (fraudCount / totalAudited) * 100 : 0;
+
+  // Average Technical Specs
+  const avgTds = totalAudited > 0 
+    ? auditedInspections.reduce((acc, curr) => acc + Number(curr.tds_value || 0), 0) / totalAudited 
+    : 0;
+  const avgSpeed = totalAudited > 0 
+    ? auditedInspections.reduce((acc, curr) => acc + Number(curr.internet_speed || 0), 0) / totalAudited 
+    : 0;
+  const avgScore = totalAudited > 0 
+    ? auditedInspections.reduce((acc, curr) => acc + Number(curr.audit_report.score || 0), 0) / totalAudited 
+    : 0;
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-gray-900 font-sans flex flex-col">
@@ -1051,17 +1110,130 @@ export default function DashboardPage() {
                   )}
                 </div>
               ) : (
-                <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm text-center py-10">
-                  <Building className="h-8 w-8 text-gray-300 mx-auto mb-3" />
-                  <h3 className="text-xs font-bold text-gray-900 mb-1">
-                    {role === 'mahasiswa' ? 'Panel Informasi' : 'Pilih Tugas'}
-                  </h3>
-                  <p className="text-[10px] text-gray-500 max-w-[200px] mx-auto leading-relaxed">
-                    {role === 'mahasiswa'
-                      ? 'Setelah inspektur selesai mengaudit lapangan, scorecard PDF otomatis terbit.'
-                      : 'Pilih salah satu tugas dari daftar di samping untuk memulai pengisian data.'}
-                  </p>
-                </div>
+                role === 'mahasiswa' ? (
+                  <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm space-y-6">
+                    <div>
+                      <h3 className="text-sm font-extrabold text-gray-900 flex items-center gap-1.5">
+                        <Gauge className="h-4 w-4 text-blue-600" />
+                        Statistik Kepatuhan Properti
+                      </h3>
+                      <p className="text-[10px] text-gray-400 mt-0.5">
+                        Analisis data kosan terinspeksi Anda di Kota Padang
+                      </p>
+                    </div>
+
+                    {totalAudited === 0 ? (
+                      <div className="text-center py-6">
+                        <Building className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                        <h4 className="text-[11px] font-bold text-gray-700">Belum Ada Data Audit</h4>
+                        <p className="text-[9px] text-gray-400 max-w-[180px] mx-auto mt-1 leading-relaxed">
+                          Setelah inspektur menyelesaikan audit lapangan, grafik data kualitas kos Anda akan muncul di sini.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        {/* 1. Donut Chart - Avg Score */}
+                        <div className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
+                          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-2">
+                            Skor Validitas Rata-Rata
+                          </span>
+                          <div className="relative flex items-center justify-center h-28 w-28">
+                            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                              <path
+                                className="text-gray-200"
+                                strokeWidth="3"
+                                stroke="currentColor"
+                                fill="none"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              />
+                              <path
+                                className="text-blue-600 transition-all duration-500"
+                                strokeDasharray={`${avgScore.toFixed(1)}, 100`}
+                                strokeWidth="3"
+                                strokeLinecap="round"
+                                stroke="currentColor"
+                                fill="none"
+                                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                              />
+                            </svg>
+                            <div className="absolute flex flex-col items-center justify-center">
+                              <span className="text-xl font-black text-gray-800">{avgScore.toFixed(0)}%</span>
+                              <span className="text-[8px] font-bold text-gray-400 uppercase">Avg Skor</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* 2. Confidence Level Progress Bars */}
+                        <div className="space-y-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block border-b border-gray-200 pb-1.5">
+                            Status Kepatuhan Kos
+                          </span>
+                          
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-[9px] font-bold text-gray-700">
+                              <span className="flex items-center gap-1">
+                                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                                VALID ({validCount})
+                              </span>
+                              <span>{validPct.toFixed(0)}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                              <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${validPct}%` }} />
+                            </div>
+                          </div>
+                          
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-[9px] font-bold text-gray-700">
+                              <span className="flex items-center gap-1">
+                                <span className="h-2 w-2 rounded-full bg-amber-500" />
+                                PARTIAL VALID ({partialCount})
+                              </span>
+                              <span>{partialPct.toFixed(0)}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                              <div className="bg-amber-500 h-full rounded-full transition-all duration-500" style={{ width: `${partialPct}%` }} />
+                            </div>
+                          </div>
+
+                          <div className="space-y-1">
+                            <div className="flex justify-between text-[9px] font-bold text-gray-700">
+                              <span className="flex items-center gap-1">
+                                <span className="h-2 w-2 rounded-full bg-red-500" />
+                                FATAL FRAUD ({fraudCount})
+                              </span>
+                              <span>{fraudPct.toFixed(0)}%</span>
+                            </div>
+                            <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                              <div className="bg-red-500 h-full rounded-full transition-all duration-500" style={{ width: `${fraudPct}%` }} />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* 3. Tech Average Metrics */}
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="p-3 bg-blue-50/30 border border-blue-100 rounded-2xl text-center">
+                            <span className="text-[8px] font-bold text-blue-600 block mb-1">RATA-RATA TDS</span>
+                            <span className="text-sm font-black text-gray-800">{avgTds.toFixed(0)} ppm</span>
+                            <span className="text-[8px] text-gray-500 block mt-0.5">{avgTds <= 300 ? 'Air Bersih' : 'Kualitas Rendah'}</span>
+                          </div>
+                          <div className="p-3 bg-orange-50/30 border border-orange-100 rounded-2xl text-center">
+                            <span className="text-[8px] font-bold text-orange-600 block mb-1">RATA-RATA SPEED</span>
+                            <span className="text-sm font-black text-gray-800">{avgSpeed.toFixed(0)} Mbps</span>
+                            <span className="text-[8px] text-gray-500 block mt-0.5">{avgSpeed >= 15 ? 'Internet Cepat' : 'Internet Lambat'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm text-center py-10">
+                    <Building className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+                    <h3 className="text-xs font-bold text-gray-900 mb-1">Pilih Tugas</h3>
+                    <p className="text-[10px] text-gray-500 max-w-[200px] mx-auto leading-relaxed">
+                      Pilih salah satu tugas dari daftar di samping untuk memulai pengisian data.
+                    </p>
+                  </div>
+                )
               )}
             </div>
           </div>
@@ -1391,6 +1563,88 @@ export default function DashboardPage() {
                   </span>
                 </div>
               </div>
+            </div>
+
+            {/* Chatbot Gemini Section */}
+            <div className="border-t border-gray-100 pt-4 mt-6">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowChat(!showChat);
+                  if (chatHistory.length === 0) {
+                    setChatHistory([
+                      {
+                        role: 'model',
+                        parts: [
+                          {
+                            text: `Halo! Saya adalah AI Asisten InspeksiKos. Saya telah meninjau hasil audit untuk "${selectedInspection.property?.name}". Apakah ada yang ingin Anda tanyakan mengenai tingkat validitas, kecepatan internet, atau kualitas air di kos ini?`
+                          }
+                        ]
+                      }
+                    ]);
+                  }
+                }}
+                className="w-full flex items-center justify-between p-3 bg-blue-50/50 hover:bg-blue-50 border border-blue-100 rounded-xl text-xs font-bold text-blue-700 transition-all cursor-pointer"
+              >
+                <span className="flex items-center gap-1.5">
+                  <Sparkles className="h-4 w-4 text-blue-600 animate-pulse" />
+                  Konsultasi Hasil Audit dengan AI Assistant
+                </span>
+                <span>{showChat ? 'Sembunyikan Chat' : 'Buka Chat'}</span>
+              </button>
+
+              {showChat && (
+                <div className="mt-3 bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden flex flex-col h-64 shadow-inner">
+                  {/* Chat message list */}
+                  <div className="flex-1 p-3 overflow-y-auto space-y-3 max-h-48 text-[11px] leading-relaxed">
+                    {chatHistory.map((chat, idx) => (
+                      <div
+                        key={idx}
+                        className={`flex ${
+                          chat.role === 'user' ? 'justify-end' : 'justify-start'
+                        }`}
+                      >
+                        <div
+                          className={`max-w-[80%] rounded-2xl p-2.5 ${
+                            chat.role === 'user'
+                              ? 'bg-blue-600 text-white rounded-br-none shadow-sm'
+                              : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-xs'
+                          }`}
+                        >
+                          <p className="whitespace-pre-line">{chat.parts[0].text}</p>
+                        </div>
+                      </div>
+                    ))}
+                    {chatLoading && (
+                      <div className="flex justify-start">
+                        <div className="bg-white text-gray-400 border border-gray-200 rounded-2xl rounded-bl-none p-2.5 flex items-center gap-1.5 shadow-xs">
+                          <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-500" />
+                          <span>AI sedang mengetik...</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Input form */}
+                  <form onSubmit={handleSendChatMessage} className="p-2 bg-white border-t border-gray-200 flex gap-2">
+                    <input
+                      type="text"
+                      value={chatMessage}
+                      onChange={(e) => setChatMessage(e.target.value)}
+                      placeholder="Tanyakan sesuatu ke AI..."
+                      className="flex-1 px-3 py-1.5 border border-gray-300 rounded-xl text-xs"
+                      disabled={chatLoading}
+                    />
+                    <button
+                      type="submit"
+                      disabled={chatLoading || !chatMessage.trim()}
+                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all cursor-pointer"
+                    >
+                      Kirim
+                    </button>
+                  </form>
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end border-t border-gray-100 pt-4 mt-6">

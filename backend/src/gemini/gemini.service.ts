@@ -116,6 +116,52 @@ export class GeminiService {
     `;
   }
 
+  async generateChatResponse(
+    systemContext: string,
+    userMessage: string,
+    chatHistory: any[] = [],
+  ): Promise<string> {
+    const apiKey = this.configService.get<string>('GEMINI_API_KEY');
+    if (!apiKey) {
+      throw new InternalServerErrorException('GEMINI_API_KEY belum terkonfigurasi');
+    }
+
+    const contents = [
+      {
+        role: 'user',
+        parts: [{ text: `System Context:\n${systemContext}` }],
+      },
+      ...chatHistory,
+      {
+        role: 'user',
+        parts: [{ text: userMessage }],
+      },
+    ];
+
+    try {
+      const response = await axios.post(
+        `${this.apiUrl}?key=${apiKey}`,
+        { contents },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      const candidate = response.data?.candidates?.[0];
+      if (!candidate) {
+        throw new Error('Respons Gemini tidak valid (tidak ada candidate)');
+      }
+
+      const rawText = candidate.content?.parts?.[0]?.text;
+      if (!rawText) {
+        throw new Error('Respons Gemini tidak valid (tidak ada text)');
+      }
+
+      return rawText;
+    } catch (err) {
+      console.error('Chat Gemini failed:', err.message);
+      throw new InternalServerErrorException('Gagal berkomunikasi dengan AI');
+    }
+  }
+
   private parseResponse(rawText: string): Record<string, any> {
     const clean = rawText.replace(/```json|```/g, '').trim();
     return JSON.parse(clean);

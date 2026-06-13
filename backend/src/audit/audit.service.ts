@@ -217,6 +217,56 @@ export class AuditService {
     return report;
   }
 
+  async chatAboutReport(
+    inspectionId: string,
+    userMessage: string,
+    chatHistory: any[] = [],
+  ): Promise<string> {
+    const inspection = await this.inspectionRepository.findOne({
+      where: { inspection_id: inspectionId },
+      relations: { property: true, audit_report: true },
+    });
+
+    if (!inspection) {
+      throw new NotFoundException('Sesi inspeksi tidak ditemukan');
+    }
+
+    const report = inspection.audit_report;
+    if (!report) {
+      throw new BadRequestException('Laporan audit belum dibuat untuk sesi inspeksi ini');
+    }
+
+    const systemContext = `
+      Anda adalah "InspeksiKos AI Assistant", konsultan properti kos untuk Politeknik Negeri Padang.
+      Tugas Anda adalah membantu mahasiswa/pengguna memahami laporan audit properti kos.
+      
+      Berikut adalah detail laporan audit properti kos saat ini:
+      - Nama Properti: ${inspection.property.name}
+      - Alamat Properti: ${inspection.property.address}
+      - Deskripsi: ${inspection.property.description || 'N/A'}
+      - Skor Audit: ${report.score}%
+      - Tingkat Validitas (Confidence Level): ${report.confidence_level}
+      - Nilai TDS Air: ${inspection.tds_value || '0'} mg/L (PPM)
+      - Kecepatan Internet Speedtest: ${inspection.internet_speed || '0'} Mbps
+      - Rincian Evaluasi Fasilitas (JSON):
+      ${JSON.stringify(report.breakdown_data)}
+      
+      Aturan Penilaian Air (TDS):
+      - TDS <= 150 mg/L: Sangat Bersih / Layak Konsumsi
+      - TDS <= 300 mg/L: Bersih / Layak Mandi & Sanitasi
+      - TDS > 500 mg/L: Kualitas Buruk / Tercemar / Tidak Layak Pakai
+
+      Aturan Penilaian Internet:
+      - Internet >= 20 Mbps: Sangat Cepat (Sangat lancar untuk Zoom/Kuliah TRPL)
+      - Internet >= 10 Mbps: Cukup Cepat (Lancar untuk browsing/sosmed)
+      - Internet < 10 Mbps: Lambat (Bisa buffering)
+
+      Harap jawab semua pertanyaan pengguna dengan ramah dalam bahasa Indonesia, berikan saran praktis berdasarkan data di atas.
+    `;
+
+    return this.geminiService.generateChatResponse(systemContext, userMessage, chatHistory);
+  }
+
   private getDefaultRules(): AuditRuleItem[] {
     // Generate simple mock rules for fallback
     const items: Partial<AuditRuleItem>[] = [

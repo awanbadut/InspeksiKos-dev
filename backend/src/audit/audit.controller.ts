@@ -38,4 +38,14 @@ export class AuditController {
     const report = await this.auditService.getReport(inspectionId);
     return { pdf_url: report.pdf_url };
   }
+
+  @Post(':inspection_id/chat')
+  async chatAboutReport(
+    @Param('inspection_id') inspectionId: string,
+    @Body('message') message: string,
+    @Body('history') history?: any[],
+  ) {
+    const reply = await this.auditService.chatAboutReport(inspectionId, message, history || []);
+    return { reply };
+  }
 }
