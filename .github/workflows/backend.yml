@@ -40,4 +40,5 @@ jobs:
             SUPABASE_URL=${{ secrets.SUPABASE_URL }}
             SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
             SUPABASE_BUCKET=${{ secrets.SUPABASE_BUCKET }}
+            MIDTRANS_SERVER_KEY=${{ secrets.MIDTRANS_SERVER_KEY }}
             NODE_ENV=production

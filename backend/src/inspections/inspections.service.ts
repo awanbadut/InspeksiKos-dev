@@ -211,12 +211,27 @@ export class InspectionsService {
       };
     }
 
+    const property = inspection.property;
+    const currentClaimData = property?.claim_data || {};
+
+    // If we already have a cached token and it's sandbox, reuse it!
+    if (currentClaimData.midtrans_token && currentClaimData.midtrans_redirect_url) {
+      return {
+        token: currentClaimData.midtrans_token,
+        redirect_url: currentClaimData.midtrans_redirect_url,
+        mode: 'sandbox',
+      };
+    }
+
+    // Generate a unique Midtrans order ID to prevent "order_id already exists" errors in sandbox
+    const midtransOrderId = currentClaimData.midtrans_order_id || `IPK-${inspectionId.slice(0, 8)}-${Date.now().toString().slice(-6)}`;
+
     // Call Midtrans Sandbox Snap API
     try {
       const authHeader = `Basic ${Buffer.from(serverKey + ':').toString('base64')}`;
       const payload = {
         transaction_details: {
-          order_id: inspectionId,
+          order_id: midtransOrderId,
           gross_amount: grossAmount,
         },
         credit_card: {
@@ -241,6 +256,15 @@ export class InspectionsService {
           },
         },
       );
+
+      // Save token, redirect_url, and order_id to property.claim_data
+      property.claim_data = {
+        ...currentClaimData,
+        midtrans_order_id: midtransOrderId,
+        midtrans_token: response.data.token,
+        midtrans_redirect_url: response.data.redirect_url,
+      };
+      await this.propertyRepository.save(property);
 
       return {
         token: response.data.token,
@@ -269,10 +293,12 @@ export class InspectionsService {
       };
     }
 
+    const midtransOrderId = inspection.property?.claim_data?.midtrans_order_id || inspectionId;
+
     try {
       const authHeader = `Basic ${Buffer.from(serverKey + ':').toString('base64')}`;
       const response = await axios.get(
-        `https://api.sandbox.midtrans.com/v2/${inspectionId}/status`,
+        `https://api.sandbox.midtrans.com/v2/${midtransOrderId}/status`,
         {
           headers: {
             Authorization: authHeader,

@@ -17,6 +17,7 @@ import {
   Eye,
   Loader2,
   ShieldAlert,
+  ShieldCheck,
   FileText,
   Layers,
   Wifi,
@@ -2350,13 +2351,33 @@ export default function DashboardPage() {
 
                 {(() => {
                   const origin = typeof window !== 'undefined' ? window.location.origin : '';
-                  const simulationLink = `${origin}/payment/simulate?id=${activeRequestInspectionIds[0] || ''}`;
-                  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(simulationLink)}`;
+                  const isSandbox = paymentMode === 'sandbox' && paymentRedirectUrl;
+                  const targetUrl = isSandbox ? paymentRedirectUrl : `${origin}/payment/simulate?id=${activeRequestInspectionIds[0] || ''}`;
+                  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(targetUrl)}`;
 
                   return (
-                    <>
+                    <div className="space-y-4">
+                      {isSandbox ? (
+                        <div className="bg-[#0b172a] border border-blue-900/60 rounded-xl p-3.5 text-center space-y-1.5 max-w-sm mx-auto shadow-inner">
+                          <div className="flex items-center justify-center gap-1.5 text-blue-400">
+                            <ShieldCheck className="h-4 w-4" />
+                            <span className="text-xs font-bold font-mono tracking-wider uppercase text-blue-300">Midtrans Sandbox Active</span>
+                          </div>
+                          <p className="text-[10px] text-gray-400 leading-relaxed">
+                            Menggunakan gerbang pembayaran resmi Midtrans Sandbox. Pindai kode QRIS di bawah atau klik tombol untuk membayar.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="bg-[#1f160c] border border-amber-900/40 rounded-xl p-3.5 text-center space-y-1.5 max-w-sm mx-auto shadow-inner">
+                          <span className="text-[10px] font-bold text-amber-400 font-mono tracking-wider uppercase">Mode Simulator Pembayaran</span>
+                          <p className="text-[10px] text-gray-400 leading-relaxed">
+                            Kunci API Midtrans belum dikonfigurasi. Menggunakan simulator internal InspeksiKos.
+                          </p>
+                        </div>
+                      )}
+
                       <div className="border border-gray-800 rounded-2xl p-5 bg-white max-w-[240px] mx-auto space-y-3 shadow-inner">
-                        {/* Mock QRIS Header */}
+                        {/* QRIS Header */}
                         <div className="flex items-center justify-between border-b border-gray-200 pb-1.5">
                           <span className="text-xs font-extrabold text-[#da251d]">QRIS</span>
                           <span className="text-[8px] font-black text-blue-900 font-mono">GPN</span>
@@ -2365,38 +2386,49 @@ export default function DashboardPage() {
                         {/* Real scannable QR Code */}
                         <div className="p-2 border border-gray-100 rounded-lg flex items-center justify-center bg-white">
                           {activeRequestInspectionIds.length > 0 ? (
-                            <img src={qrUrl} alt="QRIS Code" className="w-[140px] h-[140px]" />
+                            <img src={qrUrl} alt="QR Code" className="w-[140px] h-[140px]" />
                           ) : (
                             <div className="w-[140px] h-[140px] flex items-center justify-center text-gray-400 text-[10px] font-mono">
-                              Memuat QRIS...
+                              Memuat QR Code...
                             </div>
                           )}
                         </div>
 
                         <p className="text-[8px] text-gray-500 font-bold uppercase tracking-wider font-mono">
-                          INSPEKSIKOS ON-DEMAND<br />
-                          NMID: ID1020304050
+                          {isSandbox ? 'MIDTRANS SECURE SANDBOX' : 'INSPEKSIKOS ON-DEMAND'}<br />
+                          NMID: {isSandbox ? 'ID202688776655' : 'ID1020304050'}
                         </p>
                       </div>
 
                       {activeRequestInspectionIds.length > 0 && (
-                        <div className="pt-1">
-                          <a
-                            href={simulationLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-[10px] font-extrabold text-blue-400 hover:text-blue-300 hover:underline"
-                          >
-                            🔗 Buka Simulator Pembayaran (Bayar via Desktop)
-                          </a>
+                        <div className="pt-1 flex flex-col gap-2 max-w-xs mx-auto">
+                          {isSandbox ? (
+                            <a
+                              href={paymentRedirectUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-xl text-[11px] shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all duration-200 uppercase tracking-wider"
+                            >
+                              🚀 Bayar via Midtrans Sandbox
+                            </a>
+                          ) : (
+                            <a
+                              href={targetUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-xl text-[11px] shadow-lg shadow-emerald-500/20 active:scale-[0.98] transition-all duration-200 uppercase tracking-wider"
+                            >
+                              🔗 Buka Simulator Pembayaran
+                            </a>
+                          )}
                         </div>
                       )}
-                    </>
+                    </div>
                   );
                 })()}
 
                 <p className="text-[9px] text-gray-405 max-w-xs mx-auto leading-relaxed">
-                  Silakan scan QRIS di atas dengan HP Anda (Gopay, OVO, Dana) atau klik link simulator di atas untuk memproses pembayaran simulasi.
+                  Silakan scan QRIS di atas dengan aplikasi pembayaran Anda (Gopay, OVO, Dana, LinkAja) atau klik tombol di atas untuk melanjutkan pembayaran.
                 </p>
 
                 <div className="flex items-center justify-between border-t border-gray-850 pt-4 mt-6">
