@@ -24,6 +24,10 @@ import {
   ClipboardList,
   RefreshCw,
   Sparkles,
+  ChevronRight,
+  Send,
+  User,
+  Compass,
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -224,7 +228,6 @@ export default function DashboardPage() {
     setRequestError('');
 
     try {
-      // 1. Structure the claim data
       const claim_data = {
         location: selectedLat && selectedLng ? {
           latitude: selectedLat,
@@ -241,7 +244,6 @@ export default function DashboardPage() {
         },
       };
 
-      // 2. Create the Property
       const propResponse = await api.post('/properties', {
         name: propertyName,
         address: propertyAddress,
@@ -251,10 +253,8 @@ export default function DashboardPage() {
 
       const { property_id } = propResponse.data;
 
-      // 3. Request Inspection
       await api.post('/inspections', { property_id });
 
-      // Refresh and reset
       await fetchInspections();
       setShowRequestModal(false);
       setPropertyName('');
@@ -288,14 +288,12 @@ export default function DashboardPage() {
     setAuditError('');
     setCurrentStep(0);
 
-    // Initialize evaluations from saved inspector_data
     const initialEval: Record<string, boolean> = {};
     if (inspection.inspector_data?.fasilitas) {
       Object.keys(inspection.inspector_data.fasilitas).forEach((key) => {
         initialEval[key] = inspection.inspector_data.fasilitas[key]?.ada === true;
       });
     } else {
-      // Default to student's claimed data
       const claimFasilitas = inspection.property?.claim_data?.fasilitas || {};
       Object.keys(claimFasilitas).forEach((key) => {
         if (claimFasilitas[key]?.ada !== undefined) {
@@ -305,7 +303,6 @@ export default function DashboardPage() {
     }
     setEvaluations(initialEval);
 
-    // Load photos
     try {
       const res = await api.get(`/inspections/${inspection.inspection_id}/photos`);
       setTaskPhotos(res.data);
@@ -338,7 +335,6 @@ export default function DashboardPage() {
       await api.post(`/inspections/${activeTask.inspection_id}/photos`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      // Refresh photos
       const res = await api.get(`/inspections/${activeTask.inspection_id}/photos`);
       setTaskPhotos(res.data);
     } catch (err: any) {
@@ -362,7 +358,6 @@ export default function DashboardPage() {
       await api.post(`/inspections/${activeTask.inspection_id}/photos`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      // Refresh photos
       const res = await api.get(`/inspections/${activeTask.inspection_id}/photos`);
       setTaskPhotos(res.data);
     } catch (err: any) {
@@ -378,7 +373,6 @@ export default function DashboardPage() {
     setTechSaving(true);
     setAuditError('');
 
-    // Format inspector data payload
     const payloadInspectorData = {
       fasilitas: Object.keys(evaluations).reduce((acc, key) => {
         acc[key] = { ada: evaluations[key] };
@@ -393,7 +387,6 @@ export default function DashboardPage() {
         inspector_data: payloadInspectorData,
       });
       
-      // Update local task data
       setActiveTask(updated.data);
       
       if (nextStepIndex !== undefined) {
@@ -443,20 +436,16 @@ export default function DashboardPage() {
     };
 
     try {
-      // First save current inputs in case they forgot to save
       await api.patch(`/inspections/${activeTask.inspection_id}/teknis`, {
         tds_value: Number(tdsInput || 0),
         internet_speed: Number(internetInput || 0),
         inspector_data: payloadInspectorData,
       });
 
-      // Run AI and Rule evaluation
-      const auditRes = await api.post(`/audit/${activeTask.inspection_id}/run`);
+      await api.post(`/audit/${activeTask.inspection_id}/run`);
       
-      // Refresh
       await fetchInspections();
       
-      // Get detailed report
       const reportRes = await api.get(`/audit/${activeTask.inspection_id}/report`);
       setSelectedInspection({
         ...activeTask,
@@ -534,7 +523,6 @@ export default function DashboardPage() {
   const partialPct = totalAudited > 0 ? (partialCount / totalAudited) * 100 : 0;
   const fraudPct = totalAudited > 0 ? (fraudCount / totalAudited) * 100 : 0;
 
-  // Average Technical Specs
   const avgTds = totalAudited > 0 
     ? auditedInspections.reduce((acc, curr) => acc + Number(curr.tds_value || 0), 0) / totalAudited 
     : 0;
@@ -546,49 +534,65 @@ export default function DashboardPage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] text-gray-900 font-sans flex flex-col">
+    <div className="min-h-screen bg-[#080c14] text-gray-100 font-sans flex flex-col selection:bg-blue-600/30 selection:text-blue-200">
+      
+      {/* Decorative Grid Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+
+      {/* Glow Effects */}
+      <div className="absolute top-0 right-[10%] w-[500px] h-[500px] rounded-full bg-blue-500/5 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-10 left-[5%] w-[400px] h-[400px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
+
       {/* Navbar */}
-      <header className="bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+      <header className="relative bg-[#0c1220]/80 border-b border-gray-800/80 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-lg backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <span className="text-lg font-black tracking-tight bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-            🏠 InspeksiKos
-          </span>
-          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-600 font-semibold rounded-md uppercase tracking-wider">
-            {role} Panel
-          </span>
+          <Link href="/" className="h-9 w-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/10">
+            <span className="text-base font-bold text-white">🏠</span>
+          </Link>
+          <div>
+            <span className="text-sm font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-200 to-white bg-clip-text text-transparent">
+              InspeksiKos
+            </span>
+            <span className="ml-2 text-[9px] px-2 py-0.5 bg-blue-950 text-blue-400 border border-blue-900/60 font-bold rounded-md uppercase tracking-wider">
+              {role}
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-xs font-semibold text-gray-500 hidden md:block">
-            {email}
-          </span>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#0f182c] border border-gray-800 rounded-xl hidden md:flex">
+            <User className="h-3.5 w-3.5 text-gray-400" />
+            <span className="text-[10px] font-bold text-gray-300">
+              {email}
+            </span>
+          </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-red-600 hover:bg-red-50 rounded-lg transition-all"
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-950/20 border border-transparent hover:border-red-900/30 rounded-xl transition-all cursor-pointer"
           >
             <LogOut className="h-3.5 w-3.5" />
-            Keluar
+            <span className="hidden sm:inline">Keluar</span>
           </button>
         </div>
       </header>
 
       {/* Hero Welcome banner */}
-      <div className="bg-[#232936] text-white py-10 px-8 relative overflow-hidden">
-        <div className="absolute right-[-10%] top-[-30%] w-96 h-96 rounded-full bg-blue-500/10 blur-3xl pointer-events-none" />
+      <div className="relative bg-[#0b111e] border-b border-gray-800/60 py-10 px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div>
-            <h1 className="text-2xl md:text-3xl font-black mb-2">
-              Halo, {email?.split('@')[0]}!
+            <span className="text-[9px] uppercase tracking-wider text-blue-400 font-bold bg-blue-950/50 px-2 py-1 rounded border border-blue-900/55 block w-fit mb-2">Panel Dasbor Utama</span>
+            <h1 className="text-2xl md:text-3xl font-black mb-1 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent">
+              Selamat Datang, {email?.split('@')[0]}!
             </h1>
-            <p className="text-xs text-gray-400 max-w-xl">
+            <p className="text-xs text-gray-400 max-w-xl leading-relaxed">
               {role === 'mahasiswa'
-                ? 'Kelola pengajuan inspeksi properti kos Anda di Kota Padang untuk memvalidasi fasilitas secara objektif.'
-                : 'Daftar tugas verifikasi lapangan. Isi data TDS air, kecepatan internet, unggah foto, dan jalankan audit Gemini AI.'}
+                ? 'Kelola pengajuan verifikasi properti kos Anda di Kota Padang untuk memvalidasi fasilitas iklan secara transparan.'
+                : 'Daftar kerja verifikator lapangan. Isi data TDS air, kecepatan internet, unggah bukti visual, dan jalankan audit AI.'}
             </p>
           </div>
           {role === 'mahasiswa' && (
             <button
               onClick={() => setShowRequestModal(true)}
-              className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs tracking-wider uppercase px-5 py-3 rounded-xl shadow-lg hover:shadow-blue-500/20 transition-all cursor-pointer self-start md:self-auto"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs tracking-wider uppercase px-5 py-3.5 rounded-xl shadow-lg shadow-blue-500/10 hover:scale-[1.02] transition-all cursor-pointer self-start md:self-auto"
             >
               <Plus className="h-4 w-4" />
               Ajukan Inspeksi
@@ -598,66 +602,67 @@ export default function DashboardPage() {
       </div>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 py-8 z-10">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
-            <span className="text-xs font-semibold text-gray-500">Memuat data...</span>
+          <div className="flex flex-col items-center justify-center py-24 gap-3">
+            <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
+            <span className="text-xs font-semibold text-gray-500 font-mono">&gt; Memuat database...</span>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
             {/* Left Col (2 cols wide on desktop) - Inspections List */}
             <div className="lg:col-span-2 space-y-6">
-              <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-base font-bold flex items-center gap-2">
-                    <ClipboardList className="h-4 w-4 text-blue-600" />
+              <div className="bg-[#0c1220]/70 border border-gray-800/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+                <div className="flex items-center justify-between mb-6 border-b border-gray-800 pb-4">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2">
+                    <ClipboardList className="h-4 w-4 text-blue-500" />
                     Daftar Permintaan Inspeksi ({inspections.length})
                   </h2>
                   <button
                     onClick={fetchInspections}
-                    className="p-1.5 text-gray-400 hover:text-gray-900 rounded-lg hover:bg-gray-50 transition-all"
+                    className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-[#0f172a] border border-gray-850 hover:border-gray-800 transition-all"
                   >
-                    <RefreshCw className="h-4 w-4" />
+                    <RefreshCw className="h-3.5 w-3.5" />
                   </button>
                 </div>
 
                 {inspections.length === 0 ? (
-                  <div className="text-center py-12 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-                    <Building className="h-10 w-10 text-gray-300 mx-auto mb-3" />
-                    <p className="text-xs font-bold text-gray-600 mb-1">Belum Ada Sesi Inspeksi</p>
-                    <p className="text-[10px] text-gray-400">
+                  <div className="text-center py-16 bg-[#090d16] rounded-xl border border-dashed border-gray-850">
+                    <Building className="h-10 w-10 text-gray-600 mx-auto mb-3" />
+                    <p className="text-xs font-bold text-gray-400 mb-1">Belum Ada Sesi Inspeksi</p>
+                    <p className="text-[10px] text-gray-500 max-w-xs mx-auto leading-relaxed">
                       {role === 'mahasiswa'
-                        ? 'Klik tombol "Ajukan Inspeksi" untuk mendaftarkan kosan Anda.'
-                        : 'Tidak ada tugas inspeksi yang ditugaskan kepada Anda saat ini.'}
+                        ? 'Ajukan inspeksi kos pertama Anda dengan mengklik tombol "Ajukan Inspeksi" di pojok kanan atas.'
+                        : 'Tidak ada tugas verifikasi yang ditugaskan kepada Anda saat ini.'}
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {inspections.map((insp: any) => {
                       const isActive = activeTask?.inspection_id === insp.inspection_id;
                       return (
                         <div
                           key={insp.inspection_id}
-                          className={`p-5 rounded-2xl border transition-all ${
+                          className={`p-4 rounded-xl border transition-all ${
                             isActive
-                              ? 'border-blue-500 bg-blue-50/20 ring-1 ring-blue-500'
-                              : 'border-gray-100 bg-white hover:border-gray-300'
+                              ? 'border-blue-500 bg-blue-950/10 shadow-[0_0_15px_-3px_rgba(59,130,246,0.1)]'
+                              : 'border-gray-800/80 bg-[#090e1a]/60 hover:border-gray-700/80'
                           }`}
                         >
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <div>
-                              <div className="flex items-center gap-2 mb-1.5">
-                                <span className="text-xs font-bold text-gray-900">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-xs font-bold text-white">
                                   {insp.property?.name || 'Properti Tanpa Nama'}
                                 </span>
                                 <span
-                                  className={`text-[9px] font-bold px-2 py-0.5 rounded-full uppercase ${
+                                  className={`text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${
                                     insp.status === 'completed'
-                                      ? 'bg-emerald-100 text-emerald-800'
+                                      ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-900/50'
                                       : insp.status === 'in_progress'
-                                      ? 'bg-blue-100 text-blue-800 animate-pulse'
-                                      : 'bg-amber-100 text-amber-800'
+                                      ? 'bg-blue-950 text-blue-400 border border-blue-900/60 animate-pulse'
+                                      : 'bg-amber-950 text-amber-400 border border-amber-900/60'
                                   }`}
                                 >
                                   {insp.status === 'completed'
@@ -667,36 +672,36 @@ export default function DashboardPage() {
                                     : 'Ditugaskan'}
                                 </span>
                               </div>
-                              <p className="text-[10px] text-gray-500 flex items-center gap-1 mb-2">
-                                <MapPin className="h-3 w-3 inline text-gray-400" />
+                              <p className="text-[10px] text-gray-400 flex items-center gap-1">
+                                <MapPin className="h-3 w-3 text-gray-500" />
                                 {insp.property?.address}
                               </p>
-                              <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-gray-400">
+                              <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-[9px] text-gray-500 font-mono pt-1">
                                 <span>
-                                  Tanggal: {new Date(insp.assigned_at).toLocaleDateString('id-ID')}
+                                  Tgl: {new Date(insp.assigned_at).toLocaleDateString('id-ID')}
                                 </span>
                                 {insp.inspector && (
                                   <span>
-                                    Inspektur: {insp.inspector.first_name} {insp.inspector.last_name}
+                                    Verifikator: {insp.inspector.first_name} {insp.inspector.last_name}
                                   </span>
                                 )}
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-2.5 self-end sm:self-auto">
+                            <div className="flex items-center gap-2 self-end sm:self-auto">
                               {role === 'inspektur' && (
                                 <>
                                   {insp.status !== 'completed' && !isActive && (
                                     <button
                                       onClick={() => handleSelectTask(insp)}
-                                      className="px-4 py-2 text-xs font-bold bg-[#232936] text-white hover:bg-[#1c212b] rounded-xl transition-all"
+                                      className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-white hover:bg-gray-100 text-gray-950 rounded-lg transition-all cursor-pointer"
                                     >
                                       Buka Kerja
                                     </button>
                                   )}
                                   {isActive && (
-                                    <span className="text-xs font-semibold text-blue-600 flex items-center gap-1">
-                                      <CheckCircle2 className="h-3.5 w-3.5" /> Sedang Aktif
+                                    <span className="text-[10px] font-bold text-blue-400 flex items-center gap-1 bg-blue-950/40 border border-blue-900/40 px-2 py-1 rounded-md">
+                                      <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-ping" /> SEDANG AKTIF
                                     </span>
                                   )}
                                 </>
@@ -705,7 +710,7 @@ export default function DashboardPage() {
                               {insp.status === 'completed' && (
                                 <button
                                   onClick={() => handleViewReport(insp)}
-                                  className="inline-flex items-center gap-1 px-4 py-2 text-xs font-bold border border-gray-200 hover:bg-gray-50 rounded-xl transition-all"
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border border-gray-800 bg-[#0e172a] hover:bg-gray-800 rounded-lg text-gray-300 transition-all cursor-pointer"
                                 >
                                   <Eye className="h-3.5 w-3.5" />
                                   Scorecard
@@ -723,77 +728,83 @@ export default function DashboardPage() {
 
             {/* Right Col - Inspection Details/Actions */}
             <div className="space-y-6">
+              
               {role === 'inspektur' && activeTask ? (
-                <div className="bg-white border border-blue-100 rounded-3xl p-6 shadow-md ring-1 ring-blue-50/50">
-                  <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
+                <div className="bg-[#0c1220]/70 border border-blue-900/30 rounded-2xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden">
+                  
+                  {/* Glowing line border */}
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500 to-indigo-500" />
+                  
+                  <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-5">
                     <div>
-                      <h3 className="text-sm font-bold text-gray-900">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">
                         Inspeksi Lapangan Aktif
                       </h3>
-                      <p className="text-[10px] text-blue-600 font-semibold mt-0.5">
+                      <p className="text-[11px] text-blue-400 font-bold mt-1">
                         {activeTask.property?.name}
                       </p>
                     </div>
                     <button
                       onClick={() => setActiveTask(null)}
-                      className="text-xs font-bold text-gray-400 hover:text-gray-900"
+                      className="text-[10px] font-bold text-gray-500 hover:text-white transition-all uppercase tracking-wider"
                     >
                       Batal
                     </button>
                   </div>
 
                   {activeTask.status === 'assigned' ? (
-                    <div className="text-center py-6">
-                      <p className="text-xs text-gray-500 mb-4">
-                        Mulai status &quot;In Progress&quot; untuk mengaktifkan formulir unggah bukti.
+                    <div className="text-center py-6 space-y-4">
+                      <p className="text-xs text-gray-400 leading-relaxed px-2">
+                        Tekan mulai untuk memicu status kerja lapangan, mengaktifkan formulir input teknis, dan mengunggah bukti media.
                       </p>
                       <button
                         onClick={() => handleStartTask(activeTask.inspection_id)}
-                        className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all"
+                        className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
                       >
-                        Mulai Sesi Inspeksi
+                        Mulai Kerja Lapangan
                       </button>
                     </div>
                   ) : (
-                    <div className="space-y-6">
+                    <div className="space-y-5">
+                      
                       {/* Navigation Map */}
                       {activeTask.property?.claim_data?.location && (
-                        <div className="border-b border-gray-100 pb-5">
-                          <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2.5 flex items-center justify-between">
-                            <span className="flex items-center gap-1.5">
-                              <MapPin className="h-3.5 w-3.5 text-red-500 animate-bounce" />
-                              Lokasi Rute Lapangan
+                        <div className="border-b border-gray-800/80 pb-4">
+                          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                            <span className="flex items-center gap-1">
+                              <MapPin className="h-3.5 w-3.5 text-red-500" />
+                              Lokasi Kos Rute Lapangan
                             </span>
                             <a
                               href={`https://www.google.com/maps/dir/?api=1&destination=${activeTask.property.claim_data.location.latitude},${activeTask.property.claim_data.location.longitude}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[9px] text-blue-600 hover:underline font-bold flex items-center gap-0.5"
+                              className="text-[9px] text-blue-400 hover:underline font-bold"
                             >
-                              🚀 Buka Rute Navigasi
+                              🚀 Google Maps
                             </a>
                           </h4>
                           <div
                             id="task-map-container"
-                            className="w-full h-32 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 z-10"
+                            className="w-full h-32 rounded-xl overflow-hidden bg-gray-900 border border-gray-850 z-10"
                             style={{ minHeight: '128px' }}
                           />
                         </div>
                       )}
 
                       {/* Step-by-Step Wizard Stepper */}
-                      <div className="flex items-center gap-1.5 mb-5 overflow-x-auto pb-2 border-b border-gray-100">
+                      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-gray-800/60 scrollbar-none">
                         {activeSteps.map((step, idx) => (
                           <button
                             key={step.key}
                             type="button"
                             onClick={() => setCurrentStep(idx)}
-                            className={`text-[9px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
+                            className={`text-[9px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap transition-all uppercase tracking-wider border shrink-0 ${
                               idx === currentStep
-                                ? 'bg-blue-600 text-white shadow-sm'
+                                ? 'bg-blue-600 border-blue-500 text-white shadow-sm'
                                 : idx < currentStep
-                                ? 'bg-emerald-100 text-emerald-800'
-                                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                                ? 'bg-emerald-950/60 border-emerald-900/40 text-emerald-400'
+                                : 'bg-[#0f172a] border-gray-800 text-gray-500 hover:text-gray-300'
                             }`}
                           >
                             {idx + 1}. {step.label}
@@ -803,90 +814,86 @@ export default function DashboardPage() {
 
                       {/* Active Step Panel */}
                       {currentActiveStep && (
-                        <div className="p-5 bg-gray-50/50 rounded-2xl border border-gray-100 space-y-4">
-                          <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+                        <div className="p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-850 space-y-4">
+                          <div className="flex items-center justify-between border-b border-gray-850 pb-2">
                             <div>
-                              <h4 className="text-xs font-bold text-gray-900 uppercase tracking-wider">
-                                Langkah {currentStep + 1} dari {activeSteps.length}: {currentActiveStep.label}
+                              <h4 className="text-[10px] font-bold text-gray-300 uppercase tracking-wider">
+                                Lgkh {currentStep + 1} / {activeSteps.length}: {currentActiveStep.label}
                               </h4>
-                              <p className="text-[10px] text-gray-500 mt-0.5">{currentActiveStep.desc}</p>
+                              <p className="text-[9px] text-gray-500 mt-0.5">{currentActiveStep.desc}</p>
                             </div>
                             <div>
                               {currentActiveStep.type === 'boolean' ? (
-                                <span className="text-[9px] font-bold px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-100">
-                                  Klaim Iklan: ADA
+                                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-md bg-blue-950 text-blue-400 border border-blue-900/40 uppercase tracking-wide">
+                                  Klaim: ADA
                                 </span>
                               ) : (
-                                <span className="text-[9px] font-bold px-2 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-100">
-                                  Ekspektasi: {activeTask.property?.claim_data?.fasilitas?.[currentActiveStep.key]?.nilai} {currentActiveStep.key === 'kualitas_air' ? 'ppm' : 'Mbps'}
+                                <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-md bg-indigo-950 text-indigo-400 border border-indigo-900/40 uppercase tracking-wide">
+                                  Klaim: {activeTask.property?.claim_data?.fasilitas?.[currentActiveStep.key]?.nilai} {currentActiveStep.key === 'kualitas_air' ? 'ppm' : 'Mbps'}
                                 </span>
                               )}
                             </div>
                           </div>
 
                           {/* Pilihan Penilaian */}
-                          <div className="space-y-2">
-                            <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider block">
-                              Hasil Penilaian Aktual Lapangan
+                          <div className="space-y-1.5">
+                            <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">
+                              Hasil Penilaian Lapangan
                             </label>
                             {currentActiveStep.type === 'boolean' ? (
-                              <div className="grid grid-cols-2 gap-3">
+                              <div className="grid grid-cols-2 gap-2">
                                 <button
                                   type="button"
                                   onClick={() => setEvaluations(prev => ({ ...prev, [currentActiveStep.key]: true }))}
-                                  className={`p-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                                  className={`p-2.5 rounded-xl border text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                                     evaluations[currentActiveStep.key] === true
-                                      ? 'border-emerald-500 bg-emerald-50 text-emerald-800 ring-2 ring-emerald-500'
-                                      : 'border-gray-200 bg-white text-gray-500 hover:bg-gray-50'
+                                      ? 'border-emerald-500/80 bg-emerald-950/20 text-emerald-400 shadow-sm'
+                                      : 'border-gray-800 bg-[#0e1626] text-gray-400 hover:text-white'
                                   }`}
                                 >
-                                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                                  Ada (Tersedia)
+                                  <CheckCircle2 className="h-3.5 w-3.5" />
+                                  Ada
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => setEvaluations(prev => ({ ...prev, [currentActiveStep.key]: false }))}
-                                  className={`p-3 rounded-xl border text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                                  className={`p-2.5 rounded-xl border text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                                     evaluations[currentActiveStep.key] === false
-                                      ? 'border-red-500 bg-red-50 text-red-800 ring-2 ring-red-500'
-                                      : 'border-gray-200 bg-white text-gray-500 hover:bg-gray-50'
+                                      ? 'border-red-500/80 bg-red-950/20 text-red-400 shadow-sm'
+                                      : 'border-gray-800 bg-[#0e1626] text-gray-400 hover:text-white'
                                   }`}
                                 >
-                                  <XCircle className="h-4 w-4 text-red-600" />
+                                  <XCircle className="h-3.5 w-3.5" />
                                   Tidak Ada
                                 </button>
                               </div>
                             ) : (
                               <div>
                                 {currentActiveStep.key === 'kualitas_air' ? (
-                                  <div className="space-y-1">
-                                    <div className="relative">
-                                      <Droplets className="absolute left-3 top-2.5 h-4 w-4 text-blue-500" />
-                                      <input
-                                        type="number"
-                                        required
-                                        value={tdsInput}
-                                        onChange={(e) => setTdsInput(e.target.value)}
-                                        placeholder="Masukkan nilai kualitas air TDS (contoh: 120)"
-                                        className="w-full pl-9 pr-12 py-2 border border-gray-300 rounded-xl text-xs"
-                                      />
-                                      <span className="absolute right-3 top-2.5 text-[10px] font-bold text-gray-400">ppm</span>
-                                    </div>
+                                  <div className="relative">
+                                    <Droplets className="absolute left-3 top-2.5 h-3.5 w-3.5 text-blue-400" />
+                                    <input
+                                      type="number"
+                                      required
+                                      value={tdsInput}
+                                      onChange={(e) => setTdsInput(e.target.value)}
+                                      placeholder="Masukkan kadar air TDS (contoh: 120)"
+                                      className="w-full pl-9 pr-12 py-2 bg-[#0e1626] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white"
+                                    />
+                                    <span className="absolute right-3 top-2.5 text-[9px] font-bold text-gray-500">ppm</span>
                                   </div>
                                 ) : (
-                                  <div className="space-y-1">
-                                    <div className="relative">
-                                      <Wifi className="absolute left-3 top-2.5 h-4 w-4 text-orange-500" />
-                                      <input
-                                        type="number"
-                                        required
-                                        value={internetInput}
-                                        onChange={(e) => setInternetInput(e.target.value)}
-                                        placeholder="Masukkan kecepatan internet Speedtest (contoh: 35)"
-                                        className="w-full pl-9 pr-12 py-2 border border-gray-300 rounded-xl text-xs"
-                                      />
-                                      <span className="absolute right-3 top-2.5 text-[10px] font-bold text-gray-400">Mbps</span>
-                                    </div>
+                                  <div className="relative">
+                                    <Wifi className="absolute left-3 top-2.5 h-3.5 w-3.5 text-orange-400" />
+                                    <input
+                                      type="number"
+                                      required
+                                      value={internetInput}
+                                      onChange={(e) => setInternetInput(e.target.value)}
+                                      placeholder="Masukkan internet speedtest (contoh: 30)"
+                                      className="w-full pl-9 pr-12 py-2 bg-[#0e1626] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white"
+                                    />
+                                    <span className="absolute right-3 top-2.5 text-[9px] font-bold text-gray-500">Mbps</span>
                                   </div>
                                 )}
                               </div>
@@ -894,12 +901,13 @@ export default function DashboardPage() {
                           </div>
 
                           {/* Unggah Bukti Media */}
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
-                            {/* 1. Foto Aktual */}
-                            <div className="space-y-2">
-                              <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1">
-                                <Upload className="h-3.5 w-3.5 text-blue-500" />
-                                Foto Bukti Aktual
+                          <div className="grid grid-cols-1 gap-3 pt-2 border-t border-gray-850">
+                            
+                            {/* Foto Aktual */}
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                                <Upload className="h-3 w-3 text-blue-400" />
+                                Foto Bukti Lapangan
                               </label>
                               {(() => {
                                 const uploadedPhoto = taskPhotos.find(p => p.room_type === currentActiveStep.key);
@@ -907,20 +915,20 @@ export default function DashboardPage() {
                                 
                                 if (uploadedPhoto) {
                                   return (
-                                    <div className="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between gap-3 shadow-xs">
-                                      <div className="flex items-center gap-3">
-                                        <div className="relative h-12 w-12 rounded-lg border border-gray-200 overflow-hidden bg-gray-50 group cursor-pointer" onClick={() => window.open(uploadedPhoto.photo_url, '_blank')}>
+                                    <div className="p-2.5 bg-[#0a0e1a] border border-gray-800 rounded-xl flex items-center justify-between gap-3">
+                                      <div className="flex items-center gap-2.5">
+                                        <div className="relative h-10 w-10 rounded-lg border border-gray-800 overflow-hidden bg-gray-900 group cursor-pointer" onClick={() => window.open(uploadedPhoto.photo_url, '_blank')}>
                                           <img src={uploadedPhoto.photo_url} alt={currentActiveStep.label} className="h-full w-full object-cover" />
-                                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <Eye className="h-4 w-4 text-white" />
+                                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <Eye className="h-3 w-3 text-white" />
                                           </div>
                                         </div>
                                         <div>
-                                          <p className="text-[9px] font-bold text-gray-900 truncate max-w-[80px]">Foto Tersimpan</p>
-                                          <p className="text-[8px] text-gray-400">Format gambar</p>
+                                          <p className="text-[9px] font-bold text-gray-300 truncate max-w-[80px]">Foto Tersimpan</p>
+                                          <p className="text-[8px] text-gray-500">Bukti visual</p>
                                         </div>
                                       </div>
-                                      <label className="cursor-pointer px-2.5 py-1.5 text-[9px] font-bold border border-gray-300 hover:bg-gray-50 rounded-lg transition-all">
+                                      <label className="cursor-pointer px-2.5 py-1.5 text-[9px] font-bold bg-[#0f172a] hover:bg-gray-800 border border-gray-800 rounded-lg text-gray-300 transition-all">
                                         {isUploading ? 'Mengunggah...' : 'Ubah Foto'}
                                         <input
                                           type="file"
@@ -937,17 +945,17 @@ export default function DashboardPage() {
                                   );
                                 } else {
                                   return (
-                                    <label className="cursor-pointer flex flex-col items-center justify-center p-4 border border-dashed border-gray-300 hover:border-blue-500 hover:bg-blue-50/10 rounded-xl transition-all h-20 text-center">
+                                    <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-gray-800 hover:border-blue-500 bg-[#090e1a]/30 hover:bg-blue-950/5 rounded-xl transition-all h-20 text-center">
                                       {isUploading ? (
                                         <>
                                           <Loader2 className="h-4 w-4 animate-spin text-blue-500 mb-1" />
-                                          <span className="text-[9px] font-bold text-gray-500">Mengunggah...</span>
+                                          <span className="text-[8px] font-bold text-gray-500 font-mono">Mengunggah...</span>
                                         </>
                                       ) : (
                                         <>
-                                          <Upload className="h-4 w-4 text-gray-400 mb-1" />
-                                          <span className="text-[9px] font-bold text-gray-700">Pilih & Unggah Foto</span>
-                                          <span className="text-[8px] text-gray-400">JPEG, PNG, WEBP</span>
+                                          <Upload className="h-4 w-4 text-gray-500 mb-1" />
+                                          <span className="text-[9px] font-bold text-gray-300">Unggah Foto Aktual</span>
+                                          <span className="text-[8px] text-gray-500">Format gambar JPEG, PNG, WEBP</span>
                                         </>
                                       )}
                                       <input
@@ -966,11 +974,11 @@ export default function DashboardPage() {
                               })()}
                             </div>
 
-                            {/* 2. Video Aktual */}
-                            <div className="space-y-2">
-                              <label className="text-[10px] font-bold text-gray-600 uppercase tracking-wider flex items-center gap-1">
-                                <Upload className="h-3.5 w-3.5 text-purple-500" />
-                                Video Bukti Aktual
+                            {/* Video Aktual */}
+                            <div className="space-y-1.5">
+                              <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                                <Upload className="h-3 w-3 text-purple-400" />
+                                Video Bukti Lapangan
                               </label>
                               {(() => {
                                 const videoKey = currentActiveStep.key + '_video';
@@ -979,20 +987,20 @@ export default function DashboardPage() {
 
                                 if (uploadedVideo) {
                                   return (
-                                    <div className="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between gap-3 shadow-xs">
-                                      <div className="flex items-center gap-3">
-                                        <div className="relative h-12 w-12 rounded-lg border border-gray-200 overflow-hidden bg-black group cursor-pointer" onClick={() => window.open(uploadedVideo.photo_url, '_blank')}>
+                                    <div className="p-2.5 bg-[#0a0e1a] border border-gray-800 rounded-xl flex items-center justify-between gap-3">
+                                      <div className="flex items-center gap-2.5">
+                                        <div className="relative h-10 w-10 rounded-lg border border-gray-800 overflow-hidden bg-black group cursor-pointer" onClick={() => window.open(uploadedVideo.photo_url, '_blank')}>
                                           <video src={uploadedVideo.photo_url} className="h-full w-full object-cover" />
-                                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <Eye className="h-4 w-4 text-white" />
+                                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            <Eye className="h-3 w-3 text-white" />
                                           </div>
                                         </div>
                                         <div>
-                                          <p className="text-[9px] font-bold text-gray-900 truncate max-w-[80px]">Video Tersimpan</p>
-                                          <p className="text-[8px] text-gray-400">Format video</p>
+                                          <p className="text-[9px] font-bold text-gray-300 truncate max-w-[80px]">Video Tersimpan</p>
+                                          <p className="text-[8px] text-gray-500">Bukti video</p>
                                         </div>
                                       </div>
-                                      <label className="cursor-pointer px-2.5 py-1.5 text-[9px] font-bold border border-gray-300 hover:bg-gray-50 rounded-lg transition-all">
+                                      <label className="cursor-pointer px-2.5 py-1.5 text-[9px] font-bold bg-[#0f172a] hover:bg-gray-800 border border-gray-800 rounded-lg text-gray-300 transition-all">
                                         {isUploading ? 'Mengunggah...' : 'Ubah Video'}
                                         <input
                                           type="file"
@@ -1009,17 +1017,17 @@ export default function DashboardPage() {
                                   );
                                 } else {
                                   return (
-                                    <label className="cursor-pointer flex flex-col items-center justify-center p-4 border border-dashed border-gray-300 hover:border-purple-500 hover:bg-purple-50/10 rounded-xl transition-all h-20 text-center">
+                                    <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-gray-800 hover:border-purple-500 bg-[#090e1a]/30 hover:bg-purple-950/5 rounded-xl transition-all h-20 text-center">
                                       {isUploading ? (
                                         <>
                                           <Loader2 className="h-4 w-4 animate-spin text-purple-500 mb-1" />
-                                          <span className="text-[9px] font-bold text-gray-500">Mengunggah...</span>
+                                          <span className="text-[8px] font-bold text-gray-500 font-mono">Mengunggah...</span>
                                         </>
                                       ) : (
                                         <>
-                                          <Upload className="h-4 w-4 text-gray-400 mb-1" />
-                                          <span className="text-[9px] font-bold text-gray-700">Pilih & Unggah Video</span>
-                                          <span className="text-[8px] text-gray-400">MP4, MOV, WebM</span>
+                                          <Upload className="h-4 w-4 text-gray-500 mb-1" />
+                                          <span className="text-[9px] font-bold text-gray-300">Unggah Video Aktual</span>
+                                          <span className="text-[8px] text-gray-500">Format MP4, MOV, WebM</span>
                                         </>
                                       )}
                                       <input
@@ -1037,15 +1045,16 @@ export default function DashboardPage() {
                                 }
                               })()}
                             </div>
+
                           </div>
 
                           {/* Tombol Navigasi Wizard */}
-                          <div className="flex items-center justify-between pt-4 border-t border-gray-100 gap-3">
+                          <div className="flex items-center justify-between pt-3 border-t border-gray-850 gap-2">
                             <button
                               type="button"
                               disabled={currentStep === 0 || techSaving}
                               onClick={() => handleSaveStepProgress(currentStep - 1)}
-                              className="px-4 py-2 border border-gray-200 hover:bg-gray-50 text-gray-600 rounded-xl text-xs font-bold disabled:opacity-50 transition-all cursor-pointer"
+                              className="px-3.5 py-2 border border-gray-800 bg-[#0f172a] hover:bg-gray-800 text-gray-400 hover:text-white rounded-lg text-[10px] font-bold disabled:opacity-30 transition-all cursor-pointer uppercase tracking-wider"
                             >
                               Sebelumnya
                             </button>
@@ -1055,99 +1064,104 @@ export default function DashboardPage() {
                                 type="button"
                                 disabled={techSaving}
                                 onClick={() => handleSaveStepProgress(currentStep + 1)}
-                                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer uppercase tracking-wider"
                               >
                                 {techSaving && <Loader2 className="h-3 w-3 animate-spin" />}
-                                Simpan & Lanjut
+                                Lanjut
                               </button>
                             ) : (
                               <button
                                 type="button"
                                 disabled={techSaving}
                                 onClick={() => handleSaveStepProgress()}
-                                className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer"
+                                className="px-4 py-2 bg-indigo-650 hover:bg-indigo-600 text-white rounded-lg text-[10px] font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer uppercase tracking-wider"
                               >
                                 {techSaving && <Loader2 className="h-3 w-3 animate-spin" />}
-                                Simpan Progres Final
+                                Simpan Final
                               </button>
                             )}
                           </div>
+
                         </div>
                       )}
 
                       {/* Run AI Scorecard Audit */}
                       {currentStep === activeSteps.length - 1 && (
-                        <div className="border-t border-gray-100 pt-5 space-y-3">
-                          <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                        <div className="border-t border-gray-850 pt-4 space-y-3">
+                          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
                             <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
-                            3. Evaluasi Platform
+                            Langkah Akhir: Evaluasi
                           </h4>
-                          <p className="text-[10px] text-gray-500 leading-relaxed">
-                            Menjalankan ekstraksi Gemini AI Vision untuk mengecek foto aktual dengan klaim mahasiswa, kemudian mengomparasi data air dan wifi menggunakan Rule-Based Engine.
+                          <p className="text-[10px] text-gray-500 leading-relaxed font-mono">
+                            Menjalankan deteksi AI Vision pada berkas bukti visual dan menghitung skor akhir berdasarkan bobot kepatuhan.
                           </p>
                           {auditError && (
-                            <div className="p-3 text-[10px] text-red-600 bg-red-50 border border-red-200 rounded-lg">
+                            <div className="p-2.5 text-[10px] text-red-400 bg-red-950/20 border border-red-900/30 rounded-lg">
                               {auditError}
                             </div>
                           )}
                           <button
                             onClick={handleRunAudit}
                             disabled={auditRunning || techSaving}
-                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md hover:shadow-emerald-500/10 cursor-pointer"
+                            className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
                           >
                             {auditRunning ? (
                               <>
                                 <Loader2 className="h-4 w-4 animate-spin" />
-                                Memproses AI & Rules...
+                                Memproses AI & Aturan...
                               </>
                             ) : (
-                              'Jalankan Audit AI & Hitung Skor'
+                              'Jalankan Evaluasi & Selesaikan'
                             )}
                           </button>
                         </div>
                       )}
+
                     </div>
                   )}
+
                 </div>
               ) : (
                 role === 'mahasiswa' ? (
-                  <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm space-y-6">
+                  <div className="bg-[#0c1220]/70 border border-gray-800/85 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-6">
+                    
                     <div>
-                      <h3 className="text-sm font-extrabold text-gray-900 flex items-center gap-1.5">
-                        <Gauge className="h-4 w-4 text-blue-600" />
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-1.5">
+                        <Gauge className="h-4 w-4 text-blue-500" />
                         Statistik Kepatuhan Properti
                       </h3>
-                      <p className="text-[10px] text-gray-400 mt-0.5">
-                        Analisis data kosan terinspeksi Anda di Kota Padang
+                      <p className="text-[10px] text-gray-500 mt-1">
+                        Analisis kos terinspeksi milik Anda di Kota Padang
                       </p>
                     </div>
 
                     {totalAudited === 0 ? (
-                      <div className="text-center py-6">
-                        <Building className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                        <h4 className="text-[11px] font-bold text-gray-700">Belum Ada Data Audit</h4>
-                        <p className="text-[9px] text-gray-400 max-w-[180px] mx-auto mt-1 leading-relaxed">
+                      <div className="text-center py-8">
+                        <Building className="h-7 w-7 text-gray-600 mx-auto mb-2" />
+                        <h4 className="text-[10px] font-bold text-gray-400">Belum Ada Data Audit</h4>
+                        <p className="text-[9px] text-gray-500 max-w-[180px] mx-auto mt-1 leading-relaxed">
                           Setelah inspektur menyelesaikan audit lapangan, grafik data kualitas kos Anda akan muncul di sini.
                         </p>
                       </div>
                     ) : (
                       <div className="space-y-6">
-                        {/* 1. Donut Chart - Avg Score */}
-                        <div className="flex flex-col items-center justify-center p-3 bg-gray-50 rounded-2xl border border-gray-100">
-                          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-2">
-                            Skor Validitas Rata-Rata
+                        
+                        {/* Donut Chart - Avg Score */}
+                        <div className="flex flex-col items-center justify-center p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-850">
+                          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-2 font-mono">
+                            SKOR VALIDITAS RATA-RATA
                           </span>
                           <div className="relative flex items-center justify-center h-28 w-28">
                             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                               <path
-                                className="text-gray-200"
+                                className="text-gray-800"
                                 strokeWidth="3"
                                 stroke="currentColor"
                                 fill="none"
                                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                               />
                               <path
-                                className="text-blue-600 transition-all duration-500"
+                                className="text-blue-500 transition-all duration-500"
                                 strokeDasharray={`${avgScore.toFixed(1)}, 100`}
                                 strokeWidth="3"
                                 strokeLinecap="round"
@@ -1157,84 +1171,86 @@ export default function DashboardPage() {
                               />
                             </svg>
                             <div className="absolute flex flex-col items-center justify-center">
-                              <span className="text-xl font-black text-gray-800">{avgScore.toFixed(0)}%</span>
-                              <span className="text-[8px] font-bold text-gray-400 uppercase">Avg Skor</span>
+                              <span className="text-xl font-black text-white">{avgScore.toFixed(0)}%</span>
+                              <span className="text-[8px] font-bold text-gray-500 uppercase font-mono tracking-wide">Skor</span>
                             </div>
                           </div>
                         </div>
 
-                        {/* 2. Confidence Level Progress Bars */}
-                        <div className="space-y-3 p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block border-b border-gray-200 pb-1.5">
-                            Status Kepatuhan Kos
+                        {/* Confidence Level Progress Bars */}
+                        <div className="space-y-3.5 p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-850">
+                          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block font-mono border-b border-gray-850 pb-1.5">
+                            STATUS KEPATUHAN KOS
                           </span>
                           
                           <div className="space-y-1">
-                            <div className="flex justify-between text-[9px] font-bold text-gray-700">
-                              <span className="flex items-center gap-1">
-                                <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                            <div className="flex justify-between text-[9px] font-bold text-gray-400">
+                              <span className="flex items-center gap-1.5">
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                                 VALID ({validCount})
                               </span>
                               <span>{validPct.toFixed(0)}%</span>
                             </div>
-                            <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                            <div className="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
                               <div className="bg-emerald-500 h-full rounded-full transition-all duration-500" style={{ width: `${validPct}%` }} />
                             </div>
                           </div>
                           
                           <div className="space-y-1">
-                            <div className="flex justify-between text-[9px] font-bold text-gray-700">
-                              <span className="flex items-center gap-1">
-                                <span className="h-2 w-2 rounded-full bg-amber-500" />
+                            <div className="flex justify-between text-[9px] font-bold text-gray-400">
+                              <span className="flex items-center gap-1.5">
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                                 PARTIAL VALID ({partialCount})
                               </span>
                               <span>{partialPct.toFixed(0)}%</span>
                             </div>
-                            <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                            <div className="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
                               <div className="bg-amber-500 h-full rounded-full transition-all duration-500" style={{ width: `${partialPct}%` }} />
                             </div>
                           </div>
 
                           <div className="space-y-1">
-                            <div className="flex justify-between text-[9px] font-bold text-gray-700">
-                              <span className="flex items-center gap-1">
-                                <span className="h-2 w-2 rounded-full bg-red-500" />
+                            <div className="flex justify-between text-[9px] font-bold text-gray-400">
+                              <span className="flex items-center gap-1.5">
+                                <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
                                 FATAL FRAUD ({fraudCount})
                               </span>
                               <span>{fraudPct.toFixed(0)}%</span>
                             </div>
-                            <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+                            <div className="w-full bg-gray-800 h-1.5 rounded-full overflow-hidden">
                               <div className="bg-red-500 h-full rounded-full transition-all duration-500" style={{ width: `${fraudPct}%` }} />
                             </div>
                           </div>
                         </div>
 
-                        {/* 3. Tech Average Metrics */}
+                        {/* Tech Average Metrics */}
                         <div className="grid grid-cols-2 gap-3">
-                          <div className="p-3 bg-blue-50/30 border border-blue-100 rounded-2xl text-center">
-                            <span className="text-[8px] font-bold text-blue-600 block mb-1">RATA-RATA TDS</span>
-                            <span className="text-sm font-black text-gray-800">{avgTds.toFixed(0)} ppm</span>
-                            <span className="text-[8px] text-gray-500 block mt-0.5">{avgTds <= 300 ? 'Air Bersih' : 'Kualitas Rendah'}</span>
+                          <div className="p-3 bg-blue-950/20 border border-blue-900/30 rounded-xl text-center">
+                            <span className="text-[8px] font-bold text-blue-400 block mb-1 uppercase font-mono tracking-wider">Rata-Rata TDS</span>
+                            <span className="text-sm font-black text-white">{avgTds.toFixed(0)} ppm</span>
+                            <span className="text-[8px] text-gray-500 block mt-1 font-mono">{avgTds <= 300 ? 'Air Bersih' : 'Kualitas Rendah'}</span>
                           </div>
-                          <div className="p-3 bg-orange-50/30 border border-orange-100 rounded-2xl text-center">
-                            <span className="text-[8px] font-bold text-orange-600 block mb-1">RATA-RATA SPEED</span>
-                            <span className="text-sm font-black text-gray-800">{avgSpeed.toFixed(0)} Mbps</span>
-                            <span className="text-[8px] text-gray-500 block mt-0.5">{avgSpeed >= 15 ? 'Internet Cepat' : 'Internet Lambat'}</span>
+                          <div className="p-3 bg-orange-950/20 border border-orange-900/30 rounded-xl text-center">
+                            <span className="text-[8px] font-bold text-orange-400 block mb-1 uppercase font-mono tracking-wider">Rata-Rata Speed</span>
+                            <span className="text-sm font-black text-white">{avgSpeed.toFixed(0)} Mbps</span>
+                            <span className="text-[8px] text-gray-500 block mt-1 font-mono">{avgSpeed >= 15 ? 'Internet Cepat' : 'Internet Buffering'}</span>
                           </div>
                         </div>
+
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-sm text-center py-10">
-                    <Building className="h-8 w-8 text-gray-300 mx-auto mb-3" />
-                    <h3 className="text-xs font-bold text-gray-900 mb-1">Pilih Tugas</h3>
+                  <div className="bg-[#0c1220]/70 border border-gray-800/85 rounded-2xl p-8 shadow-xl backdrop-blur-md text-center py-12">
+                    <Compass className="h-8 w-8 text-gray-600 mx-auto mb-3 animate-spin" style={{ animationDuration: '6s' }} />
+                    <h3 className="text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">Pilih Sesi Kerja</h3>
                     <p className="text-[10px] text-gray-500 max-w-[200px] mx-auto leading-relaxed">
-                      Pilih salah satu tugas dari daftar di samping untuk memulai pengisian data.
+                      Pilih salah satu tugas dari daftar di samping untuk memulai pengisian berkas audit lapangan.
                     </p>
                   </div>
                 )
               )}
+
             </div>
           </div>
         )}
@@ -1242,24 +1258,24 @@ export default function DashboardPage() {
 
       {/* Modal - Request Inspection (Mahasiswa) */}
       {showRequestModal && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-40 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl w-full max-w-lg p-6 shadow-2xl relative border border-gray-100 animate-in fade-in zoom-in-95 duration-200">
-            <h3 className="text-base font-bold text-gray-900 mb-2">
+        <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-40 backdrop-blur-sm">
+          <div className="bg-[#0c1220] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative border border-gray-800 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+            <h3 className="text-sm font-bold uppercase tracking-wider text-white mb-2">
               Ajukan Permintaan Inspeksi Baru
             </h3>
-            <p className="text-[10px] text-gray-500 mb-5 leading-relaxed">
-              Mendaftarkan properti kos baru dan klaim fasilitas iklan. Data ini akan diaudit di lapangan oleh tim verifikator bersertifikat.
+            <p className="text-[10px] text-gray-400 mb-5 leading-relaxed">
+              Mendaftarkan properti kos baru dan klaim fasilitas iklan. Data ini akan diverifikasi di lapangan oleh tim inspektur kami.
             </p>
 
             {requestError && (
-              <div className="mb-4 p-3 text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl">
+              <div className="mb-4 p-3 text-xs text-red-400 bg-red-950/20 border border-red-900/30 rounded-xl text-center font-bold">
                 ⚠️ {requestError}
               </div>
             )}
 
             <form onSubmit={handleCreateRequest} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-700 uppercase">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
                   Nama Properti Kos
                 </label>
                 <input
@@ -1267,13 +1283,13 @@ export default function DashboardPage() {
                   required
                   value={propertyName}
                   onChange={(e) => setPropertyName(e.target.value)}
-                  placeholder="Kos Anggrek Indah TRPL"
-                  className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs"
+                  placeholder="Contoh: Kos Anggrek Indah TRPL"
+                  className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white placeholder-gray-600 focus:outline-none"
                 />
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-700 uppercase">
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
                   Alamat Lengkap
                 </label>
                 <input
@@ -1282,79 +1298,77 @@ export default function DashboardPage() {
                   value={propertyAddress}
                   onChange={(e) => setPropertyAddress(e.target.value)}
                   placeholder="Jl. Limau Manis Kec. Pauh No. 40, Kota Padang"
-                  className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs"
+                  className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white placeholder-gray-600 focus:outline-none"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-gray-700 uppercase flex items-center justify-between">
-                  <span>Lokasi Koordinat Kos (Maps)</span>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                    Lokasi Koordinat Kos (Maps)
+                  </label>
                   <button
                     type="button"
                     onClick={() => setShowMapPicker(!showMapPicker)}
-                    className="text-[9px] text-blue-600 hover:underline font-bold flex items-center gap-1"
+                    className="text-[9px] text-blue-400 hover:underline font-bold"
                   >
                     📍 {showMapPicker ? 'Tutup Peta' : 'Pilih di Peta'}
                   </button>
-                </label>
+                </div>
                 
                 {showMapPicker && (
-                  <div className="border border-gray-200 rounded-2xl p-2 bg-gray-50 space-y-2">
+                  <div className="border border-gray-800 rounded-xl p-2 bg-[#090d16] space-y-2">
                     <div
                       id="map-picker-container"
-                      className="w-full h-48 rounded-xl overflow-hidden bg-gray-100 border border-gray-200 z-10"
+                      className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-gray-850 z-10"
                       style={{ minHeight: '192px' }}
                     />
-                    <p className="text-[8px] text-gray-400 text-center font-medium">
-                      Klik pada peta untuk memindahkan pin lokasi.
+                    <p className="text-[8px] text-gray-500 text-center font-mono">
+                      Klik pada peta untuk memindahkan pin lokasi kos.
                     </p>
                   </div>
                 )}
 
                 <div className="grid grid-cols-2 gap-2.5">
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Latitude"
-                      readOnly
-                      value={selectedLat !== null ? selectedLat.toFixed(6) : ''}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-500 font-semibold"
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Longitude"
-                      readOnly
-                      value={selectedLng !== null ? selectedLng.toFixed(6) : ''}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-500 font-semibold"
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    placeholder="Latitude"
+                    readOnly
+                    value={selectedLat !== null ? selectedLat.toFixed(6) : ''}
+                    className="w-full px-3.5 py-2 bg-[#080d1a] border border-gray-805 rounded-xl text-xs text-gray-400 font-mono"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Longitude"
+                    readOnly
+                    value={selectedLng !== null ? selectedLng.toFixed(6) : ''}
+                    className="w-full px-3.5 py-2 bg-[#080d1a] border border-gray-805 rounded-xl text-xs text-gray-400 font-mono"
+                  />
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-700 uppercase">
-                  Deskripsi / Info Tambahan (Opsional)
+              <div className="space-y-1.5">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                  Deskripsi / Catatan Iklan
                 </label>
                 <textarea
                   value={propertyDesc}
                   onChange={(e) => setPropertyDesc(e.target.value)}
-                  placeholder="Kamar berukuran 3x4 meter, dekat dengan gerbang utama..."
+                  placeholder="Kamar berukuran 3x4 meter, dekat gerbang utama..."
                   rows={2}
-                  className="w-full px-3.5 py-2 border border-gray-300 rounded-lg text-xs"
+                  className="w-full px-3.5 py-2 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white placeholder-gray-600 focus:outline-none"
                 />
               </div>
 
-              <div className="space-y-2.5">
-                <label className="text-[10px] font-bold text-gray-700 uppercase block">
-                  Fasilitas Yang Diklaim Di Iklan
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block font-mono border-b border-gray-850 pb-1">
+                  Fasilitas Yang Terpasang di Iklan
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {Object.keys(claims).map((facility) => (
                     <label
                       key={facility}
-                      className="flex items-center gap-2 p-2 bg-gray-50 border border-gray-200 rounded-lg text-[10px] font-semibold text-gray-700 cursor-pointer hover:bg-gray-100"
+                      className="flex items-center gap-2 p-2 bg-[#090e1a] border border-gray-850 rounded-xl text-[10px] font-semibold text-gray-300 cursor-pointer hover:bg-gray-850 transition-all"
                     >
                       <input
                         type="checkbox"
@@ -1362,7 +1376,7 @@ export default function DashboardPage() {
                         onChange={(e) =>
                           setClaims({ ...claims, [facility]: e.target.checked })
                         }
-                        className="rounded border-gray-300 text-blue-600 focus:ring-0"
+                        className="rounded border-gray-800 text-blue-600 focus:ring-0 focus:ring-offset-0 bg-gray-900"
                       />
                       <span className="capitalize">{facility.replace(/_/g, ' ')}</span>
                     </label>
@@ -1370,9 +1384,9 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 border-t border-gray-100 pt-4">
+              <div className="grid grid-cols-2 gap-4 border-t border-gray-850 pt-4">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-gray-700 uppercase block">
+                  <label className="text-[9px] font-bold text-gray-400 uppercase block font-mono">
                     Klaim TDS Air (Maks ppm)
                   </label>
                   <input
@@ -1380,12 +1394,11 @@ export default function DashboardPage() {
                     required
                     value={tdsExpectation}
                     onChange={(e) => setTdsExpectation(Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs"
+                    className="w-full px-3 py-2 bg-[#080d1a] border border-gray-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
                   />
-                  <span className="text-[8px] text-gray-400">Standar air bersih: &lt;= 500 ppm</span>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-gray-700 uppercase block">
+                  <label className="text-[9px] font-bold text-gray-400 uppercase block font-mono">
                     Klaim Speed Wifi (Min Mbps)
                   </label>
                   <input
@@ -1393,27 +1406,26 @@ export default function DashboardPage() {
                     required
                     value={internetExpectation}
                     onChange={(e) => setInternetExpectation(Number(e.target.value))}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-xs"
+                    className="w-full px-3 py-2 bg-[#080d1a] border border-gray-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
                   />
-                  <span className="text-[8px] text-gray-400">Kecepatan minimal: 10 Mbps</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 border-t border-gray-100 pt-4 mt-6">
+              <div className="flex items-center justify-end gap-3 border-t border-gray-850 pt-4 mt-6">
                 <button
                   type="button"
                   onClick={() => setShowRequestModal(false)}
-                  className="px-4 py-2.5 text-xs font-bold text-gray-500 hover:bg-gray-50 rounded-xl transition-all"
+                  className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-white transition-all uppercase tracking-wider"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={requestLoading}
-                  className="px-5 py-2.5 bg-[#232936] hover:bg-[#1b202a] text-white font-bold rounded-xl text-xs flex items-center gap-1 shadow-sm"
+                  className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider flex items-center gap-1 shadow-md cursor-pointer"
                 >
                   {requestLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                  Ajukan Permintaan
+                  Kirim Permintaan
                 </button>
               </div>
             </form>
@@ -1423,20 +1435,21 @@ export default function DashboardPage() {
 
       {/* Modal - Report Scorecard Detail */}
       {showReportModal && selectedInspection && selectedInspection.audit_report && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-40 backdrop-blur-xs">
-          <div className="bg-white rounded-3xl w-full max-w-2xl p-6 shadow-2xl relative border border-gray-100 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-4">
+        <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-40 backdrop-blur-sm">
+          <div className="bg-[#0c1220] rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative border border-gray-800 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+            
+            <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-4">
               <div>
-                <h3 className="text-base font-extrabold text-gray-900">
+                <h3 className="text-sm font-extrabold uppercase tracking-wider text-white">
                   Laporan Audit Scorecard
                 </h3>
-                <p className="text-[10px] text-gray-400 mt-0.5">
+                <p className="text-[10px] text-gray-500 mt-1 font-mono">
                   {selectedInspection.property?.name} — {selectedInspection.property?.address}
                 </p>
               </div>
               <button
                 onClick={() => setShowReportModal(false)}
-                className="text-xs font-bold text-gray-400 hover:text-gray-900 p-1"
+                className="text-xs font-bold text-gray-500 hover:text-white transition-all"
               >
                 Tutup
               </button>
@@ -1444,48 +1457,49 @@ export default function DashboardPage() {
 
             {/* Main Score Visual */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center flex flex-col justify-center items-center">
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">
-                  Nilai Validitas
+              
+              <div className="bg-[#0a0f1b]/60 border border-gray-850 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
+                  Skor Validitas
                 </span>
-                <span className="text-3xl font-black text-blue-600 mt-1">
+                <span className="text-3xl font-black text-blue-500 mt-1">
                   {selectedInspection.audit_report.score}%
                 </span>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-center flex flex-col justify-center items-center">
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">
+              <div className="bg-[#0a0f1b]/60 border border-gray-850 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
                   Tingkat Kepercayaan
                 </span>
                 <span
-                  className={`text-xs font-bold px-3 py-1 rounded-full uppercase mt-2 ${
+                  className={`text-[9px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider mt-2 border ${
                     selectedInspection.audit_report.confidence_level === 'VALID'
-                      ? 'bg-emerald-100 text-emerald-800'
+                      ? 'bg-emerald-950 text-emerald-400 border-emerald-900/50'
                       : selectedInspection.audit_report.confidence_level === 'PARTIAL_VALID'
-                      ? 'bg-amber-100 text-amber-800'
-                      : 'bg-red-100 text-red-800'
+                      ? 'bg-amber-955 text-amber-400 border-amber-900/50'
+                      : 'bg-red-955 text-red-400 border-red-900/50'
                   }`}
                 >
                   {selectedInspection.audit_report.confidence_level.replace(/_/g, ' ')}
                 </span>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex flex-col justify-center items-center text-center">
-                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wide">
-                  Laporan Scorecard
+              <div className="bg-[#0a0f1b]/60 border border-gray-850 p-4 rounded-xl flex flex-col justify-center items-center text-center">
+                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
+                  Laporan Resmi PDF
                 </span>
                 {selectedInspection.audit_report.pdf_url ? (
                   <a
                     href={selectedInspection.audit_report.pdf_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 mt-2 text-xs font-bold text-blue-600 hover:underline"
+                    className="inline-flex items-center gap-1.5 mt-2 text-xs font-bold text-blue-400 hover:underline"
                   >
                     <Download className="h-4 w-4" /> Download PDF
                   </a>
                 ) : (
-                  <span className="text-[10px] text-gray-400 mt-2 font-semibold">
-                    PDF Belum Tersedia
+                  <span className="text-[10px] text-gray-550 mt-2 font-mono">
+                    Belum Tersedia
                   </span>
                 )}
               </div>
@@ -1493,9 +1507,9 @@ export default function DashboardPage() {
 
             {/* Comparison Details */}
             <div className="space-y-4">
-              <h4 className="text-xs font-extrabold text-gray-900 border-b border-gray-100 pb-2 flex items-center gap-1">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-850 pb-2 flex items-center gap-1.5">
                 <ClipboardList className="h-4 w-4 text-blue-500" />
-                Rincian Kecocokan Fasilitas (AI Vision)
+                Kecocokan Fasilitas Lapangan (AI Vision)
               </h4>
 
               {/* Match/Mismatch grid */}
@@ -1504,26 +1518,26 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={i}
-                      className="flex items-center justify-between p-3 bg-gray-50/50 rounded-xl border border-gray-100"
+                      className="flex items-center justify-between p-3 bg-[#0a0f1b]/30 rounded-xl border border-gray-850"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold capitalize text-gray-800">
+                        <span className="text-xs font-bold capitalize text-gray-300">
                           {item.facility.replace(/_/g, ' ')}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
                         {item.status === 'MATCH' && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-100">
-                            <CheckCircle2 className="h-3 w-3" /> MATCH
+                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-md border border-emerald-900/50 tracking-wider">
+                            ✓ MATCH
                           </span>
                         )}
                         {item.status === 'MISMATCH' && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-red-700 bg-red-50 px-2.5 py-0.5 rounded-full border border-red-100">
-                            <XCircle className="h-3 w-3" /> MISMATCH
+                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-red-400 bg-red-950/40 px-2 py-0.5 rounded-md border border-red-900/50 tracking-wider">
+                            ✗ MISMATCH
                           </span>
                         )}
                         {item.status === 'NEUTRAL' && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-gray-500 bg-gray-100 px-2.5 py-0.5 rounded-full">
+                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-gray-500 bg-gray-900/40 px-2 py-0.5 rounded-md border border-gray-800/60 tracking-wider">
                             TIDAK DIKLAIM
                           </span>
                         )}
@@ -1534,39 +1548,39 @@ export default function DashboardPage() {
               </div>
 
               {/* Technical breakdown */}
-              <h4 className="text-xs font-extrabold text-gray-900 border-b border-gray-100 pb-2 pt-2 flex items-center gap-1">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-850 pb-2 pt-2 flex items-center gap-1.5">
                 <Gauge className="h-4 w-4 text-indigo-500" />
                 Data Teknis Pengukuran
               </h4>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                  <span className="text-[10px] font-bold text-gray-400 block mb-1">
-                    TDS AIR AKTUAL
+                <div className="p-3 bg-[#0a0f1b]/50 rounded-xl border border-gray-850">
+                  <span className="text-[9px] font-bold text-gray-500 block mb-1 font-mono uppercase tracking-wider">
+                    TDS Air Aktual
                   </span>
-                  <span className="text-lg font-black text-gray-800">
+                  <span className="text-base font-black text-white">
                     {selectedInspection.tds_value} ppm
                   </span>
-                  <span className="text-[9px] text-gray-500 block mt-1">
-                    Klaim/Batas: &lt;= {selectedInspection.property?.claim_data?.fasilitas?.kualitas_air?.nilai || 500} ppm
+                  <span className="text-[8px] text-gray-500 block mt-1 font-mono">
+                    Klaim Maks: {selectedInspection.property?.claim_data?.fasilitas?.kualitas_air?.nilai || 500} ppm
                   </span>
                 </div>
-                <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                  <span className="text-[10px] font-bold text-gray-400 block mb-1">
-                    INTERNET SPEED AKTUAL
+                <div className="p-3 bg-[#0a0f1b]/50 rounded-xl border border-gray-850">
+                  <span className="text-[9px] font-bold text-gray-500 block mb-1 font-mono uppercase tracking-wider">
+                    Speed Internet
                   </span>
-                  <span className="text-lg font-black text-gray-800">
+                  <span className="text-base font-black text-white">
                     {selectedInspection.internet_speed} Mbps
                   </span>
-                  <span className="text-[9px] text-gray-500 block mt-1">
-                    Klaim/Batas: &gt;= {selectedInspection.property?.claim_data?.fasilitas?.kecepatan_internet?.nilai || 10} Mbps
+                  <span className="text-[8px] text-gray-500 block mt-1 font-mono">
+                    Klaim Min: {selectedInspection.property?.claim_data?.fasilitas?.kecepatan_internet?.nilai || 10} Mbps
                   </span>
                 </div>
               </div>
             </div>
 
             {/* Chatbot Gemini Section */}
-            <div className="border-t border-gray-100 pt-4 mt-6">
+            <div className="border-t border-gray-850 pt-4 mt-6">
               <button
                 type="button"
                 onClick={() => {
@@ -1584,19 +1598,20 @@ export default function DashboardPage() {
                     ]);
                   }
                 }}
-                className="w-full flex items-center justify-between p-3 bg-blue-50/50 hover:bg-blue-50 border border-blue-100 rounded-xl text-xs font-bold text-blue-700 transition-all cursor-pointer"
+                className="w-full flex items-center justify-between p-3 bg-blue-950/20 hover:bg-blue-950/40 border border-blue-900/40 rounded-xl text-xs font-bold text-blue-400 transition-all cursor-pointer"
               >
-                <span className="flex items-center gap-1.5">
-                  <Sparkles className="h-4 w-4 text-blue-600 animate-pulse" />
+                <span className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-blue-400 animate-pulse" />
                   Konsultasi Hasil Audit dengan AI Assistant
                 </span>
-                <span>{showChat ? 'Sembunyikan Chat' : 'Buka Chat'}</span>
+                <span>{showChat ? 'Sembunyikan Chat' : 'Tanya AI'}</span>
               </button>
 
               {showChat && (
-                <div className="mt-3 bg-gray-50 rounded-2xl border border-gray-200 overflow-hidden flex flex-col h-64 shadow-inner">
+                <div className="mt-3 bg-[#090e1a] rounded-xl border border-gray-800 overflow-hidden flex flex-col h-72 shadow-inner">
+                  
                   {/* Chat message list */}
-                  <div className="flex-1 p-3 overflow-y-auto space-y-3 max-h-48 text-[11px] leading-relaxed">
+                  <div className="flex-1 p-3 overflow-y-auto space-y-3 max-h-56 text-[10px] leading-relaxed scrollbar-none">
                     {chatHistory.map((chat, idx) => (
                       <div
                         key={idx}
@@ -1605,52 +1620,52 @@ export default function DashboardPage() {
                         }`}
                       >
                         <div
-                          className={`max-w-[80%] rounded-2xl p-2.5 ${
+                          className={`max-w-[80%] rounded-xl p-2.5 ${
                             chat.role === 'user'
-                              ? 'bg-blue-600 text-white rounded-br-none shadow-sm'
-                              : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-xs'
+                              ? 'bg-blue-600 text-white rounded-tr-none shadow-md'
+                              : 'bg-[#0f172a] text-gray-200 border border-gray-800 rounded-tl-none'
                           }`}
                         >
-                          <p className="whitespace-pre-line">{chat.parts[0].text}</p>
+                          <p className="whitespace-pre-line font-sans">{chat.parts[0].text}</p>
                         </div>
                       </div>
                     ))}
                     {chatLoading && (
                       <div className="flex justify-start">
-                        <div className="bg-white text-gray-400 border border-gray-200 rounded-2xl rounded-bl-none p-2.5 flex items-center gap-1.5 shadow-xs">
-                          <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-500" />
-                          <span>AI sedang mengetik...</span>
+                        <div className="bg-[#0f172a] text-gray-500 border border-gray-800 rounded-xl rounded-tl-none p-2.5 flex items-center gap-1.5 font-mono">
+                          <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
+                          <span>AI sedang merespon...</span>
                         </div>
                       </div>
                     )}
                   </div>
 
                   {/* Input form */}
-                  <form onSubmit={handleSendChatMessage} className="p-2 bg-white border-t border-gray-200 flex gap-2">
+                  <form onSubmit={handleSendChatMessage} className="p-2 bg-[#0c1220] border-t border-gray-800 flex gap-2">
                     <input
                       type="text"
                       value={chatMessage}
                       onChange={(e) => setChatMessage(e.target.value)}
-                      placeholder="Tanyakan sesuatu ke AI..."
-                      className="flex-1 px-3 py-1.5 border border-gray-300 rounded-xl text-xs"
+                      placeholder="Tanyakan mengenai hasil audit kos ke AI..."
+                      className="flex-1 px-3 py-2 bg-[#080d1a] border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 placeholder-gray-650"
                       disabled={chatLoading}
                     />
                     <button
                       type="submit"
                       disabled={chatLoading || !chatMessage.trim()}
-                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition-all cursor-pointer"
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold text-xs rounded-xl transition-all cursor-pointer flex items-center justify-center"
                     >
-                      Kirim
+                      <Send className="h-3 w-3" />
                     </button>
                   </form>
                 </div>
               )}
             </div>
 
-            <div className="flex justify-end border-t border-gray-100 pt-4 mt-6">
+            <div className="flex justify-end border-t border-gray-850 pt-4 mt-6">
               <button
                 onClick={() => setShowReportModal(false)}
-                className="px-5 py-2.5 bg-[#232936] hover:bg-[#1a1f29] text-white font-bold text-xs rounded-xl shadow-sm transition-all"
+                className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer uppercase tracking-wider"
               >
                 Selesai
               </button>

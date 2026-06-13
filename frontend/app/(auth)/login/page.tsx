@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, EyeOff, Loader } from 'lucide-react';
+import { Eye, EyeOff, Loader, Shield, ArrowLeft, CheckCircle2 } from 'lucide-react';
 import api from '@/lib/api';
 
 export default function LoginPage() {
@@ -23,13 +23,11 @@ export default function LoginPage() {
       const response = await api.post('/auth/login', { email, password });
       const { access_token, refresh_token, role, email: userEmail } = response.data;
 
-      // Save tokens and user info
       localStorage.setItem('access_token', access_token);
       localStorage.setItem('refresh_token', refresh_token);
       localStorage.setItem('user_role', role);
       localStorage.setItem('user_email', userEmail);
 
-      // Redirect to correct dashboard based on role
       if (role === 'admin') {
         router.push('/admin/dashboard');
       } else {
@@ -44,102 +42,154 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-[#f8fafc] overflow-hidden font-sans">
-      {/* Decorative Curved Wave Lines Background (Match Wireframe) */}
-      <div className="absolute left-0 top-0 bottom-0 w-28 md:w-64 overflow-hidden pointer-events-none opacity-20">
-        <svg className="h-full w-full" viewBox="0 0 100 800" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinecap="round" xmlns="http://www.w3.org/2000/svg">
-          <path d="M-80,150 C50,220 30,350 -40,430 C-90,500 50,600 -10,750" />
-        </svg>
-      </div>
-      <div className="absolute right-0 top-0 bottom-0 w-28 md:w-64 overflow-hidden pointer-events-none opacity-20">
-        <svg className="h-full w-full" viewBox="0 0 100 800" fill="none" stroke="#000000" strokeWidth="2.5" strokeLinecap="round" xmlns="http://www.w3.org/2000/svg">
-          <path d="M150,180 C40,280 80,420 180,500 C80,600 30,680 120,780" />
-        </svg>
-      </div>
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-[#080d1a] font-sans text-gray-100">
+      
+      {/* Left side: Premium Promo Panel (Hidden on small screens) */}
+      <div className="hidden lg:flex lg:col-span-5 relative flex-col justify-between p-12 bg-[#0c1224] border-r border-gray-800/80 overflow-hidden">
+        {/* Glow Background inside panel */}
+        <div className="absolute top-[-20%] left-[-20%] w-[400px] h-[400px] rounded-full bg-blue-600/10 blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[350px] h-[350px] rounded-full bg-indigo-600/5 blur-[90px] pointer-events-none" />
+        
+        {/* Header */}
+        <Link href="/" className="relative flex items-center gap-2.5 z-10 group">
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/10 group-hover:scale-105 transition-transform">
+            <span className="text-sm font-bold text-white">🏠</span>
+          </div>
+          <span className="text-base font-extrabold tracking-tight bg-gradient-to-r from-white via-gray-200 to-gray-400 bg-clip-text text-transparent">
+            InspeksiKos
+          </span>
+        </Link>
 
-      {/* Main Auth Card (White, Rounded, Clean shadow) */}
-      <div className="relative w-full max-w-[420px] px-8 py-10 mx-4 bg-white border border-gray-100 rounded-3xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.08)] z-10">
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 mb-3">
-            Login
-          </h1>
-          <p className="text-xs text-gray-500 leading-relaxed px-4">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. At purus tellus arcu sit nibh consectetur.
-          </p>
-          <div className="w-24 h-[1px] bg-gray-300 mx-auto mt-4" />
+        {/* Marketing/Feature Points */}
+        <div className="relative space-y-8 z-10">
+          <div className="space-y-3">
+            <h2 className="text-2xl font-black leading-snug bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+              Platform Verifikasi & Audit Properti Kos
+            </h2>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              Mengamankan pencarian tempat tinggal mahasiswa dengan audit lapangan terpercaya menggunakan AI Vision & verifikasi fisik terakreditasi.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <div className="flex gap-3">
+              <CheckCircle2 className="h-5 w-5 text-blue-500 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-xs font-bold text-gray-200">Akurasi Deteksi Fasilitas</h4>
+                <p className="text-[11px] text-gray-400 mt-0.5">Analisis visual foto oleh AI Vision mencegah penipuan foto iklan.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <CheckCircle2 className="h-5 w-5 text-indigo-500 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-xs font-bold text-gray-200">Pengukuran Teknis Akurat</h4>
+                <p className="text-[11px] text-gray-400 mt-0.5">Pengujian langsung kualitas air TDS dan kecepatan internet speedtest.</p>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-xs font-bold text-gray-200">Konsultasi Interaktif AI</h4>
+                <p className="text-[11px] text-gray-400 mt-0.5">Dapatkan saran kelayakan air atau spesifikasi kamar lewat chatbot asisten.</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        {error && (
-          <div className="mb-5 p-3 text-xs text-red-600 bg-red-50 border border-red-200 rounded-xl text-center font-medium">
-            ⚠️ {error}
-          </div>
-        )}
+        {/* Footer info inside promo panel */}
+        <div className="relative text-[10px] text-gray-600 z-10">
+          © 2026 InspeksiKos. Politeknik Negeri Padang.
+        </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email input */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700 block">
-              Email
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Ed_Dietrich80@gmail.com"
-              className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-500 focus:ring-0 transition-all text-xs"
-            />
-          </div>
-
-          {/* Password input */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-bold text-gray-700 block">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="******"
-                className="w-full pl-4 pr-10 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:border-gray-500 focus:ring-0 transition-all text-xs"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
-              >
-                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
-            <div className="text-right">
-              <Link href="#" className="text-[10px] font-medium text-gray-500 hover:text-gray-900 transition-all">
-                Lupa Password?
-              </Link>
-            </div>
-          </div>
-
-          {/* Submit button (Dark Navy) */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full flex justify-center items-center py-3 px-4 bg-[#232936] hover:bg-[#181d27] text-white font-bold rounded-lg text-xs tracking-wider transition-all focus:outline-none disabled:opacity-50 mt-4 shadow-sm"
-          >
-            {isLoading ? (
-              <Loader className="animate-spin h-4 w-4" />
-            ) : (
-              'Masuk'
-            )}
-          </button>
-        </form>
-
-        {/* Redirect toggle */}
-        <div className="mt-8 text-center text-xs text-gray-500">
-          Belum Punya Akun?{' '}
-          <Link href="/register" className="font-bold text-gray-900 hover:underline transition-all">
-            Daftar
+      {/* Right side: Login Form Column */}
+      <div className="lg:col-span-7 flex flex-col justify-center items-center px-6 py-12 relative">
+        <div className="absolute top-10 left-6 block lg:hidden">
+          <Link href="/" className="flex items-center gap-1 text-xs font-bold text-gray-400 hover:text-white transition-all uppercase tracking-wider">
+            <ArrowLeft className="h-4 w-4" /> Kembali
           </Link>
+        </div>
+
+        <div className="w-full max-w-[380px] space-y-8">
+          <div className="space-y-2 text-center lg:text-left">
+            <h1 className="text-2xl font-black tracking-tight text-white">
+              Selamat Datang Kembali
+            </h1>
+            <p className="text-xs text-gray-400">
+              Silakan masuk dengan kredensial terdaftar Anda untuk mengelola verifikasi.
+            </p>
+          </div>
+
+          {error && (
+            <div className="p-3 text-xs text-red-400 bg-red-950/20 border border-red-900/30 rounded-xl text-center font-bold">
+              ⚠️ {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                Email
+              </label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="masukkan email Anda"
+                className="w-full px-3.5 py-2.5 bg-[#0e1626] border border-gray-800 focus:border-blue-500 rounded-xl text-white placeholder-gray-600 focus:outline-none transition-all text-xs"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                  Password
+                </label>
+                <Link href="#" className="text-[10px] font-bold text-gray-500 hover:text-white transition-all">
+                  Lupa Password?
+                </Link>
+              </div>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full pl-3.5 pr-10 py-2.5 bg-[#0e1626] border border-gray-800 focus:border-blue-500 rounded-xl text-white placeholder-gray-600 focus:outline-none transition-all text-xs"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-gray-300"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full flex justify-center items-center py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all disabled:opacity-50 mt-6 shadow-lg shadow-blue-900/10 cursor-pointer"
+            >
+              {isLoading ? (
+                <Loader className="animate-spin h-4 w-4" />
+              ) : (
+                'Masuk ke Panel'
+              )}
+            </button>
+          </form>
+
+          <div className="text-center text-xs text-gray-500 pt-4">
+            Belum punya akun?{' '}
+            <Link href="/register" className="font-bold text-white hover:underline transition-all">
+              Daftar Sekarang
+            </Link>
+          </div>
         </div>
       </div>
     </div>
