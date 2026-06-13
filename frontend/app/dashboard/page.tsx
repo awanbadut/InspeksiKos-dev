@@ -110,26 +110,20 @@ export default function DashboardPage() {
     }
   }, []);
 
-  // Dynamically load Leaflet CDN scripts/CSS
+  // Check if Leaflet is ready (loaded globally in layout.tsx)
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    if (!document.getElementById('leaflet-css')) {
-      const link = document.createElement('link');
-      link.id = 'leaflet-css';
-      link.rel = 'stylesheet';
-      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-      document.head.appendChild(link);
-    }
-
-    if (!document.getElementById('leaflet-js')) {
-      const script = document.createElement('script');
-      script.id = 'leaflet-js';
-      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-      script.onload = () => setMapReady(true);
-      document.head.appendChild(script);
-    } else {
+    if ((window as any).L) {
       setMapReady(true);
+    } else {
+      const checkInterval = setInterval(() => {
+        if ((window as any).L) {
+          setMapReady(true);
+          clearInterval(checkInterval);
+        }
+      }, 50);
+      return () => clearInterval(checkInterval);
     }
   }, []);
 
@@ -188,10 +182,14 @@ export default function DashboardPage() {
           marker.bindPopup(popupContent);
         });
 
+        mapInstance.invalidateSize();
+        setTimeout(() => mapInstance.invalidateSize(), 150);
+
         (window as any).currentDashboardMap = mapInstance;
       }, 200);
 
       return () => {
+        clearTimeout(timer);
         const mapInst = (window as any).currentDashboardMap;
         if (mapInst) {
           mapInst.remove();
@@ -237,10 +235,14 @@ export default function DashboardPage() {
           markerInstance.setLatLng([lat, lng]);
         });
 
+        mapInstance.invalidateSize();
+        setTimeout(() => mapInstance.invalidateSize(), 150);
+
         (window as any).currentMapPicker = mapInstance;
       }, 100);
 
       return () => {
+        clearTimeout(timer);
         const mapInst = (window as any).currentMapPicker;
         if (mapInst) {
           mapInst.remove();
@@ -276,10 +278,14 @@ export default function DashboardPage() {
 
         L.marker([latitude, longitude], { icon: customIcon }).addTo(mapInstance);
 
+        mapInstance.invalidateSize();
+        setTimeout(() => mapInstance.invalidateSize(), 150);
+
         (window as any).currentTaskMap = mapInstance;
       }, 100);
 
       return () => {
+        clearTimeout(timer);
         const mapInst = (window as any).currentTaskMap;
         if (mapInst) {
           mapInst.remove();
