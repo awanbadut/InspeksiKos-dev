@@ -107,6 +107,9 @@ export default function DashboardPage() {
   const [customFacilitySingle, setCustomFacilitySingle] = useState('');
   const [customFacilityMulti, setCustomFacilityMulti] = useState<Record<number, string>>({});
   const [activeRequestInspectionIds, setActiveRequestInspectionIds] = useState<string[]>([]);
+  const [paymentToken, setPaymentToken] = useState('');
+  const [paymentRedirectUrl, setPaymentRedirectUrl] = useState('');
+  const [paymentMode, setPaymentMode] = useState<'sandbox' | 'simulator'>('simulator');
 
   // Leaflet map states
   const [mapReady, setMapReady] = useState(false);
@@ -201,6 +204,54 @@ export default function DashboardPage() {
 
     return () => clearInterval(intervalId);
   }, [matchingStatus, activeRequestInspectionIds]);
+
+  // Polling for QRIS payment success
+  useEffect(() => {
+    if (currentStepModal !== 3 || activeRequestInspectionIds.length === 0) return;
+
+    const intervalId = setInterval(async () => {
+      try {
+        let allPaid = true;
+        for (const id of activeRequestInspectionIds) {
+          const res = await api.get(`/inspections/${id}/check-payment`);
+          if (!res.data.paid) {
+            allPaid = false;
+            break;
+          }
+        }
+
+        if (allPaid && activeRequestInspectionIds.length > 0) {
+          clearInterval(intervalId);
+          // Transition to Step 4: Radar Matchmaking!
+          setCurrentStepModal(4);
+          setMatchingStatus('searching');
+        }
+      } catch (err) {
+        console.error('Error polling payment status:', err);
+      }
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, [currentStepModal, activeRequestInspectionIds]);
+
+  // Fetch payment token when active inspections are created
+  useEffect(() => {
+    if (activeRequestInspectionIds.length === 0) return;
+
+    const fetchToken = async () => {
+      try {
+        const id = activeRequestInspectionIds[0];
+        const res = await api.post(`/inspections/${id}/payment-token`);
+        setPaymentToken(res.data.token);
+        setPaymentRedirectUrl(res.data.redirect_url);
+        setPaymentMode(res.data.mode);
+      } catch (err) {
+        console.error('Failed to fetch payment token:', err);
+      }
+    };
+
+    fetchToken();
+  }, [activeRequestInspectionIds]);
 
   // Dynamic dashboard background polling (every 10s)
   useEffect(() => {
@@ -583,7 +634,7 @@ export default function DashboardPage() {
     }
   };
 
-  const handlePaymentAndOrder = async () => {
+  const handleCreateOrderInvoice = async () => {
     setRequestLoading(true);
     setRequestError('');
 
@@ -605,6 +656,7 @@ export default function DashboardPage() {
             longitude: selectedLng
           } : null,
           fasilitas: fasilitasPayload,
+          payment_status: 'unpaid',
         };
 
         const propResponse = await api.post('/properties', {
@@ -634,6 +686,7 @@ export default function DashboardPage() {
               longitude: p.lng
             } : null,
             fasilitas: fasilitasPayload,
+            payment_status: 'unpaid',
           };
 
           const propResponse = await api.post('/properties', {
@@ -651,8 +704,7 @@ export default function DashboardPage() {
 
       await fetchInspections();
       setActiveRequestInspectionIds(createdIds);
-      setCurrentStepModal(4);
-      setMatchingStatus('searching');
+      setCurrentStepModal(3);
 
     } catch (err: any) {
       console.error(err);
@@ -684,6 +736,9 @@ export default function DashboardPage() {
     setSelectedLat(null);
     setSelectedLng(null);
     setShowMapPicker(false);
+    setPaymentToken('');
+    setPaymentRedirectUrl('');
+    setPaymentMode('simulator');
     setMultiProperties([
       {
         name: '',
@@ -1991,7 +2046,7 @@ export default function DashboardPage() {
                 
                 {orderCategory === 'single' ? (
                   /* Form Single Kos */
-                  <form onSubmit={(e) => { e.preventDefault(); setCurrentStepModal(3); }} className="space-y-4">
+                  <form onSubmit={(e) => { e.preventDefault(); handleCreateOrderInvoice(); }} className="space-y-4">
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Nama Properti Kos</label>
                       <input
@@ -2261,18 +2316,11 @@ export default function DashboardPage() {
                       <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-white uppercase">Kembali</button>
                       <button
                         type="button"
-                        onClick={() => {
-                          // Verify that all forms are filled
-                          const invalid = multiProperties.some(p => !p.name || !p.address);
-                          if (invalid) {
-                            setRequestError('Mohon isi nama dan alamat untuk semua properti kos!');
-                            return;
-                          }
-                          setRequestError('');
-                          setCurrentStepModal(3);
-                        }}
-                        className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider"
+                        onClick={handleCreateOrderInvoice}
+                        disabled={requestLoading}
+                        className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5"
                       >
+                        {requestLoading && <Loader2 className="h-3 w-3 animate-spin" />}
                         Lanjut Bayar
                       </button>
                     </div>
@@ -2284,7 +2332,7 @@ export default function DashboardPage() {
             {/* STEP 3: QRIS PAYMENT */}
             {currentStepModal === 3 && (
               <div className="space-y-5 py-2 text-center">
-                <div className="p-4 bg-[#090d16] border border-gray-850 rounded-xl text-left space-y-2">
+                <div className="p-4 bg-[#090d16] border border-gray-855 rounded-xl text-left space-y-2">
                   <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono">Invoice Ringkasan Transaksi</h4>
                   <div className="text-xs space-y-1">
                     <div className="flex justify-between">
@@ -2300,41 +2348,66 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
-                <div className="border border-gray-800 rounded-2xl p-5 bg-white max-w-[240px] mx-auto space-y-3 shadow-inner">
-                  {/* Mock QRIS Header */}
-                  <div className="flex items-center justify-between border-b border-gray-200 pb-1.5">
-                    <span className="text-xs font-extrabold text-[#da251d]">QRIS</span>
-                    <span className="text-[8px] font-black text-blue-900 font-mono">GPN</span>
-                  </div>
-                  
-                  {/* QRIS Code Image representation */}
-                  <div className="p-2 border border-gray-100 rounded-lg flex items-center justify-center bg-white relative">
-                    <svg width="140" height="140" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="1.6" strokeLinecap="square">
-                      <path d="M2 2h6v6H2z M16 2h6v6h-6z M2 16h6v6H2z M12 2v2 M12 6h2 M20 12h2 M12 12h2 M16 12h2 M12 16h2 M16 16v4 M20 20h2" />
-                      <path d="M4 4h2v2H4z M18 4h2v2h-2z M4 18h2v2H4z" fill="black" />
-                    </svg>
-                  </div>
+                {(() => {
+                  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+                  const simulationLink = `${origin}/payment/simulate?id=${activeRequestInspectionIds[0] || ''}`;
+                  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(simulationLink)}`;
 
-                  <p className="text-[8px] text-gray-500 font-bold uppercase tracking-wider font-mono">
-                    INSPEKSIKOS ON-DEMAND<br />
-                    NMID: ID1020304050
-                  </p>
-                </div>
+                  return (
+                    <>
+                      <div className="border border-gray-800 rounded-2xl p-5 bg-white max-w-[240px] mx-auto space-y-3 shadow-inner">
+                        {/* Mock QRIS Header */}
+                        <div className="flex items-center justify-between border-b border-gray-200 pb-1.5">
+                          <span className="text-xs font-extrabold text-[#da251d]">QRIS</span>
+                          <span className="text-[8px] font-black text-blue-900 font-mono">GPN</span>
+                        </div>
+                        
+                        {/* Real scannable QR Code */}
+                        <div className="p-2 border border-gray-100 rounded-lg flex items-center justify-center bg-white">
+                          {activeRequestInspectionIds.length > 0 ? (
+                            <img src={qrUrl} alt="QRIS Code" className="w-[140px] h-[140px]" />
+                          ) : (
+                            <div className="w-[140px] h-[140px] flex items-center justify-center text-gray-400 text-[10px] font-mono">
+                              Memuat QRIS...
+                            </div>
+                          )}
+                        </div>
 
-                <p className="text-[9px] text-gray-400 max-w-xs mx-auto leading-relaxed">
-                  Silakan scan QRIS di atas menggunakan dompet digital Anda (Gopay, OVO, Dana) untuk menyelesaikan transaksi booking inspektur lapangan.
+                        <p className="text-[8px] text-gray-500 font-bold uppercase tracking-wider font-mono">
+                          INSPEKSIKOS ON-DEMAND<br />
+                          NMID: ID1020304050
+                        </p>
+                      </div>
+
+                      {activeRequestInspectionIds.length > 0 && (
+                        <div className="pt-1">
+                          <a
+                            href={simulationLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-[10px] font-extrabold text-blue-400 hover:text-blue-300 hover:underline"
+                          >
+                            🔗 Buka Simulator Pembayaran (Bayar via Desktop)
+                          </a>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+
+                <p className="text-[9px] text-gray-405 max-w-xs mx-auto leading-relaxed">
+                  Silakan scan QRIS di atas dengan HP Anda (Gopay, OVO, Dana) atau klik link simulator di atas untuk memproses pembayaran simulasi.
                 </p>
 
                 <div className="flex items-center justify-between border-t border-gray-850 pt-4 mt-6">
                   <button type="button" onClick={() => setCurrentStepModal(2)} className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-white uppercase">Kembali</button>
                   <button
                     type="button"
-                    onClick={handlePaymentAndOrder}
-                    disabled={requestLoading}
-                    className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1 shadow-md shadow-emerald-500/10 cursor-pointer w-48"
+                    disabled={true}
+                    className="px-5 py-2.5 bg-gray-800 text-gray-500 border border-gray-700/60 font-bold rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-not-allowed w-56"
                   >
-                    {requestLoading && <Loader2 className="h-3 w-3 animate-spin" />}
-                    Konfirmasi Bayar
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-500" />
+                    Menunggu Pembayaran...
                   </button>
                 </div>
               </div>

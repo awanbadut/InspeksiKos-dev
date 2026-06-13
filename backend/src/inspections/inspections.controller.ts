@@ -41,6 +41,18 @@ export class InspectionsController {
     return this.inspectionsService.findOne(id);
   }
 
+  @Post(':id/payment-token')
+  @Roles(UserRole.MAHASISWA, UserRole.ADMIN)
+  getPaymentToken(@Param('id') id: string) {
+    return this.inspectionsService.getPaymentToken(id);
+  }
+
+  @Get(':id/check-payment')
+  @Roles(UserRole.MAHASISWA, UserRole.ADMIN)
+  checkPaymentStatus(@Param('id') id: string) {
+    return this.inspectionsService.checkPaymentStatus(id);
+  }
+
   @Patch(':id/status')
   @Roles(UserRole.ADMIN, UserRole.INSPEKTUR)
   updateStatus(

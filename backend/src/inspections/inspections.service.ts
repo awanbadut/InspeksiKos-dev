@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, IsNull } from 'typeorm';
+import axios from 'axios';
 import { Inspection, InspectionStatus } from './entities/inspection.entity';
 import { InspectionPhoto } from './entities/inspection-photo.entity';
 import { Property } from '../properties/entities/property.entity';
@@ -180,5 +181,127 @@ export class InspectionsService {
     // Verify inspection exists
     await this.findOne(inspectionId);
     return this.photoRepository.find({ where: { inspection_id: inspectionId } });
+  }
+
+  async getPaymentToken(inspectionId: string): Promise<{ token: string; redirect_url: string; mode: 'sandbox' | 'simulator' }> {
+    const inspection = await this.findOne(inspectionId);
+    const serverKey = process.env.MIDTRANS_SERVER_KEY || '';
+    
+    // Check if Midtrans Server Key is configured and valid
+    const isMock = !serverKey || serverKey === 'SB-Mid-server-YOUR_KEY_HERE';
+    
+    // Determine gross amount
+    // If it's a multi-kos group comparison, check how many inspections share this comparison_id
+    let grossAmount = 50000;
+    const compId = inspection.property?.claim_data?.comparison_id;
+    if (compId) {
+      const relatedInsps = await this.inspectionRepository.find({
+        where: { property: { claim_data: { comparison_id: compId } } as any },
+        relations: { property: true }
+      });
+      grossAmount = relatedInsps.length * 45000;
+    }
+
+    if (isMock) {
+      // Return a simulated redirect URL pointing to the local payment simulate route
+      return {
+        token: `mock_token_${Date.now()}`,
+        redirect_url: `/payment/simulate?id=${inspectionId}`,
+        mode: 'simulator',
+      };
+    }
+
+    // Call Midtrans Sandbox Snap API
+    try {
+      const authHeader = `Basic ${Buffer.from(serverKey + ':').toString('base64')}`;
+      const payload = {
+        transaction_details: {
+          order_id: inspectionId,
+          gross_amount: grossAmount,
+        },
+        credit_card: {
+          secure: true
+        },
+        customer_details: {
+          first_name: inspection.property?.user?.first_name || 'Customer',
+          last_name: inspection.property?.user?.last_name || '',
+          email: inspection.property?.user?.email || 'customer@inspeksikos.com',
+          phone: inspection.property?.user?.phone_number || '',
+        }
+      };
+
+      const response = await axios.post(
+        'https://app.sandbox.midtrans.com/snap/v1/transactions',
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: authHeader,
+          },
+        },
+      );
+
+      return {
+        token: response.data.token,
+        redirect_url: response.data.redirect_url,
+        mode: 'sandbox',
+      };
+    } catch (err: any) {
+      console.error('Failed to create Midtrans Snap transaction:', err.response?.data || err.message);
+      // Fallback to simulator if Midtrans API call fails
+      return {
+        token: `mock_token_fallback_${Date.now()}`,
+        redirect_url: `/payment/simulate?id=${inspectionId}`,
+        mode: 'simulator',
+      };
+    }
+  }
+
+  async checkPaymentStatus(inspectionId: string): Promise<{ paid: boolean }> {
+    const inspection = await this.findOne(inspectionId);
+    const serverKey = process.env.MIDTRANS_SERVER_KEY || '';
+    const isMock = !serverKey || serverKey === 'SB-Mid-server-YOUR_KEY_HERE';
+
+    if (isMock) {
+      return {
+        paid: inspection.property?.claim_data?.payment_status === 'paid',
+      };
+    }
+
+    try {
+      const authHeader = `Basic ${Buffer.from(serverKey + ':').toString('base64')}`;
+      const response = await axios.get(
+        `https://api.sandbox.midtrans.com/v2/${inspectionId}/status`,
+        {
+          headers: {
+            Authorization: authHeader,
+            Accept: 'application/json',
+          },
+        },
+      );
+
+      const status = response.data.transaction_status;
+      const isPaid = status === 'settlement' || status === 'capture';
+
+      if (isPaid && inspection.property?.claim_data?.payment_status !== 'paid') {
+        // Automatically update payment status in database!
+        const property = inspection.property;
+        const currentClaimData = property.claim_data || {};
+        property.claim_data = {
+          ...currentClaimData,
+          payment_status: 'paid',
+        };
+        await this.propertyRepository.save(property);
+      }
+
+      return { paid: isPaid };
+    } catch (err: any) {
+      console.error('Failed to check Midtrans transaction status:', err.response?.data || err.message);
+      // Fallback check
+      return {
+        paid: inspection.property?.claim_data?.payment_status === 'paid',
+      };
+    }
   }
 }
