@@ -69,6 +69,41 @@ export default function DashboardPage() {
   const [requestLoading, setRequestLoading] = useState(false);
   const [requestError, setRequestError] = useState('');
 
+  // Gojek Model States
+  const [orderCategory, setOrderCategory] = useState<'single' | 'multi'>('single');
+  const [multiProperties, setMultiProperties] = useState<any[]>([
+    {
+      name: '',
+      address: '',
+      description: '',
+      claims: { kasur: true, lemari: true, ac: false, wifi: false, kamar_mandi_dalam: false },
+      tdsExpectation: 500,
+      internetExpectation: 10,
+      lat: null,
+      lng: null,
+      showPicker: false,
+    },
+    {
+      name: '',
+      address: '',
+      description: '',
+      claims: { kasur: true, lemari: true, ac: false, wifi: false, kamar_mandi_dalam: false },
+      tdsExpectation: 500,
+      internetExpectation: 10,
+      lat: null,
+      lng: null,
+      showPicker: false,
+    }
+  ]);
+  const [currentStepModal, setCurrentStepModal] = useState<number>(1);
+  const [matchingStatus, setMatchingStatus] = useState<string>('');
+  const [mockInspector, setMockInspector] = useState<any | null>(null);
+  const [activeTabInspector, setActiveTabInspector] = useState<'my_tasks' | 'available_orders'>('my_tasks');
+  const [acceptingTaskLoading, setAcceptingTaskLoading] = useState<Record<string, boolean>>({});
+
+  const [showComparisonModal, setShowComparisonModal] = useState(false);
+  const [selectedComparisonGroup, setSelectedComparisonGroup] = useState<any[]>([]);
+
   // Leaflet map states
   const [mapReady, setMapReady] = useState(false);
   const [selectedLat, setSelectedLat] = useState<number | null>(null);
@@ -252,6 +287,85 @@ export default function DashboardPage() {
     }
   }, [mapReady, showMapPicker]);
 
+  // Multi-Map Picker initialization for Multi-Kos category
+  useEffect(() => {
+    if (!mapReady || orderCategory !== 'multi') return;
+
+    const activePickers = multiProperties
+      .map((p, idx) => ({ ...p, idx }))
+      .filter((p) => p.showPicker);
+
+    const timers: any[] = [];
+
+    activePickers.forEach((p) => {
+      const idx = p.idx;
+      const timer = setTimeout(() => {
+        const L = (window as any).L;
+        if (!L) return;
+
+        const defaultLat = -0.9471;
+        const defaultLng = 100.4172;
+        const initialLat = p.lat || defaultLat;
+        const initialLng = p.lng || defaultLng;
+
+        const containerId = `map-picker-container-${idx}`;
+        const container = document.getElementById(containerId);
+        if (!container) return;
+
+        // Clean up previous map instance on this container if it exists
+        const oldMap = (window as any)[`currentMapPicker_${idx}`];
+        if (oldMap) {
+          try { oldMap.remove(); } catch (e) {}
+        }
+
+        const mapInstance = L.map(containerId).setView([initialLat, initialLng], 13);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        }).addTo(mapInstance);
+
+        const customIcon = L.icon({
+          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+        });
+
+        let markerInstance = L.marker([initialLat, initialLng], { icon: customIcon }).addTo(mapInstance);
+
+        mapInstance.on('click', (e: any) => {
+          const { lat, lng } = e.latlng;
+          setMultiProperties((prev) => {
+            const copy = [...prev];
+            copy[idx] = { ...copy[idx], lat, lng };
+            return copy;
+          });
+          markerInstance.setLatLng([lat, lng]);
+        });
+
+        mapInstance.invalidateSize();
+        setTimeout(() => mapInstance.invalidateSize(), 150);
+
+        (window as any)[`currentMapPicker_${idx}`] = mapInstance;
+      }, 100);
+
+      timers.push(timer);
+    });
+
+    return () => {
+      timers.forEach(clearTimeout);
+      activePickers.forEach((p) => {
+        const idx = p.idx;
+        const mapInst = (window as any)[`currentMapPicker_${idx}`];
+        if (mapInst) {
+          try { mapInst.remove(); } catch (e) {}
+          (window as any)[`currentMapPicker_${idx}`] = null;
+        }
+      });
+    };
+  }, [mapReady, orderCategory, multiProperties.map(p => p.showPicker).join(',')]);
+
   // Inspector Task Map initialization with live routing and user location tracking
   useEffect(() => {
     if (mapReady && activeTask && activeTask.property?.claim_data?.location) {
@@ -420,61 +534,154 @@ export default function DashboardPage() {
     }
   };
 
-  const handleCreateRequest = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePaymentAndOrder = async () => {
     setRequestLoading(true);
     setRequestError('');
 
     try {
-      const claim_data = {
-        location: selectedLat && selectedLng ? {
-          latitude: selectedLat,
-          longitude: selectedLng
-        } : null,
-        fasilitas: {
-          kasur: { ada: claims.kasur },
-          lemari: { ada: claims.lemari },
-          ac: { ada: claims.ac },
-          wifi: { ada: claims.wifi },
-          kamar_mandi_dalam: { ada: claims.kamar_mandi_dalam },
-          kualitas_air: { nilai: Number(tdsExpectation) },
-          kecepatan_internet: { nilai: Number(internetExpectation) },
-        },
-      };
+      const comparisonId = `comp_${Date.now()}`;
 
-      const propResponse = await api.post('/properties', {
-        name: propertyName,
-        address: propertyAddress,
-        description: propertyDesc,
-        claim_data,
-      });
+      if (orderCategory === 'single') {
+        const claim_data = {
+          location: selectedLat && selectedLng ? {
+            latitude: selectedLat,
+            longitude: selectedLng
+          } : null,
+          fasilitas: {
+            kasur: { ada: claims.kasur },
+            lemari: { ada: claims.lemari },
+            ac: { ada: claims.ac },
+            wifi: { ada: claims.wifi },
+            kamar_mandi_dalam: { ada: claims.kamar_mandi_dalam },
+            kualitas_air: { nilai: Number(tdsExpectation) },
+            kecepatan_internet: { nilai: Number(internetExpectation) },
+          },
+        };
 
-      const { property_id } = propResponse.data;
+        const propResponse = await api.post('/properties', {
+          name: propertyName,
+          address: propertyAddress,
+          description: propertyDesc,
+          claim_data,
+        });
 
-      await api.post('/inspections', { property_id });
+        const { property_id } = propResponse.data;
+        await api.post('/inspections', { property_id });
+      } else {
+        // Multi-Kos
+        for (const p of multiProperties) {
+          const claim_data = {
+            comparison_id: comparisonId,
+            location: p.lat && p.lng ? {
+              latitude: p.lat,
+              longitude: p.lng
+            } : null,
+            fasilitas: {
+              kasur: { ada: p.claims.kasur },
+              lemari: { ada: p.claims.lemari },
+              ac: { ada: p.claims.ac },
+              wifi: { ada: p.claims.wifi },
+              kamar_mandi_dalam: { ada: p.claims.kamar_mandi_dalam },
+              kualitas_air: { nilai: Number(p.tdsExpectation) },
+              kecepatan_internet: { nilai: Number(p.internetExpectation) },
+            },
+          };
+
+          const propResponse = await api.post('/properties', {
+            name: p.name,
+            address: p.address,
+            description: p.description,
+            claim_data,
+          });
+
+          const { property_id } = propResponse.data;
+          await api.post('/inspections', { property_id });
+        }
+      }
 
       await fetchInspections();
-      setShowRequestModal(false);
-      setPropertyName('');
-      setPropertyAddress('');
-      setPropertyDesc('');
-      setClaims({
-        kasur: true,
-        lemari: true,
-        ac: false,
-        wifi: false,
-        kamar_mandi_dalam: false,
-      });
-      setTdsExpectation(500);
-      setInternetExpectation(10);
-      setSelectedLat(null);
-      setSelectedLng(null);
-      setShowMapPicker(false);
+      
+      // Move to matching search step
+      setCurrentStepModal(4);
+      setMatchingStatus('searching');
+      
+      setTimeout(() => {
+        setMatchingStatus('found');
+        setMockInspector({
+          name: 'Rian Hidayat',
+          phone: '0812-3456-7890',
+          rating: '4.9',
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100',
+        });
+      }, 3000);
+
     } catch (err: any) {
       console.error(err);
-      setRequestError(err.response?.data?.message || 'Gagal mengirim permintaan inspeksi');
+      setRequestError(err.response?.data?.message || 'Gagal membuat order inspeksi');
+      setCurrentStepModal(2); // Fall back to form step
     } finally {
       setRequestLoading(false);
+    }
+  };
+
+  const handleCloseRequestModal = () => {
+    setShowRequestModal(false);
+    setCurrentStepModal(1);
+    setOrderCategory('single');
+    setMatchingStatus('');
+    setMockInspector(null);
+    setPropertyName('');
+    setPropertyAddress('');
+    setPropertyDesc('');
+    setClaims({
+      kasur: true,
+      lemari: true,
+      ac: false,
+      wifi: false,
+      kamar_mandi_dalam: false,
+    });
+    setTdsExpectation(500);
+    setInternetExpectation(10);
+    setSelectedLat(null);
+    setSelectedLng(null);
+    setShowMapPicker(false);
+    setMultiProperties([
+      {
+        name: '',
+        address: '',
+        description: '',
+        claims: { kasur: true, lemari: true, ac: false, wifi: false, kamar_mandi_dalam: false },
+        tdsExpectation: 500,
+        internetExpectation: 10,
+        lat: null,
+        lng: null,
+        showPicker: false,
+      },
+      {
+        name: '',
+        address: '',
+        description: '',
+        claims: { kasur: true, lemari: true, ac: false, wifi: false, kamar_mandi_dalam: false },
+        tdsExpectation: 500,
+        internetExpectation: 10,
+        lat: null,
+        lng: null,
+        showPicker: false,
+      }
+    ]);
+  };
+
+  const handleAcceptOrder = async (inspectionId: string) => {
+    try {
+      setAcceptingTaskLoading((prev) => ({ ...prev, [inspectionId]: true }));
+      await api.patch(`/inspections/${inspectionId}/status`, {
+        status: 'assigned',
+      });
+      await fetchInspections();
+    } catch (err) {
+      console.error('Failed to accept order:', err);
+    } finally {
+      setAcceptingTaskLoading((prev) => ({ ...prev, [inspectionId]: false }));
     }
   };
 
@@ -731,9 +938,31 @@ export default function DashboardPage() {
     ? auditedInspections.reduce((acc, curr) => acc + Number(curr.audit_report.score || 0), 0) / totalAudited 
     : 0;
 
-  const hasCompletedLocations = inspections.some(
-    (i) => i.status === 'completed' && i.property?.claim_data?.location?.latitude
-  );
+  const displayedInspections = role === 'inspektur'
+    ? (activeTabInspector === 'my_tasks'
+        ? inspections.filter(i => i.inspector_id !== null)
+        : inspections.filter(i => i.inspector_id === null))
+    : inspections;
+
+  // Group completed inspections by comparison_id for Mahasiswa
+  const mahasiswaCompleted = inspections.filter(i => i.status === 'completed');
+  const comparisonGroups: Record<string, any[]> = {};
+  mahasiswaCompleted.forEach(insp => {
+    const compId = insp.property?.claim_data?.comparison_id;
+    if (compId) {
+      if (!comparisonGroups[compId]) {
+        comparisonGroups[compId] = [];
+      }
+      comparisonGroups[compId].push(insp);
+    }
+  });
+
+  const validComparisonGroups = Object.keys(comparisonGroups)
+    .map(key => ({
+      id: key,
+      items: comparisonGroups[key]
+    }))
+    .filter(g => g.items.length >= 2);
 
   return (
     <div className="min-h-screen bg-[#080c14] text-gray-100 font-sans flex flex-col selection:bg-blue-600/30 selection:text-blue-200">
@@ -831,40 +1060,112 @@ export default function DashboardPage() {
                 </div>
               )}
 
+              {role === 'mahasiswa' && validComparisonGroups.length > 0 && (
+                <div className="bg-[#0c1220]/75 border border-indigo-900/35 rounded-2xl p-5 shadow-2xl backdrop-blur-md mb-6 relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                  <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500" />
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-4 flex items-center gap-2">
+                    <Sparkles className="h-4 w-4 text-indigo-400 animate-pulse" />
+                    Analisis Perbandingan Multi-Kos Anda
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {validComparisonGroups.map((group) => {
+                      const names = group.items.map(i => i.property.name).join(' vs ');
+                      return (
+                        <div key={group.id} className="p-4 bg-[#090d16]/80 border border-gray-800 rounded-xl flex items-center justify-between gap-4">
+                          <div className="space-y-1 min-w-0">
+                            <p className="text-xs font-extrabold text-white truncate">{names}</p>
+                            <p className="text-[10px] text-gray-500 font-medium">Membandingkan {group.items.length} properti kos</p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              setSelectedComparisonGroup(group.items);
+                              setShowComparisonModal(true);
+                            }}
+                            className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-550 text-white font-bold text-[9px] rounded-lg tracking-wider uppercase shrink-0 transition-all cursor-pointer shadow-md hover:scale-[1.02]"
+                          >
+                            Bandingkan
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               <div className="bg-[#0c1220]/70 border border-gray-800/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
-                <div className="flex items-center justify-between mb-6 border-b border-gray-800 pb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-gray-800 pb-4">
                   <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2">
                     <ClipboardList className="h-4 w-4 text-blue-500" />
-                    Daftar Permintaan Inspeksi ({inspections.length})
+                    Daftar Permintaan Inspeksi ({displayedInspections.length})
                   </h2>
-                  <button
-                    onClick={fetchInspections}
-                    className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-[#0f172a] border border-gray-850 hover:border-gray-800 transition-all"
-                  >
-                    <RefreshCw className="h-3.5 w-3.5" />
-                  </button>
+                  
+                  <div className="flex items-center gap-2">
+                    {role === 'inspektur' && (
+                      <div className="flex bg-[#090d16] p-0.5 rounded-lg border border-gray-800">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveTabInspector('my_tasks');
+                            setActiveTask(null);
+                          }}
+                          className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider rounded-md transition-all ${
+                            activeTabInspector === 'my_tasks'
+                              ? 'bg-blue-600 text-white shadow-sm'
+                              : 'text-gray-400 hover:text-white'
+                          }`}
+                        >
+                          📋 Tugas Saya
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveTabInspector('available_orders');
+                            setActiveTask(null);
+                          }}
+                          className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider rounded-md transition-all ${
+                            activeTabInspector === 'available_orders'
+                              ? 'bg-amber-600 text-white shadow-sm'
+                              : 'text-gray-400 hover:text-white'
+                          }`}
+                        >
+                          🔔 Orderan Baru
+                        </button>
+                      </div>
+                    )}
+                    <button
+                      onClick={fetchInspections}
+                      className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-[#0f172a] border border-gray-850 hover:border-gray-800 transition-all"
+                    >
+                      <RefreshCw className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
 
-                {inspections.length === 0 ? (
+                {displayedInspections.length === 0 ? (
                   <div className="text-center py-16 bg-[#090d16] rounded-xl border border-dashed border-gray-850">
                     <Building className="h-10 w-10 text-gray-650 mx-auto mb-3" />
                     <p className="text-xs font-bold text-gray-400 mb-1">Belum Ada Sesi Inspeksi</p>
                     <p className="text-[10px] text-gray-500 max-w-xs mx-auto leading-relaxed">
                       {role === 'mahasiswa'
                         ? 'Ajukan inspeksi kos pertama Anda dengan mengklik tombol "Ajukan Inspeksi" di pojok kanan atas.'
-                        : 'Tidak ada tugas verifikasi yang ditugaskan kepada Anda saat ini.'}
+                        : (activeTabInspector === 'my_tasks'
+                          ? 'Tidak ada tugas verifikasi aktif yang sedang Anda tangani.'
+                          : 'Tidak ada pesanan inspeksi baru (Gojek-style) yang tersedia saat ini.')}
                     </p>
                   </div>
                 ) : (
                   <div className="space-y-3">
-                    {inspections.map((insp: any) => {
+                    {displayedInspections.map((insp: any) => {
                       const isActive = activeTask?.inspection_id === insp.inspection_id;
+                      const isUnassigned = insp.inspector_id === null;
                       return (
                         <div
                           key={insp.inspection_id}
                           className={`p-4 rounded-xl border transition-all ${
                             isActive
                               ? 'border-blue-500 bg-blue-950/10 shadow-[0_0_15px_-3px_rgba(59,130,246,0.1)]'
+                              : isUnassigned
+                              ? 'border-amber-900/40 bg-amber-955/5 hover:border-amber-700/60'
                               : 'border-gray-800/80 bg-[#090e1a]/60 hover:border-gray-700/80'
                           }`}
                         >
@@ -874,21 +1175,27 @@ export default function DashboardPage() {
                                 <span className="text-xs font-bold text-white">
                                   {insp.property?.name || 'Properti Tanpa Nama'}
                                 </span>
-                                <span
-                                  className={`text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${
-                                    insp.status === 'completed'
-                                      ? 'bg-emerald-955 text-emerald-400 border border-emerald-900/50'
+                                {isUnassigned ? (
+                                  <span className="text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider bg-amber-950 text-amber-400 border border-amber-900/60 animate-pulse">
+                                    Tersedia (Gojek Match)
+                                  </span>
+                                ) : (
+                                  <span
+                                    className={`text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${
+                                      insp.status === 'completed'
+                                        ? 'bg-emerald-955 text-emerald-400 border border-emerald-900/50'
+                                        : insp.status === 'in_progress'
+                                        ? 'bg-blue-950 text-blue-400 border border-blue-900/60 animate-pulse'
+                                        : 'bg-amber-955 text-amber-400 border border-amber-900/60'
+                                    }`}
+                                  >
+                                    {insp.status === 'completed'
+                                      ? 'Selesai'
                                       : insp.status === 'in_progress'
-                                      ? 'bg-blue-950 text-blue-400 border border-blue-900/60 animate-pulse'
-                                      : 'bg-amber-955 text-amber-400 border border-amber-900/60'
-                                  }`}
-                                >
-                                  {insp.status === 'completed'
-                                    ? 'Selesai'
-                                    : insp.status === 'in_progress'
-                                    ? 'Proses'
-                                    : 'Ditugaskan'}
-                                </span>
+                                      ? 'Proses'
+                                      : 'Ditugaskan'}
+                                  </span>
+                                )}
                               </div>
                               <p className="text-[10px] text-gray-400 flex items-center gap-1">
                                 <MapPin className="h-3 w-3 text-gray-500" />
@@ -909,18 +1216,32 @@ export default function DashboardPage() {
                             <div className="flex items-center gap-2.5 self-end sm:self-auto">
                               {role === 'inspektur' && (
                                 <>
-                                  {insp.status !== 'completed' && !isActive && (
+                                  {isUnassigned ? (
                                     <button
-                                      onClick={() => handleSelectTask(insp)}
-                                      className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-white hover:bg-gray-100 text-gray-955 rounded-lg transition-all cursor-pointer"
+                                      onClick={() => handleAcceptOrder(insp.inspection_id)}
+                                      disabled={acceptingTaskLoading[insp.inspection_id]}
+                                      className="px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-wider bg-amber-500 hover:bg-amber-400 disabled:bg-amber-900/40 text-black rounded-lg transition-all cursor-pointer shadow-md flex items-center gap-1 hover:scale-[1.02]"
                                     >
-                                      Buka Kerja
+                                      {acceptingTaskLoading[insp.inspection_id] ? (
+                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                      ) : '⚡ Terima Orderan'}
                                     </button>
-                                  )}
-                                  {isActive && (
-                                    <span className="text-[10px] font-bold text-blue-400 flex items-center gap-1 bg-blue-950/40 border border-blue-900/40 px-2 py-1 rounded-md">
-                                      <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-ping" /> SEDANG AKTIF
-                                    </span>
+                                  ) : (
+                                    <>
+                                      {insp.status !== 'completed' && !isActive && (
+                                        <button
+                                          onClick={() => handleSelectTask(insp)}
+                                          className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-white hover:bg-gray-100 text-gray-955 rounded-lg transition-all cursor-pointer"
+                                        >
+                                          Buka Kerja
+                                        </button>
+                                      )}
+                                      {isActive && (
+                                        <span className="text-[10px] font-bold text-blue-400 flex items-center gap-1 bg-blue-950/40 border border-blue-900/40 px-2 py-1 rounded-md">
+                                          <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-ping" /> SEDANG AKTIF
+                                        </span>
+                                      )}
+                                    </>
                                   )}
                                 </>
                               )}
@@ -1473,16 +1794,24 @@ export default function DashboardPage() {
         )}
       </main>
 
-      {/* Modal - Request Inspection (Mahasiswa) */}
+       {/* Modal - Request Inspection (Mahasiswa) - Gojek Style Wizard */}
       {showRequestModal && (
         <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-40 backdrop-blur-sm">
           <div className="bg-[#0c1220] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative border border-gray-800 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-            <h3 className="text-sm font-bold uppercase tracking-wider text-white mb-2">
-              Ajukan Permintaan Inspeksi Baru
-            </h3>
-            <p className="text-[10px] text-gray-400 mb-5 leading-relaxed">
-              Mendaftarkan properti kos baru dan klaim fasilitas iklan. Data ini akan diverifikasi di lapangan oleh tim inspektur kami.
-            </p>
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between border-b border-gray-800 pb-3 mb-4">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
+                <span>⚡ Pesan Verifikator Kos (Gojek-Style)</span>
+              </h3>
+              <button
+                type="button"
+                onClick={handleCloseRequestModal}
+                className="text-gray-400 hover:text-white font-bold text-[10px] uppercase tracking-wider"
+              >
+                Tutup
+              </button>
+            </div>
 
             {requestError && (
               <div className="mb-4 p-3 text-xs text-red-400 bg-red-955/20 border border-red-900/30 rounded-xl text-center font-bold">
@@ -1490,162 +1819,644 @@ export default function DashboardPage() {
               </div>
             )}
 
-            <form onSubmit={handleCreateRequest} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Nama Properti Kos
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={propertyName}
-                  onChange={(e) => setPropertyName(e.target.value)}
-                  placeholder="Contoh: Kos Anggrek Indah TRPL"
-                  className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white placeholder-gray-600 focus:outline-none"
-                />
-              </div>
+            {/* STEP 1: CATEGORY SELECTION */}
+            {currentStepModal === 1 && (
+              <div className="space-y-5 py-2">
+                <p className="text-[10px] text-gray-400 leading-relaxed">
+                  Pilih jenis layanan verifikasi kos yang Anda inginkan. Sistem kami akan menghubungkan Anda dengan Inspektur terdekat untuk melakukan audit langsung di lapangan.
+                </p>
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Alamat Lengkap
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={propertyAddress}
-                  onChange={(e) => setPropertyAddress(e.target.value)}
-                  placeholder="Jl. Limau Manis Kec. Pauh No. 40, Kota Padang"
-                  className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white placeholder-gray-650 focus:outline-none"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between mb-1">
-                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                    Lokasi Koordinat Kos (Maps)
+                <div className="grid grid-cols-1 gap-4">
+                  {/* Single Kos Option */}
+                  <label
+                    onClick={() => setOrderCategory('single')}
+                    className={`p-4 rounded-xl border flex items-center gap-4 cursor-pointer transition-all ${
+                      orderCategory === 'single'
+                        ? 'border-blue-500 bg-blue-950/10'
+                        : 'border-gray-800 bg-[#090e1a]/40 hover:border-gray-700'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="orderCategory"
+                      checked={orderCategory === 'single'}
+                      onChange={() => setOrderCategory('single')}
+                      className="hidden"
+                    />
+                    <div className="h-9 w-9 rounded-lg bg-blue-950/40 border border-blue-900/50 flex items-center justify-center shrink-0 text-lg">
+                      🏠
+                    </div>
+                    <div className="text-left flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-white block">Inspeksi Tunggal</span>
+                        <span className="text-[10px] font-black text-blue-400">Rp 50.000</span>
+                      </div>
+                      <span className="text-[9px] text-gray-500 block leading-relaxed mt-0.5">
+                        Verifikasi 1 properti kos. Dapatkan scorecard Gemini AI untuk fasilitas iklan.
+                      </span>
+                    </div>
                   </label>
+
+                  {/* Multi-Kos Option */}
+                  <label
+                    onClick={() => setOrderCategory('multi')}
+                    className={`p-4 rounded-xl border flex items-center gap-4 cursor-pointer transition-all ${
+                      orderCategory === 'multi'
+                        ? 'border-blue-500 bg-blue-950/10'
+                        : 'border-gray-800 bg-[#090e1a]/40 hover:border-gray-700'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="orderCategory"
+                      checked={orderCategory === 'multi'}
+                      onChange={() => setOrderCategory('multi')}
+                      className="hidden"
+                    />
+                    <div className="h-9 w-9 rounded-lg bg-purple-950/40 border border-purple-900/50 flex items-center justify-center shrink-0 text-lg">
+                      🏢
+                    </div>
+                    <div className="text-left flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-white block">Multi-Kos (Grup Banding)</span>
+                        <span className="text-[10px] font-black text-purple-400">Rp 45.000 <span className="text-[8px] font-normal text-gray-400">/ kos</span></span>
+                      </div>
+                      <span className="text-[9px] text-gray-500 block leading-relaxed mt-0.5">
+                        Verifikasi 2 sampai 5 kos secara bersamaan. Dapatkan lembar perbandingan dasbor interaktif.
+                      </span>
+                    </div>
+                  </label>
+                </div>
+
+                <div className="flex justify-end pt-3">
                   <button
                     type="button"
-                    onClick={() => setShowMapPicker(!showMapPicker)}
-                    className="text-[9px] text-blue-400 hover:underline font-bold"
+                    onClick={() => setCurrentStepModal(2)}
+                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider"
                   >
-                    📍 {showMapPicker ? 'Tutup Peta' : 'Pilih di Peta'}
+                    Lanjut Pengisian Form
                   </button>
                 </div>
+              </div>
+            )}
+
+            {/* STEP 2: FILL FORMS */}
+            {currentStepModal === 2 && (
+              <div className="space-y-4 py-2">
                 
-                {showMapPicker && (
-                  <div className="border border-gray-800 rounded-xl p-2 bg-[#090d16] space-y-2">
-                    <div
-                      id="map-picker-container"
-                      className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-gray-855 z-10"
-                      style={{ minHeight: '192px' }}
-                    />
-                    <p className="text-[8px] text-gray-500 text-center font-mono">
-                      Klik pada peta untuk memindahkan pin lokasi kos.
-                    </p>
+                {orderCategory === 'single' ? (
+                  /* Form Single Kos */
+                  <form onSubmit={(e) => { e.preventDefault(); setCurrentStepModal(3); }} className="space-y-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Nama Properti Kos</label>
+                      <input
+                        type="text"
+                        required
+                        value={propertyName}
+                        onChange={(e) => setPropertyName(e.target.value)}
+                        placeholder="Contoh: Kos Anggrek Indah TRPL"
+                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Alamat Lengkap</label>
+                      <input
+                        type="text"
+                        required
+                        value={propertyAddress}
+                        onChange={(e) => setPropertyAddress(e.target.value)}
+                        placeholder="Jl. Limau Manis No. 40, Padang"
+                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Lokasi Koordinat Kos</label>
+                        <button
+                          type="button"
+                          onClick={() => setShowMapPicker(!showMapPicker)}
+                          className="text-[9px] text-blue-400 hover:underline font-bold"
+                        >
+                          📍 {showMapPicker ? 'Tutup Peta' : 'Pilih di Peta'}
+                        </button>
+                      </div>
+                      {showMapPicker && (
+                        <div className="border border-gray-800 rounded-xl p-2 bg-[#090d16] space-y-2">
+                          <div
+                            id="map-picker-container"
+                            className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-gray-850 z-10"
+                            style={{ minHeight: '192px' }}
+                          />
+                        </div>
+                      )}
+                      <div className="grid grid-cols-2 gap-2">
+                        <input type="text" readOnly placeholder="Latitude" value={selectedLat ? selectedLat.toFixed(6) : ''} className="w-full px-3 py-2 bg-[#080d1a] border border-gray-850 rounded-xl text-xs text-gray-400 font-mono" />
+                        <input type="text" readOnly placeholder="Longitude" value={selectedLng ? selectedLng.toFixed(6) : ''} className="w-full px-3 py-2 bg-[#080d1a] border border-gray-850 rounded-xl text-xs text-gray-400 font-mono" />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Deskripsi Fasilitas Iklan</label>
+                      <textarea
+                        value={propertyDesc}
+                        onChange={(e) => setPropertyDesc(e.target.value)}
+                        placeholder="Catatan mengenai fasilitas..."
+                        rows={2}
+                        className="w-full px-3.5 py-2 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase block font-mono border-b border-gray-850 pb-1">Klaim Fasilitas Iklan</label>
+                      <div className="grid grid-cols-2 gap-2">
+                        {Object.keys(claims).map((facility) => (
+                          <label key={facility} className="flex items-center gap-2 p-2 bg-[#090e1a] border border-gray-850 rounded-xl text-[10px] text-gray-300 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={(claims as any)[facility]}
+                              onChange={(e) => setClaims({ ...claims, [facility]: e.target.checked })}
+                              className="rounded border-gray-800 text-blue-600 focus:ring-0 bg-gray-900"
+                            />
+                            <span className="capitalize">{facility.replace(/_/g, ' ')}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="text-[9px] font-bold text-gray-400 block font-mono uppercase">TDS Air (ppm)</label>
+                        <input type="number" required value={tdsExpectation} onChange={(e) => setTdsExpectation(Number(e.target.value))} className="w-full px-3 py-2 bg-[#080d1a] border border-gray-805 rounded-xl text-xs text-white" />
+                      </div>
+                      <div>
+                        <label className="text-[9px] font-bold text-gray-400 block font-mono uppercase">Wifi (Mbps)</label>
+                        <input type="number" required value={internetExpectation} onChange={(e) => setInternetExpectation(Number(e.target.value))} className="w-full px-3 py-2 bg-[#080d1a] border border-gray-805 rounded-xl text-xs text-white" />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between border-t border-gray-850 pt-4 mt-6">
+                      <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-white uppercase">Kembali</button>
+                      <button type="submit" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider">Lanjut Bayar</button>
+                    </div>
+                  </form>
+                ) : (
+                  /* Form Multi-Kos */
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">Mendaftarkan {multiProperties.length} Kos</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (multiProperties.length >= 5) return;
+                          setMultiProperties([...multiProperties, {
+                            name: '', address: '', description: '',
+                            claims: { kasur: true, lemari: true, ac: false, wifi: false, kamar_mandi_dalam: false },
+                            tdsExpectation: 500, internetExpectation: 10, lat: null, lng: null, showPicker: false
+                          }]);
+                        }}
+                        className="text-[9px] bg-indigo-950 text-indigo-400 border border-indigo-900/60 font-bold px-2.5 py-1.5 rounded-lg hover:bg-indigo-900/40"
+                      >
+                        ➕ Tambah Kos
+                      </button>
+                    </div>
+
+                    <div className="space-y-4 max-h-[42vh] overflow-y-auto pr-1">
+                      {multiProperties.map((p, idx) => (
+                        <div key={idx} className="p-4 bg-[#090d16]/70 border border-gray-850 rounded-xl space-y-3 relative">
+                          <div className="flex items-center justify-between border-b border-gray-850 pb-2">
+                            <span className="text-[10px] font-bold text-white uppercase">Kos Properti #{idx + 1}</span>
+                            {multiProperties.length > 2 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const copy = [...multiProperties];
+                                  copy.splice(idx, 1);
+                                  setMultiProperties(copy);
+                                }}
+                                className="text-[9px] text-red-400 font-bold hover:underline"
+                              >
+                                Hapus
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="space-y-2">
+                            <input
+                              type="text"
+                              required
+                              placeholder="Nama Kos (Contoh: Kos Sakura)"
+                              value={p.name}
+                              onChange={(e) => {
+                                const copy = [...multiProperties];
+                                copy[idx].name = e.target.value;
+                                setMultiProperties(copy);
+                              }}
+                              className="w-full px-3 py-2 bg-[#080d1a] border border-gray-850 rounded-lg text-xs text-white"
+                            />
+                            <input
+                              type="text"
+                              required
+                              placeholder="Alamat Lengkap Kos"
+                              value={p.address}
+                              onChange={(e) => {
+                                const copy = [...multiProperties];
+                                copy[idx].address = e.target.value;
+                                setMultiProperties(copy);
+                              }}
+                              className="w-full px-3 py-2 bg-[#080d1a] border border-gray-850 rounded-lg text-xs text-white"
+                            />
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[9px] font-bold text-gray-500 uppercase font-mono">Pin Lokasi</span>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const copy = [...multiProperties];
+                                  copy[idx].showPicker = !copy[idx].showPicker;
+                                  setMultiProperties(copy);
+                                }}
+                                className="text-[9px] text-blue-400 font-bold hover:underline"
+                              >
+                                {p.showPicker ? 'Tutup Peta' : '📍 Pilih di Peta'}
+                              </button>
+                            </div>
+                            {p.showPicker && (
+                              <div className="border border-gray-850 rounded-xl p-2 bg-[#090d16] space-y-2">
+                                <div
+                                  id={`map-picker-container-${idx}`}
+                                  className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-gray-850 z-10"
+                                  style={{ minHeight: '192px' }}
+                                />
+                              </div>
+                            )}
+                            <div className="grid grid-cols-2 gap-2 text-[9px] font-mono text-gray-500">
+                              <span>Lat: {p.lat ? p.lat.toFixed(5) : '-'}</span>
+                              <span>Lng: {p.lng ? p.lng.toFixed(5) : '-'}</span>
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <span className="text-[9px] font-bold text-gray-400 block font-mono border-b border-gray-850 pb-0.5">Fasilitas</span>
+                            <div className="grid grid-cols-3 gap-1.5">
+                              {Object.keys(p.claims).map((facility) => (
+                                <label key={facility} className="flex items-center gap-1 p-1 bg-[#090e1a] border border-gray-850 rounded-lg text-[9px] text-gray-300 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={(p.claims as any)[facility]}
+                                    onChange={(e) => {
+                                      const copy = [...multiProperties];
+                                      copy[idx].claims[facility] = e.target.checked;
+                                      setMultiProperties(copy);
+                                    }}
+                                    className="rounded border-gray-800 text-blue-600 focus:ring-0 scale-75 bg-gray-900"
+                                  />
+                                  <span className="capitalize truncate">{facility.replace(/_/g, ' ')}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center justify-between border-t border-gray-850 pt-4 mt-6">
+                      <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-white uppercase">Kembali</button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          // Verify that all forms are filled
+                          const invalid = multiProperties.some(p => !p.name || !p.address);
+                          if (invalid) {
+                            setRequestError('Mohon isi nama dan alamat untuk semua properti kos!');
+                            return;
+                          }
+                          setRequestError('');
+                          setCurrentStepModal(3);
+                        }}
+                        className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider"
+                      >
+                        Lanjut Bayar
+                      </button>
+                    </div>
                   </div>
                 )}
+              </div>
+            )}
 
-                <div className="grid grid-cols-2 gap-2.5">
-                  <input
-                    type="text"
-                    placeholder="Latitude"
-                    readOnly
-                    value={selectedLat !== null ? selectedLat.toFixed(6) : ''}
-                    className="w-full px-3.5 py-2 bg-[#080d1a] border border-gray-805 rounded-xl text-xs text-gray-400 font-mono"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Longitude"
-                    readOnly
-                    value={selectedLng !== null ? selectedLng.toFixed(6) : ''}
-                    className="w-full px-3.5 py-2 bg-[#080d1a] border border-gray-805 rounded-xl text-xs text-gray-400 font-mono"
-                  />
+            {/* STEP 3: QRIS PAYMENT */}
+            {currentStepModal === 3 && (
+              <div className="space-y-5 py-2 text-center">
+                <div className="p-4 bg-[#090d16] border border-gray-850 rounded-xl text-left space-y-2">
+                  <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono">Invoice Ringkasan Transaksi</h4>
+                  <div className="text-xs space-y-1">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Jenis Layanan:</span>
+                      <span className="text-white font-bold">{orderCategory === 'single' ? 'Inspeksi Tunggal (1 Properti)' : `Multi-Kos (${multiProperties.length} Properti)`}</span>
+                    </div>
+                    <div className="flex justify-between border-t border-gray-850 pt-1 mt-1 font-extrabold text-sm">
+                      <span className="text-gray-300">Total Tagihan:</span>
+                      <span className="text-emerald-400">
+                        {orderCategory === 'single' ? 'Rp 50.000' : `Rp ${(multiProperties.length * 45000).toLocaleString('id-ID')}`}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border border-gray-800 rounded-2xl p-5 bg-white max-w-[240px] mx-auto space-y-3 shadow-inner">
+                  {/* Mock QRIS Header */}
+                  <div className="flex items-center justify-between border-b border-gray-200 pb-1.5">
+                    <span className="text-xs font-extrabold text-[#da251d]">QRIS</span>
+                    <span className="text-[8px] font-black text-blue-900 font-mono">GPN</span>
+                  </div>
+                  
+                  {/* QRIS Code Image representation */}
+                  <div className="p-2 border border-gray-100 rounded-lg flex items-center justify-center bg-white relative">
+                    <svg width="140" height="140" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="1.6" strokeLinecap="square">
+                      <path d="M2 2h6v6H2z M16 2h6v6h-6z M2 16h6v6H2z M12 2v2 M12 6h2 M20 12h2 M12 12h2 M16 12h2 M12 16h2 M16 16v4 M20 20h2" />
+                      <path d="M4 4h2v2H4z M18 4h2v2h-2z M4 18h2v2H4z" fill="black" />
+                    </svg>
+                  </div>
+
+                  <p className="text-[8px] text-gray-500 font-bold uppercase tracking-wider font-mono">
+                    INSPEKSIKOS ON-DEMAND<br />
+                    NMID: ID1020304050
+                  </p>
+                </div>
+
+                <p className="text-[9px] text-gray-400 max-w-xs mx-auto leading-relaxed">
+                  Silakan scan QRIS di atas menggunakan dompet digital Anda (Gopay, OVO, Dana) untuk menyelesaikan transaksi booking inspektur lapangan.
+                </p>
+
+                <div className="flex items-center justify-between border-t border-gray-850 pt-4 mt-6">
+                  <button type="button" onClick={() => setCurrentStepModal(2)} className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-white uppercase">Kembali</button>
+                  <button
+                    type="button"
+                    onClick={handlePaymentAndOrder}
+                    disabled={requestLoading}
+                    className="px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1 shadow-md shadow-emerald-500/10 cursor-pointer w-48"
+                  >
+                    {requestLoading && <Loader2 className="h-3 w-3 animate-spin" />}
+                    Konfirmasi Bayar
+                  </button>
                 </div>
               </div>
+            )}
 
-              <div className="space-y-1.5">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
-                  Deskripsi / Catatan Iklan
-                </label>
-                <textarea
-                  value={propertyDesc}
-                  onChange={(e) => setPropertyDesc(e.target.value)}
-                  placeholder="Kamar berukuran 3x4 meter, dekat gerbang utama..."
-                  rows={2}
-                  className="w-full px-3.5 py-2 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white placeholder-gray-650 focus:outline-none"
-                />
+            {/* STEP 4: RADAR MATCHING ANIMATION */}
+            {currentStepModal === 4 && (
+              <div className="space-y-6 py-6 text-center">
+                
+                {matchingStatus === 'searching' ? (
+                  <div className="space-y-6">
+                    <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
+                      {/* Radar pulses */}
+                      <span className="absolute inset-0 rounded-full bg-blue-500/20 animate-ping" style={{ animationDuration: '2s' }} />
+                      <span className="absolute inset-2 rounded-full bg-indigo-500/30 animate-pulse" style={{ animationDuration: '1.5s' }} />
+                      <div className="relative h-12 w-12 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 border border-blue-400">
+                        <Loader2 className="h-5 w-5 text-white animate-spin" />
+                      </div>
+                    </div>
+
+                    <div className="space-y-1">
+                      <h4 className="text-xs font-extrabold text-white uppercase tracking-wider">Mencari Inspektur...</h4>
+                      <p className="text-[9px] text-gray-500 max-w-xs mx-auto leading-relaxed">
+                        Menghubungkan dengan verifikasi bersertifikat terdekat dari lokasi kosan untuk langsung mengaudit ke lapangan.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-6 animate-in zoom-in-95 duration-200">
+                    <div className="h-12 w-12 rounded-full bg-emerald-950 border border-emerald-900/60 flex items-center justify-center mx-auto text-xl shadow-lg shadow-emerald-900/20 text-emerald-400">
+                      ✔
+                    </div>
+
+                    <div className="space-y-1">
+                      <h4 className="text-xs font-extrabold text-white uppercase tracking-wider text-emerald-400">Inspektur Ditemukan!</h4>
+                      <p className="text-[9px] text-gray-500 max-w-xs mx-auto leading-relaxed">
+                        Inspektur mitra kami telah menerima pesanan verifikasi Anda.
+                      </p>
+                    </div>
+
+                    {/* Driver Card */}
+                    {mockInspector && (
+                      <div className="p-4 bg-[#090d16] border border-gray-850 rounded-xl flex items-center gap-4 text-left max-w-xs mx-auto">
+                        <img src={mockInspector.avatar} alt={mockInspector.name} className="w-10 h-10 rounded-full border border-gray-800 object-cover" />
+                        <div className="flex-1 min-w-0">
+                          <span className="text-[10px] font-extrabold text-white block truncate">{mockInspector.name}</span>
+                          <span className="text-[9px] text-gray-500 font-medium block">⭐ {mockInspector.rating} • Mitra Lapangan</span>
+                          <span className="text-[9px] text-blue-400 font-mono block mt-0.5">{mockInspector.phone}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={handleCloseRequestModal}
+                        className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider cursor-pointer"
+                      >
+                        Selesai & Ke Dasbor
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
+            )}
+          </div>
+        </div>
+      )}
 
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block font-mono border-b border-gray-855 pb-1">
-                  Fasilitas Yang Terpasang di Iklan
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  {Object.keys(claims).map((facility) => (
-                    <label
-                      key={facility}
-                      className="flex items-center gap-2 p-2 bg-[#090e1a] border border-gray-855 rounded-xl text-[10px] font-semibold text-gray-300 cursor-pointer hover:bg-gray-850 transition-all"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={(claims as any)[facility]}
-                        onChange={(e) =>
-                          setClaims({ ...claims, [facility]: e.target.checked })
-                        }
-                        className="rounded border-gray-800 text-blue-600 focus:ring-0 focus:ring-offset-0 bg-gray-900"
-                      />
-                      <span className="capitalize">{facility.replace(/_/g, ' ')}</span>
-                    </label>
-                  ))}
+      {/* Modal - Multi-Kos Comparison Panel */}
+      {showComparisonModal && selectedComparisonGroup.length >= 2 && (
+        <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-40 backdrop-blur-sm">
+          <div className="bg-[#0c1220] rounded-2xl w-full max-w-4xl p-6 shadow-2xl relative border border-gray-800 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-5">
+              <div>
+                <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
+                  <Sparkles className="h-4 w-4 text-indigo-400 animate-pulse" />
+                  Hasil Analisis Komparatif Properti Kos
+                </h3>
+                <p className="text-[10px] text-gray-500 mt-1 leading-relaxed font-medium">
+                  Perbandingan data iklan vs hasil verifikasi lapangan (TDS air, Wifi speed, fasilitas) bersertifikasi AI.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowComparisonModal(false);
+                  setSelectedComparisonGroup([]);
+                }}
+                className="text-gray-400 hover:text-white font-extrabold text-[10px] uppercase tracking-wider"
+              >
+                Tutup
+              </button>
+            </div>
+
+            {/* Smart Recommendation Card */}
+            {(() => {
+              const sorted = [...selectedComparisonGroup].sort(
+                (a, b) => Number(b.audit_report?.score || 0) - Number(a.audit_report?.score || 0)
+              );
+              const bestKos = sorted[0];
+              return (
+                <div className="mb-6 p-4 bg-indigo-950/20 border border-indigo-900/30 rounded-xl relative overflow-hidden">
+                  <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[8px] font-extrabold px-3 py-1 uppercase rounded-bl-lg tracking-wider">
+                    Rekomendasi Terbaik
+                  </div>
+                  <h4 className="text-xs font-bold text-indigo-300 flex items-center gap-1.5 mb-1">
+                    🌟 Pilihan Utama: {bestKos.property.name}
+                  </h4>
+                  <p className="text-[10px] text-gray-400 leading-relaxed font-medium">
+                    Berdasarkan verifikasi lapangan, properti ini memiliki tingkat akreditasi tertinggi sebesar <strong className="text-emerald-400 font-extrabold">{bestKos.audit_report?.score}%</strong> dengan kualitas air bersih ({bestKos.tds_value} ppm) dan kecepatan internet ({bestKos.internet_speed} Mbps) yang paling unggul.
+                  </p>
                 </div>
-              </div>
+              );
+            })()}
 
-              <div className="grid grid-cols-2 gap-4 border-t border-gray-855 pt-4">
-                <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-gray-400 uppercase block font-mono">
-                    Klaim TDS Air (Maks ppm)
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    value={tdsExpectation}
-                    onChange={(e) => setTdsExpectation(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-[#080d1a] border border-gray-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[9px] font-bold text-gray-400 uppercase block font-mono">
-                    Klaim Speed Wifi (Min Mbps)
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    value={internetExpectation}
-                    onChange={(e) => setInternetExpectation(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-[#080d1a] border border-gray-800 rounded-lg text-xs text-white focus:outline-none focus:border-blue-500"
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 border-t border-gray-855 pt-4 mt-6">
-                <button
-                  type="button"
-                  onClick={() => setShowRequestModal(false)}
-                  className="px-4 py-2.5 text-xs font-bold text-gray-500 hover:text-white transition-all uppercase tracking-wider"
-                >
-                  Batal
-                </button>
-                <button
-                  type="submit"
-                  disabled={requestLoading}
-                  className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider flex items-center gap-1 shadow-md cursor-pointer"
-                >
-                  {requestLoading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-                  Kirim Permintaan
-                </button>
-              </div>
-            </form>
+            {/* Comparison Table */}
+            <div className="overflow-x-auto border border-gray-800 rounded-xl bg-[#090d16]/50 shadow-inner">
+              <table className="w-full text-left border-collapse text-[11px]">
+                <thead>
+                  <tr className="border-b border-gray-800 bg-gray-950/40 text-[9px] uppercase font-bold text-gray-400 tracking-wider">
+                    <th className="p-3 w-1/4">Parameter</th>
+                    {selectedComparisonGroup.map((insp) => (
+                      <th key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60 font-black text-white">
+                        {insp.property.name}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-850 font-medium">
+                  {/* Score */}
+                  <tr>
+                    <td className="p-3 font-semibold text-gray-300">Skor Akreditasi</td>
+                    {selectedComparisonGroup.map((insp) => (
+                      <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
+                        <span className="font-extrabold text-xs text-blue-400">
+                          {insp.audit_report?.score}%
+                        </span>
+                      </td>
+                    ))}
+                  </tr>
+                  {/* Validity status */}
+                  <tr>
+                    <td className="p-3 font-semibold text-gray-300">Status Validitas</td>
+                    {selectedComparisonGroup.map((insp) => (
+                      <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
+                        <span className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider ${
+                          insp.audit_report?.confidence_level === 'VALID'
+                            ? 'bg-emerald-955 text-emerald-400'
+                            : insp.audit_report?.confidence_level === 'PARTIAL_VALID'
+                            ? 'bg-blue-950 text-blue-400 animate-pulse'
+                            : 'bg-red-955 text-red-400'
+                        }`}>
+                          {insp.audit_report?.confidence_level?.replace(/_/g, ' ')}
+                        </span>
+                      </td>
+                    ))}
+                  </tr>
+                  {/* Water TDS */}
+                  <tr>
+                    <td className="p-3 font-semibold text-gray-300">Kualitas Air (TDS)</td>
+                    {selectedComparisonGroup.map((insp) => (
+                      <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60 font-mono text-gray-200">
+                        {insp.tds_value} ppm
+                        <span className="block text-[8px] text-gray-500 font-bold uppercase mt-0.5">
+                          {Number(insp.tds_value) <= 300 ? '🟢 Sangat Baik' : Number(insp.tds_value) <= 500 ? '🟡 Layak' : '🔴 Buruk'}
+                        </span>
+                      </td>
+                    ))}
+                  </tr>
+                  {/* Internet Speed */}
+                  <tr>
+                    <td className="p-3 font-semibold text-gray-300">Kecepatan WiFi</td>
+                    {selectedComparisonGroup.map((insp) => (
+                      <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60 font-mono text-gray-200">
+                        {insp.internet_speed} Mbps
+                        <span className="block text-[8px] text-gray-500 font-bold uppercase mt-0.5">
+                          {Number(insp.internet_speed) >= 20 ? '🟢 Cepat' : Number(insp.internet_speed) >= 10 ? '🟡 Cukup' : '🔴 Lambat'}
+                        </span>
+                      </td>
+                    ))}
+                  </tr>
+                  {/* Address */}
+                  <tr>
+                    <td className="p-3 font-semibold text-gray-300">Alamat Properti</td>
+                    {selectedComparisonGroup.map((insp) => (
+                      <td key={insp.inspection_id} className="p-3 border-l border-gray-800/60 text-gray-400 max-w-[200px] leading-relaxed">
+                        {insp.property.address}
+                      </td>
+                    ))}
+                  </tr>
+                  {/* Facility - Kasur */}
+                  <tr>
+                    <td className="p-3 font-semibold text-gray-300">Fasilitas Kasur</td>
+                    {selectedComparisonGroup.map((insp) => {
+                      const claim = insp.property?.claim_data?.fasilitas?.kasur?.ada;
+                      const actual = insp.inspector_data?.fasilitas?.kasur?.ada ?? claim;
+                      return (
+                        <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
+                          {actual ? (
+                            <span className="text-emerald-400 font-bold">✔ Ada</span>
+                          ) : (
+                            <span className="text-red-500 font-bold">✖ Tidak Ada</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                  {/* Facility - AC */}
+                  <tr>
+                    <td className="p-3 font-semibold text-gray-300">Air Conditioner (AC)</td>
+                    {selectedComparisonGroup.map((insp) => {
+                      const claim = insp.property?.claim_data?.fasilitas?.ac?.ada;
+                      const actual = insp.inspector_data?.fasilitas?.ac?.ada ?? claim;
+                      return (
+                        <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
+                          {actual ? (
+                            <span className="text-emerald-400 font-bold">✔ Ada</span>
+                          ) : (
+                            <span className="text-red-500 font-bold">✖ Tidak Ada</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                  {/* Facility - WiFi */}
+                  <tr>
+                    <td className="p-3 font-semibold text-gray-300">Koneksi WiFi</td>
+                    {selectedComparisonGroup.map((insp) => {
+                      const claim = insp.property?.claim_data?.fasilitas?.wifi?.ada;
+                      const actual = insp.inspector_data?.fasilitas?.wifi?.ada ?? claim;
+                      return (
+                        <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
+                          {actual ? (
+                            <span className="text-emerald-400 font-bold">✔ Ada</span>
+                          ) : (
+                            <span className="text-red-500 font-bold">✖ Tidak Ada</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                  {/* Facility - Kamar Mandi */}
+                  <tr>
+                    <td className="p-3 font-semibold text-gray-300">Kamar Mandi Dalam</td>
+                    {selectedComparisonGroup.map((insp) => {
+                      const claim = insp.property?.claim_data?.fasilitas?.kamar_mandi_dalam?.ada;
+                      const actual = insp.inspector_data?.fasilitas?.kamar_mandi_dalam?.ada ?? claim;
+                      return (
+                        <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
+                          {actual ? (
+                            <span className="text-emerald-400 font-bold">✔ Ada</span>
+                          ) : (
+                            <span className="text-red-500 font-bold">✖ Tidak Ada</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}

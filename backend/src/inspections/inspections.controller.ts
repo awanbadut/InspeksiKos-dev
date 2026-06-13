@@ -43,8 +43,13 @@ export class InspectionsController {
 
   @Patch(':id/status')
   @Roles(UserRole.ADMIN, UserRole.INSPEKTUR)
-  updateStatus(@Param('id') id: string, @Body() updateStatusDto: UpdateInspectionStatusDto) {
-    return this.inspectionsService.updateStatus(id, updateStatusDto);
+  updateStatus(
+    @Param('id') id: string,
+    @Body() updateStatusDto: UpdateInspectionStatusDto,
+    @GetUser('user_id') userId: string,
+    @GetUser('role') role: UserRole,
+  ) {
+    return this.inspectionsService.updateStatus(id, updateStatusDto, userId, role);
   }
 
   @Patch(':id/teknis')

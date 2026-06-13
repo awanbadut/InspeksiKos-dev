@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, IsNull } from 'typeorm';
 import { Inspection, InspectionStatus } from './entities/inspection.entity';
 import { InspectionPhoto } from './entities/inspection-photo.entity';
 import { Property } from '../properties/entities/property.entity';
@@ -53,8 +53,11 @@ export class InspectionsService {
 
     if (role === UserRole.INSPEKTUR) {
       return this.inspectionRepository.find({
-        where: { inspector_id: userId },
-        relations: { property: true },
+        where: [
+          { inspector_id: userId },
+          { inspector_id: IsNull() }
+        ],
+        relations: { property: true, inspector: true },
       });
     }
 
@@ -86,6 +89,8 @@ export class InspectionsService {
   async updateStatus(
     inspectionId: string,
     updateStatusDto: UpdateInspectionStatusDto,
+    userId: string,
+    role: UserRole,
   ): Promise<Inspection> {
     const inspection = await this.findOne(inspectionId);
     const { status, inspector_id } = updateStatusDto;
@@ -97,7 +102,9 @@ export class InspectionsService {
       }
     }
 
-    if (inspector_id) {
+    if (role === UserRole.INSPEKTUR) {
+      inspection.inspector_id = userId;
+    } else if (role === UserRole.ADMIN && inspector_id) {
       inspection.inspector_id = inspector_id;
     }
 
