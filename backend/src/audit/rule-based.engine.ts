@@ -26,9 +26,11 @@ export class RuleBasedEngine {
     let matchedWeight = 0;
     let totalWeight = 0;
     const breakdown: BreakdownItem[] = [];
+    const evaluatedFacilities = new Set<string>();
 
     for (const item of ruleItems) {
       const facilityName = item.facility_name;
+      evaluatedFacilities.add(facilityName);
       const claimed = claimData?.fasilitas?.[facilityName];
 
       // Check if this facility is claimed in the advertisement
@@ -70,6 +72,44 @@ export class RuleBasedEngine {
           status: 'NEUTRAL',
         });
       }
+    }
+
+    // Process custom facilities dynamically
+    if (claimData?.fasilitas) {
+      Object.keys(claimData.fasilitas).forEach((facilityName) => {
+        if (facilityName === 'kualitas_air' || facilityName === 'kecepatan_internet') return;
+
+        if (!evaluatedFacilities.has(facilityName)) {
+          const claimed = claimData.fasilitas[facilityName];
+          const isClaimed = claimed?.ada === true || claimed?.router_terlihat === true;
+
+          if (isClaimed) {
+            const defaultWeight = 1.0;
+            const defaultPenalty = 0.5;
+            totalWeight += defaultWeight;
+
+            const actualVal = extractedData?.fasilitas?.[facilityName];
+            const actualAda = actualVal?.ada === true || actualVal?.router_terlihat === true;
+            const match = actualAda === true;
+
+            if (match) {
+              matchedWeight += defaultWeight;
+              breakdown.push({
+                facility: facilityName,
+                status: 'MATCH',
+                weight: defaultWeight,
+              });
+            } else {
+              matchedWeight -= defaultPenalty;
+              breakdown.push({
+                facility: facilityName,
+                status: 'MISMATCH',
+                penalty: defaultPenalty,
+              });
+            }
+          }
+        }
+      });
     }
 
     const score = this.calculateScore(matchedWeight, totalWeight);

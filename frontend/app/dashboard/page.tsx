@@ -104,6 +104,9 @@ export default function DashboardPage() {
   const [showComparisonModal, setShowComparisonModal] = useState(false);
   const [selectedComparisonGroup, setSelectedComparisonGroup] = useState<any[]>([]);
 
+  const [customFacilitySingle, setCustomFacilitySingle] = useState('');
+  const [customFacilityMulti, setCustomFacilityMulti] = useState<Record<number, string>>({});
+
   // Leaflet map states
   const [mapReady, setMapReady] = useState(false);
   const [selectedLat, setSelectedLat] = useState<number | null>(null);
@@ -542,20 +545,19 @@ export default function DashboardPage() {
       const comparisonId = `comp_${Date.now()}`;
 
       if (orderCategory === 'single') {
+        const fasilitasPayload: Record<string, any> = {};
+        Object.keys(claims).forEach((key) => {
+          fasilitasPayload[key] = { ada: (claims as any)[key] };
+        });
+        fasilitasPayload['kualitas_air'] = { nilai: Number(tdsExpectation) };
+        fasilitasPayload['kecepatan_internet'] = { nilai: Number(internetExpectation) };
+
         const claim_data = {
           location: selectedLat && selectedLng ? {
             latitude: selectedLat,
             longitude: selectedLng
           } : null,
-          fasilitas: {
-            kasur: { ada: claims.kasur },
-            lemari: { ada: claims.lemari },
-            ac: { ada: claims.ac },
-            wifi: { ada: claims.wifi },
-            kamar_mandi_dalam: { ada: claims.kamar_mandi_dalam },
-            kualitas_air: { nilai: Number(tdsExpectation) },
-            kecepatan_internet: { nilai: Number(internetExpectation) },
-          },
+          fasilitas: fasilitasPayload,
         };
 
         const propResponse = await api.post('/properties', {
@@ -570,21 +572,20 @@ export default function DashboardPage() {
       } else {
         // Multi-Kos
         for (const p of multiProperties) {
+          const fasilitasPayload: Record<string, any> = {};
+          Object.keys(p.claims).forEach((key) => {
+            fasilitasPayload[key] = { ada: p.claims[key] };
+          });
+          fasilitasPayload['kualitas_air'] = { nilai: Number(p.tdsExpectation) };
+          fasilitasPayload['kecepatan_internet'] = { nilai: Number(p.internetExpectation) };
+
           const claim_data = {
             comparison_id: comparisonId,
             location: p.lat && p.lng ? {
               latitude: p.lat,
               longitude: p.lng
             } : null,
-            fasilitas: {
-              kasur: { ada: p.claims.kasur },
-              lemari: { ada: p.claims.lemari },
-              ac: { ada: p.claims.ac },
-              wifi: { ada: p.claims.wifi },
-              kamar_mandi_dalam: { ada: p.claims.kamar_mandi_dalam },
-              kualitas_air: { nilai: Number(p.tdsExpectation) },
-              kecepatan_internet: { nilai: Number(p.internetExpectation) },
-            },
+            fasilitas: fasilitasPayload,
           };
 
           const propResponse = await api.post('/properties', {
@@ -683,6 +684,29 @@ export default function DashboardPage() {
     } finally {
       setAcceptingTaskLoading((prev) => ({ ...prev, [inspectionId]: false }));
     }
+  };
+
+  const handleAddCustomFacilitySingle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!customFacilitySingle.trim()) return;
+    const cleanName = customFacilitySingle.trim().toLowerCase().replace(/\s+/g, '_');
+    setClaims((prev) => ({ ...prev, [cleanName]: true }));
+    setCustomFacilitySingle('');
+  };
+
+  const handleAddCustomFacilityMulti = (idx: number, e: React.MouseEvent) => {
+    e.preventDefault();
+    const typedText = customFacilityMulti[idx];
+    if (!typedText || !typedText.trim()) return;
+    const cleanName = typedText.trim().toLowerCase().replace(/\s+/g, '_');
+
+    setMultiProperties((prev) => {
+      const copy = [...prev];
+      copy[idx].claims = { ...copy[idx].claims, [cleanName]: true };
+      return copy;
+    });
+
+    setCustomFacilityMulti((prev) => ({ ...prev, [idx]: '' }));
   };
 
   // Inspector Functions
@@ -910,10 +934,29 @@ export default function DashboardPage() {
     }
   };
 
-  const activeSteps = checkPoints.filter((cp) => {
-    if (cp.type === 'technical') return true;
-    return activeTask?.property?.claim_data?.fasilitas?.[cp.key]?.ada === true;
-  });
+  const activeSteps = (() => {
+    if (!activeTask?.property?.claim_data?.fasilitas) {
+      return checkPoints;
+    }
+    const standardBoolean = checkPoints.filter(cp => cp.type === 'boolean' && activeTask.property.claim_data.fasilitas?.[cp.key]?.ada === true);
+    const technical = checkPoints.filter(cp => cp.type === 'technical');
+    
+    const customSteps: any[] = [];
+    const standardKeys = ['kasur', 'lemari', 'ac', 'wifi', 'kamar_mandi_dalam', 'kualitas_air', 'kecepatan_internet'];
+    const claimsObj = activeTask.property.claim_data.fasilitas;
+    Object.keys(claimsObj).forEach((key) => {
+      if (!standardKeys.includes(key) && claimsObj[key]?.ada === true) {
+        customSteps.push({
+          key: key,
+          label: key.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase()),
+          type: 'boolean',
+          desc: `Verifikasi fasilitas kustom: ${key.replace(/_/g, ' ')}`
+        });
+      }
+    });
+
+    return [...standardBoolean, ...customSteps, ...technical];
+  })();
   const currentActiveStep = activeSteps[currentStep];
 
   // Analytics calculations
@@ -963,6 +1006,10 @@ export default function DashboardPage() {
       items: comparisonGroups[key]
     }))
     .filter(g => g.items.length >= 2);
+
+  const hasCompletedLocations = inspections.some(
+    (insp) => insp.status === 'completed' && insp.property?.claim_data?.location?.latitude
+  );
 
   return (
     <div className="min-h-screen bg-[#080c14] text-gray-100 font-sans flex flex-col selection:bg-blue-600/30 selection:text-blue-200">
@@ -1979,6 +2026,31 @@ export default function DashboardPage() {
                           </label>
                         ))}
                       </div>
+                      <div className="flex gap-2 pt-1">
+                        <input
+                          type="text"
+                          placeholder="Tambah fasilitas kustom... (e.g. TV, Kulkas)"
+                          value={customFacilitySingle}
+                          onChange={(e) => setCustomFacilitySingle(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              if (!customFacilitySingle.trim()) return;
+                              const cleanName = customFacilitySingle.trim().toLowerCase().replace(/\s+/g, '_');
+                              setClaims((prev) => ({ ...prev, [cleanName]: true }));
+                              setCustomFacilitySingle('');
+                            }
+                          }}
+                          className="flex-1 px-3 py-1.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-[10px] text-white placeholder-gray-600 focus:outline-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddCustomFacilitySingle}
+                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-[9px] uppercase tracking-wider transition-all"
+                        >
+                          Tambah
+                        </button>
+                      </div>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
@@ -2094,7 +2166,7 @@ export default function DashboardPage() {
                           </div>
 
                           <div className="space-y-1.5">
-                            <span className="text-[9px] font-bold text-gray-400 block font-mono border-b border-gray-850 pb-0.5">Fasilitas</span>
+                            <span className="text-[9px] font-bold text-gray-400 block font-mono border-b border-gray-855 pb-0.5">Fasilitas</span>
                             <div className="grid grid-cols-3 gap-1.5">
                               {Object.keys(p.claims).map((facility) => (
                                 <label key={facility} className="flex items-center gap-1 p-1 bg-[#090e1a] border border-gray-850 rounded-lg text-[9px] text-gray-300 cursor-pointer">
@@ -2111,6 +2183,36 @@ export default function DashboardPage() {
                                   <span className="capitalize truncate">{facility.replace(/_/g, ' ')}</span>
                                 </label>
                               ))}
+                            </div>
+                            <div className="flex gap-1.5 pt-1">
+                              <input
+                                type="text"
+                                placeholder="Tambah fasilitas..."
+                                value={customFacilityMulti[idx] || ''}
+                                onChange={(e) => setCustomFacilityMulti((prev) => ({ ...prev, [idx]: e.target.value }))}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    const typedText = customFacilityMulti[idx];
+                                    if (!typedText || !typedText.trim()) return;
+                                    const cleanName = typedText.trim().toLowerCase().replace(/\s+/g, '_');
+                                    setMultiProperties((prev) => {
+                                      const copy = [...prev];
+                                      copy[idx].claims = { ...copy[idx].claims, [cleanName]: true };
+                                      return copy;
+                                    });
+                                    setCustomFacilityMulti((prev) => ({ ...prev, [idx]: '' }));
+                                  }
+                                }}
+                                className="flex-1 px-2 py-1 bg-[#080d1a] border border-gray-850 focus:border-indigo-500 rounded-md text-[9px] text-white focus:outline-none placeholder-gray-650"
+                              />
+                              <button
+                                type="button"
+                                onClick={(e) => handleAddCustomFacilityMulti(idx, e)}
+                                className="px-2.5 py-1 bg-indigo-950 hover:bg-indigo-900/60 text-indigo-400 border border-indigo-900/60 font-bold rounded-md text-[8px] uppercase tracking-wider transition-all"
+                              >
+                                Tambah
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -2386,74 +2488,42 @@ export default function DashboardPage() {
                       </td>
                     ))}
                   </tr>
-                  {/* Facility - Kasur */}
-                  <tr>
-                    <td className="p-3 font-semibold text-gray-300">Fasilitas Kasur</td>
-                    {selectedComparisonGroup.map((insp) => {
-                      const claim = insp.property?.claim_data?.fasilitas?.kasur?.ada;
-                      const actual = insp.inspector_data?.fasilitas?.kasur?.ada ?? claim;
+                  {(() => {
+                    const allKeys = new Set<string>();
+                    selectedComparisonGroup.forEach((insp) => {
+                      const claimFas = insp.property?.claim_data?.fasilitas || {};
+                      Object.keys(claimFas).forEach((k) => {
+                        if (k !== 'kualitas_air' && k !== 'kecepatan_internet' && claimFas[k]?.ada !== undefined) {
+                          allKeys.add(k);
+                        }
+                      });
+                    });
+                    
+                    return Array.from(allKeys).map((facilityKey) => {
                       return (
-                        <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
-                          {actual ? (
-                            <span className="text-emerald-400 font-bold">✔ Ada</span>
-                          ) : (
-                            <span className="text-red-500 font-bold">✖ Tidak Ada</span>
-                          )}
-                        </td>
+                        <tr key={facilityKey}>
+                          <td className="p-3 font-semibold text-gray-300 capitalize">
+                            Fasilitas {facilityKey.replace(/_/g, ' ')}
+                          </td>
+                          {selectedComparisonGroup.map((insp) => {
+                            const claim = insp.property?.claim_data?.fasilitas?.[facilityKey]?.ada;
+                            const actual = insp.inspector_data?.fasilitas?.[facilityKey]?.ada ?? claim;
+                            return (
+                              <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
+                                {claim === undefined ? (
+                                  <span className="text-gray-550 font-mono text-[8px] uppercase">TDK DIKLAIM</span>
+                                ) : actual ? (
+                                  <span className="text-emerald-400 font-bold">✔ Ada</span>
+                                ) : (
+                                  <span className="text-red-500 font-bold">✖ Tidak Ada</span>
+                                )}
+                              </td>
+                            );
+                          })}
+                        </tr>
                       );
-                    })}
-                  </tr>
-                  {/* Facility - AC */}
-                  <tr>
-                    <td className="p-3 font-semibold text-gray-300">Air Conditioner (AC)</td>
-                    {selectedComparisonGroup.map((insp) => {
-                      const claim = insp.property?.claim_data?.fasilitas?.ac?.ada;
-                      const actual = insp.inspector_data?.fasilitas?.ac?.ada ?? claim;
-                      return (
-                        <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
-                          {actual ? (
-                            <span className="text-emerald-400 font-bold">✔ Ada</span>
-                          ) : (
-                            <span className="text-red-500 font-bold">✖ Tidak Ada</span>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                  {/* Facility - WiFi */}
-                  <tr>
-                    <td className="p-3 font-semibold text-gray-300">Koneksi WiFi</td>
-                    {selectedComparisonGroup.map((insp) => {
-                      const claim = insp.property?.claim_data?.fasilitas?.wifi?.ada;
-                      const actual = insp.inspector_data?.fasilitas?.wifi?.ada ?? claim;
-                      return (
-                        <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
-                          {actual ? (
-                            <span className="text-emerald-400 font-bold">✔ Ada</span>
-                          ) : (
-                            <span className="text-red-500 font-bold">✖ Tidak Ada</span>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                  {/* Facility - Kamar Mandi */}
-                  <tr>
-                    <td className="p-3 font-semibold text-gray-300">Kamar Mandi Dalam</td>
-                    {selectedComparisonGroup.map((insp) => {
-                      const claim = insp.property?.claim_data?.fasilitas?.kamar_mandi_dalam?.ada;
-                      const actual = insp.inspector_data?.fasilitas?.kamar_mandi_dalam?.ada ?? claim;
-                      return (
-                        <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
-                          {actual ? (
-                            <span className="text-emerald-400 font-bold">✔ Ada</span>
-                          ) : (
-                            <span className="text-red-500 font-bold">✖ Tidak Ada</span>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
+                    });
+                  })()}
                 </tbody>
               </table>
             </div>
