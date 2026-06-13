@@ -133,6 +133,74 @@ export default function DashboardPage() {
     }
   }, []);
 
+  // Interactive All-Audited-Properties Map for Students
+  useEffect(() => {
+    if (mapReady && role === 'mahasiswa' && inspections.length > 0) {
+      const timer = setTimeout(() => {
+        const L = (window as any).L;
+        if (!L) return;
+
+        const completedWithLocation = inspections.filter(
+          (insp) => insp.status === 'completed' && insp.property?.claim_data?.location?.latitude
+        );
+
+        const mapContainer = document.getElementById('all-properties-map-container');
+        if (!mapContainer || completedWithLocation.length === 0) return;
+
+        const defaultLat = -0.9471;
+        const defaultLng = 100.4172;
+
+        const mapInstance = L.map('all-properties-map-container').setView([defaultLat, defaultLng], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(mapInstance);
+
+        const customIcon = L.icon({
+          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+        });
+
+        completedWithLocation.forEach((insp) => {
+          const { latitude, longitude } = insp.property.claim_data.location;
+          const score = insp.audit_report?.score || 0;
+          const conf = insp.audit_report?.confidence_level || 'UNKNOWN';
+
+          const marker = L.marker([latitude, longitude], { icon: customIcon }).addTo(mapInstance);
+          
+          const popupContent = `
+            <div style="font-family: sans-serif; padding: 4px; min-width: 140px; color: #1e293b;">
+              <h5 style="margin: 0 0 3px 0; font-size: 11px; font-weight: 850; color: #0f172a;">${insp.property.name}</h5>
+              <p style="margin: 0 0 6px 0; font-size: 9px; color: #64748b; line-height: 1.3;">${insp.property.address}</p>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 9px; font-weight: 800; color: #3b82f6; background: #eff6ff; padding: 1px 4px; border-radius: 4px; border: 1px solid #bfdbfe;">
+                  Skor: ${score}%
+                </span>
+                <span style="font-size: 8px; font-weight: 700; color: #475569; text-transform: uppercase;">
+                  ${conf.replace(/_/g, ' ')}
+                </span>
+              </div>
+            </div>
+          `;
+          marker.bindPopup(popupContent);
+        });
+
+        (window as any).currentDashboardMap = mapInstance;
+      }, 200);
+
+      return () => {
+        const mapInst = (window as any).currentDashboardMap;
+        if (mapInst) {
+          mapInst.remove();
+          (window as any).currentDashboardMap = null;
+        }
+      };
+    }
+  }, [mapReady, inspections, role]);
+
   // Map Picker initialization
   useEffect(() => {
     if (mapReady && showMapPicker) {
@@ -152,7 +220,15 @@ export default function DashboardPage() {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(mapInstance);
 
-        let markerInstance = L.marker([initialLat, initialLng]).addTo(mapInstance);
+        const customIcon = L.icon({
+          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+        });
+
+        let markerInstance = L.marker([initialLat, initialLng], { icon: customIcon }).addTo(mapInstance);
 
         mapInstance.on('click', (e: any) => {
           const { lat, lng } = e.latlng;
@@ -190,7 +266,15 @@ export default function DashboardPage() {
           attribution: '&copy; OpenStreetMap contributors'
         }).addTo(mapInstance);
 
-        L.marker([latitude, longitude]).addTo(mapInstance);
+        const customIcon = L.icon({
+          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+        });
+
+        L.marker([latitude, longitude], { icon: customIcon }).addTo(mapInstance);
 
         (window as any).currentTaskMap = mapInstance;
       }, 100);
@@ -533,11 +617,15 @@ export default function DashboardPage() {
     ? auditedInspections.reduce((acc, curr) => acc + Number(curr.audit_report.score || 0), 0) / totalAudited 
     : 0;
 
+  const hasCompletedLocations = inspections.some(
+    (i) => i.status === 'completed' && i.property?.claim_data?.location?.latitude
+  );
+
   return (
     <div className="min-h-screen bg-[#080c14] text-gray-100 font-sans flex flex-col selection:bg-blue-600/30 selection:text-blue-200">
       
       {/* Decorative Grid Overlay */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
 
       {/* Glow Effects */}
       <div className="absolute top-0 right-[10%] w-[500px] h-[500px] rounded-full bg-blue-500/5 blur-[120px] pointer-events-none" />
@@ -567,7 +655,7 @@ export default function DashboardPage() {
           </div>
           <button
             onClick={handleLogout}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-950/20 border border-transparent hover:border-red-900/30 rounded-xl transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-955/20 border border-transparent hover:border-red-900/30 rounded-xl transition-all cursor-pointer"
           >
             <LogOut className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Keluar</span>
@@ -611,8 +699,24 @@ export default function DashboardPage() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
-            {/* Left Col (2 cols wide on desktop) - Inspections List */}
+            {/* Left Col (2 cols wide on desktop) - Map and Inspections List */}
             <div className="lg:col-span-2 space-y-6">
+              
+              {/* Interactive Leaflet Map for Student browsing */}
+              {role === 'mahasiswa' && hasCompletedLocations && (
+                <div className="bg-[#0c1220]/70 border border-gray-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-md">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 mb-4 flex items-center gap-2">
+                    <Compass className="h-4 w-4 text-blue-500 animate-spin" style={{ animationDuration: '8s' }} />
+                    Peta Sebaran Kos Terakreditasi di Kota Padang
+                  </h2>
+                  <div
+                    id="all-properties-map-container"
+                    className="w-full h-72 sm:h-80 rounded-xl overflow-hidden bg-gray-950 border border-gray-850 z-10"
+                    style={{ minHeight: '280px' }}
+                  />
+                </div>
+              )}
+
               <div className="bg-[#0c1220]/70 border border-gray-800/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
                 <div className="flex items-center justify-between mb-6 border-b border-gray-800 pb-4">
                   <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2">
@@ -629,7 +733,7 @@ export default function DashboardPage() {
 
                 {inspections.length === 0 ? (
                   <div className="text-center py-16 bg-[#090d16] rounded-xl border border-dashed border-gray-850">
-                    <Building className="h-10 w-10 text-gray-600 mx-auto mb-3" />
+                    <Building className="h-10 w-10 text-gray-650 mx-auto mb-3" />
                     <p className="text-xs font-bold text-gray-400 mb-1">Belum Ada Sesi Inspeksi</p>
                     <p className="text-[10px] text-gray-500 max-w-xs mx-auto leading-relaxed">
                       {role === 'mahasiswa'
@@ -659,10 +763,10 @@ export default function DashboardPage() {
                                 <span
                                   className={`text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${
                                     insp.status === 'completed'
-                                      ? 'bg-emerald-950/60 text-emerald-400 border border-emerald-900/50'
+                                      ? 'bg-emerald-955 text-emerald-400 border border-emerald-900/50'
                                       : insp.status === 'in_progress'
                                       ? 'bg-blue-950 text-blue-400 border border-blue-900/60 animate-pulse'
-                                      : 'bg-amber-950 text-amber-400 border border-amber-900/60'
+                                      : 'bg-amber-955 text-amber-400 border border-amber-900/60'
                                   }`}
                                 >
                                   {insp.status === 'completed'
@@ -688,13 +792,13 @@ export default function DashboardPage() {
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-2 self-end sm:self-auto">
+                            <div className="flex items-center gap-2.5 self-end sm:self-auto">
                               {role === 'inspektur' && (
                                 <>
                                   {insp.status !== 'completed' && !isActive && (
                                     <button
                                       onClick={() => handleSelectTask(insp)}
-                                      className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-white hover:bg-gray-100 text-gray-950 rounded-lg transition-all cursor-pointer"
+                                      className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-white hover:bg-gray-100 text-gray-955 rounded-lg transition-all cursor-pointer"
                                     >
                                       Buka Kerja
                                     </button>
@@ -732,7 +836,6 @@ export default function DashboardPage() {
               {role === 'inspektur' && activeTask ? (
                 <div className="bg-[#0c1220]/70 border border-blue-900/30 rounded-2xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden">
                   
-                  {/* Glowing line border */}
                   <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500 to-indigo-500" />
                   
                   <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-5">
@@ -803,7 +906,7 @@ export default function DashboardPage() {
                               idx === currentStep
                                 ? 'bg-blue-600 border-blue-500 text-white shadow-sm'
                                 : idx < currentStep
-                                ? 'bg-emerald-950/60 border-emerald-900/40 text-emerald-400'
+                                ? 'bg-emerald-955 border-emerald-900/40 text-emerald-400'
                                 : 'bg-[#0f172a] border-gray-800 text-gray-500 hover:text-gray-300'
                             }`}
                           >
@@ -814,8 +917,8 @@ export default function DashboardPage() {
 
                       {/* Active Step Panel */}
                       {currentActiveStep && (
-                        <div className="p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-850 space-y-4">
-                          <div className="flex items-center justify-between border-b border-gray-850 pb-2">
+                        <div className="p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-855 space-y-4">
+                          <div className="flex items-center justify-between border-b border-gray-855 pb-2">
                             <div>
                               <h4 className="text-[10px] font-bold text-gray-300 uppercase tracking-wider">
                                 Lgkh {currentStep + 1} / {activeSteps.length}: {currentActiveStep.label}
@@ -859,7 +962,7 @@ export default function DashboardPage() {
                                   onClick={() => setEvaluations(prev => ({ ...prev, [currentActiveStep.key]: false }))}
                                   className={`p-2.5 rounded-xl border text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                                     evaluations[currentActiveStep.key] === false
-                                      ? 'border-red-500/80 bg-red-950/20 text-red-400 shadow-sm'
+                                      ? 'border-red-500/80 bg-red-955/20 text-red-400 shadow-sm'
                                       : 'border-gray-800 bg-[#0e1626] text-gray-400 hover:text-white'
                                   }`}
                                 >
@@ -901,7 +1004,7 @@ export default function DashboardPage() {
                           </div>
 
                           {/* Unggah Bukti Media */}
-                          <div className="grid grid-cols-1 gap-3 pt-2 border-t border-gray-850">
+                          <div className="grid grid-cols-1 gap-3 pt-2 border-t border-gray-855">
                             
                             {/* Foto Aktual */}
                             <div className="space-y-1.5">
@@ -945,7 +1048,7 @@ export default function DashboardPage() {
                                   );
                                 } else {
                                   return (
-                                    <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-gray-800 hover:border-blue-500 bg-[#090e1a]/30 hover:bg-blue-950/5 rounded-xl transition-all h-20 text-center">
+                                    <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-gray-800 hover:border-blue-500 bg-[#090e1a]/30 hover:bg-blue-955/5 rounded-xl transition-all h-20 text-center">
                                       {isUploading ? (
                                         <>
                                           <Loader2 className="h-4 w-4 animate-spin text-blue-500 mb-1" />
@@ -1017,7 +1120,7 @@ export default function DashboardPage() {
                                   );
                                 } else {
                                   return (
-                                    <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-gray-800 hover:border-purple-500 bg-[#090e1a]/30 hover:bg-purple-950/5 rounded-xl transition-all h-20 text-center">
+                                    <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-gray-800 hover:border-purple-500 bg-[#090e1a]/30 hover:bg-purple-955/5 rounded-xl transition-all h-20 text-center">
                                       {isUploading ? (
                                         <>
                                           <Loader2 className="h-4 w-4 animate-spin text-purple-500 mb-1" />
@@ -1049,7 +1152,7 @@ export default function DashboardPage() {
                           </div>
 
                           {/* Tombol Navigasi Wizard */}
-                          <div className="flex items-center justify-between pt-3 border-t border-gray-850 gap-2">
+                          <div className="flex items-center justify-between pt-3 border-t border-gray-855 gap-2">
                             <button
                               type="button"
                               disabled={currentStep === 0 || techSaving}
@@ -1087,7 +1190,7 @@ export default function DashboardPage() {
 
                       {/* Run AI Scorecard Audit */}
                       {currentStep === activeSteps.length - 1 && (
-                        <div className="border-t border-gray-850 pt-4 space-y-3">
+                        <div className="border-t border-gray-855 pt-4 space-y-3">
                           <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
                             <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                             Langkah Akhir: Evaluasi
@@ -1096,7 +1199,7 @@ export default function DashboardPage() {
                             Menjalankan deteksi AI Vision pada berkas bukti visual dan menghitung skor akhir berdasarkan bobot kepatuhan.
                           </p>
                           {auditError && (
-                            <div className="p-2.5 text-[10px] text-red-400 bg-red-950/20 border border-red-900/30 rounded-lg">
+                            <div className="p-2.5 text-[10px] text-red-400 bg-red-955/20 border border-red-900/30 rounded-lg">
                               {auditError}
                             </div>
                           )}
@@ -1147,7 +1250,7 @@ export default function DashboardPage() {
                       <div className="space-y-6">
                         
                         {/* Donut Chart - Avg Score */}
-                        <div className="flex flex-col items-center justify-center p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-850">
+                        <div className="flex flex-col items-center justify-center p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-855">
                           <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-2 font-mono">
                             SKOR VALIDITAS RATA-RATA
                           </span>
@@ -1178,8 +1281,8 @@ export default function DashboardPage() {
                         </div>
 
                         {/* Confidence Level Progress Bars */}
-                        <div className="space-y-3.5 p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-850">
-                          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block font-mono border-b border-gray-850 pb-1.5">
+                        <div className="space-y-3.5 p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-855">
+                          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block font-mono border-b border-gray-855 pb-1.5">
                             STATUS KEPATUHAN KOS
                           </span>
                           
@@ -1225,12 +1328,12 @@ export default function DashboardPage() {
 
                         {/* Tech Average Metrics */}
                         <div className="grid grid-cols-2 gap-3">
-                          <div className="p-3 bg-blue-950/20 border border-blue-900/30 rounded-xl text-center">
+                          <div className="p-3 bg-blue-955/20 border border-blue-900/30 rounded-xl text-center">
                             <span className="text-[8px] font-bold text-blue-400 block mb-1 uppercase font-mono tracking-wider">Rata-Rata TDS</span>
                             <span className="text-sm font-black text-white">{avgTds.toFixed(0)} ppm</span>
                             <span className="text-[8px] text-gray-500 block mt-1 font-mono">{avgTds <= 300 ? 'Air Bersih' : 'Kualitas Rendah'}</span>
                           </div>
-                          <div className="p-3 bg-orange-950/20 border border-orange-900/30 rounded-xl text-center">
+                          <div className="p-3 bg-orange-955/20 border border-orange-900/30 rounded-xl text-center">
                             <span className="text-[8px] font-bold text-orange-400 block mb-1 uppercase font-mono tracking-wider">Rata-Rata Speed</span>
                             <span className="text-sm font-black text-white">{avgSpeed.toFixed(0)} Mbps</span>
                             <span className="text-[8px] text-gray-500 block mt-1 font-mono">{avgSpeed >= 15 ? 'Internet Cepat' : 'Internet Buffering'}</span>
@@ -1268,7 +1371,7 @@ export default function DashboardPage() {
             </p>
 
             {requestError && (
-              <div className="mb-4 p-3 text-xs text-red-400 bg-red-950/20 border border-red-900/30 rounded-xl text-center font-bold">
+              <div className="mb-4 p-3 text-xs text-red-400 bg-red-955/20 border border-red-900/30 rounded-xl text-center font-bold">
                 ⚠️ {requestError}
               </div>
             )}
@@ -1298,7 +1401,7 @@ export default function DashboardPage() {
                   value={propertyAddress}
                   onChange={(e) => setPropertyAddress(e.target.value)}
                   placeholder="Jl. Limau Manis Kec. Pauh No. 40, Kota Padang"
-                  className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white placeholder-gray-600 focus:outline-none"
+                  className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white placeholder-gray-650 focus:outline-none"
                 />
               </div>
 
@@ -1320,7 +1423,7 @@ export default function DashboardPage() {
                   <div className="border border-gray-800 rounded-xl p-2 bg-[#090d16] space-y-2">
                     <div
                       id="map-picker-container"
-                      className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-gray-850 z-10"
+                      className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-gray-855 z-10"
                       style={{ minHeight: '192px' }}
                     />
                     <p className="text-[8px] text-gray-500 text-center font-mono">
@@ -1356,19 +1459,19 @@ export default function DashboardPage() {
                   onChange={(e) => setPropertyDesc(e.target.value)}
                   placeholder="Kamar berukuran 3x4 meter, dekat gerbang utama..."
                   rows={2}
-                  className="w-full px-3.5 py-2 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white placeholder-gray-600 focus:outline-none"
+                  className="w-full px-3.5 py-2 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white placeholder-gray-650 focus:outline-none"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block font-mono border-b border-gray-850 pb-1">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block font-mono border-b border-gray-855 pb-1">
                   Fasilitas Yang Terpasang di Iklan
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.keys(claims).map((facility) => (
                     <label
                       key={facility}
-                      className="flex items-center gap-2 p-2 bg-[#090e1a] border border-gray-850 rounded-xl text-[10px] font-semibold text-gray-300 cursor-pointer hover:bg-gray-850 transition-all"
+                      className="flex items-center gap-2 p-2 bg-[#090e1a] border border-gray-855 rounded-xl text-[10px] font-semibold text-gray-300 cursor-pointer hover:bg-gray-850 transition-all"
                     >
                       <input
                         type="checkbox"
@@ -1384,7 +1487,7 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 border-t border-gray-850 pt-4">
+              <div className="grid grid-cols-2 gap-4 border-t border-gray-855 pt-4">
                 <div className="space-y-1">
                   <label className="text-[9px] font-bold text-gray-400 uppercase block font-mono">
                     Klaim TDS Air (Maks ppm)
@@ -1411,11 +1514,11 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-3 border-t border-gray-850 pt-4 mt-6">
+              <div className="flex items-center justify-end gap-3 border-t border-gray-855 pt-4 mt-6">
                 <button
                   type="button"
                   onClick={() => setShowRequestModal(false)}
-                  className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-white transition-all uppercase tracking-wider"
+                  className="px-4 py-2.5 text-xs font-bold text-gray-500 hover:text-white transition-all uppercase tracking-wider"
                 >
                   Batal
                 </button>
@@ -1458,7 +1561,7 @@ export default function DashboardPage() {
             {/* Main Score Visual */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               
-              <div className="bg-[#0a0f1b]/60 border border-gray-850 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+              <div className="bg-[#0a0f1b]/60 border border-gray-855 p-4 rounded-xl text-center flex flex-col justify-center items-center">
                 <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
                   Skor Validitas
                 </span>
@@ -1467,14 +1570,14 @@ export default function DashboardPage() {
                 </span>
               </div>
 
-              <div className="bg-[#0a0f1b]/60 border border-gray-850 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+              <div className="bg-[#0a0f1b]/60 border border-gray-855 p-4 rounded-xl text-center flex flex-col justify-center items-center">
                 <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
                   Tingkat Kepercayaan
                 </span>
                 <span
                   className={`text-[9px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider mt-2 border ${
                     selectedInspection.audit_report.confidence_level === 'VALID'
-                      ? 'bg-emerald-950 text-emerald-400 border-emerald-900/50'
+                      ? 'bg-emerald-955 text-emerald-400 border-emerald-900/50'
                       : selectedInspection.audit_report.confidence_level === 'PARTIAL_VALID'
                       ? 'bg-amber-955 text-amber-400 border-amber-900/50'
                       : 'bg-red-955 text-red-400 border-red-900/50'
@@ -1484,7 +1587,7 @@ export default function DashboardPage() {
                 </span>
               </div>
 
-              <div className="bg-[#0a0f1b]/60 border border-gray-850 p-4 rounded-xl flex flex-col justify-center items-center text-center">
+              <div className="bg-[#0a0f1b]/60 border border-gray-855 p-4 rounded-xl flex flex-col justify-center items-center text-center">
                 <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
                   Laporan Resmi PDF
                 </span>
@@ -1507,7 +1610,7 @@ export default function DashboardPage() {
 
             {/* Comparison Details */}
             <div className="space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-850 pb-2 flex items-center gap-1.5">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-855 pb-2 flex items-center gap-1.5">
                 <ClipboardList className="h-4 w-4 text-blue-500" />
                 Kecocokan Fasilitas Lapangan (AI Vision)
               </h4>
@@ -1518,7 +1621,7 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={i}
-                      className="flex items-center justify-between p-3 bg-[#0a0f1b]/30 rounded-xl border border-gray-850"
+                      className="flex items-center justify-between p-3 bg-[#0a0f1b]/30 rounded-xl border border-gray-855"
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold capitalize text-gray-300">
@@ -1527,12 +1630,12 @@ export default function DashboardPage() {
                       </div>
                       <div className="flex items-center gap-2">
                         {item.status === 'MATCH' && (
-                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded-md border border-emerald-900/50 tracking-wider">
+                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-955/40 px-2 py-0.5 rounded-md border border-emerald-900/50 tracking-wider">
                             ✓ MATCH
                           </span>
                         )}
                         {item.status === 'MISMATCH' && (
-                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-red-400 bg-red-950/40 px-2 py-0.5 rounded-md border border-red-900/50 tracking-wider">
+                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-red-400 bg-red-955/40 px-2 py-0.5 rounded-md border border-red-900/50 tracking-wider">
                             ✗ MISMATCH
                           </span>
                         )}
@@ -1548,13 +1651,13 @@ export default function DashboardPage() {
               </div>
 
               {/* Technical breakdown */}
-              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-850 pb-2 pt-2 flex items-center gap-1.5">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-855 pb-2 pt-2 flex items-center gap-1.5">
                 <Gauge className="h-4 w-4 text-indigo-500" />
                 Data Teknis Pengukuran
               </h4>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 bg-[#0a0f1b]/50 rounded-xl border border-gray-850">
+                <div className="p-3 bg-[#0a0f1b]/50 rounded-xl border border-gray-855">
                   <span className="text-[9px] font-bold text-gray-500 block mb-1 font-mono uppercase tracking-wider">
                     TDS Air Aktual
                   </span>
@@ -1565,7 +1668,7 @@ export default function DashboardPage() {
                     Klaim Maks: {selectedInspection.property?.claim_data?.fasilitas?.kualitas_air?.nilai || 500} ppm
                   </span>
                 </div>
-                <div className="p-3 bg-[#0a0f1b]/50 rounded-xl border border-gray-850">
+                <div className="p-3 bg-[#0a0f1b]/50 rounded-xl border border-gray-855">
                   <span className="text-[9px] font-bold text-gray-500 block mb-1 font-mono uppercase tracking-wider">
                     Speed Internet
                   </span>
@@ -1580,7 +1683,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Chatbot Gemini Section */}
-            <div className="border-t border-gray-850 pt-4 mt-6">
+            <div className="border-t border-gray-855 pt-4 mt-6">
               <button
                 type="button"
                 onClick={() => {
@@ -1598,7 +1701,7 @@ export default function DashboardPage() {
                     ]);
                   }
                 }}
-                className="w-full flex items-center justify-between p-3 bg-blue-950/20 hover:bg-blue-950/40 border border-blue-900/40 rounded-xl text-xs font-bold text-blue-400 transition-all cursor-pointer"
+                className="w-full flex items-center justify-between p-3 bg-blue-955/20 hover:bg-blue-955/40 border border-blue-900/40 rounded-xl text-xs font-bold text-blue-400 transition-all cursor-pointer"
               >
                 <span className="flex items-center gap-2">
                   <Sparkles className="h-4 w-4 text-blue-400 animate-pulse" />
@@ -1662,7 +1765,7 @@ export default function DashboardPage() {
               )}
             </div>
 
-            <div className="flex justify-end border-t border-gray-850 pt-4 mt-6">
+            <div className="flex justify-end border-t border-gray-855 pt-4 mt-6">
               <button
                 onClick={() => setShowReportModal(false)}
                 className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer uppercase tracking-wider"
