@@ -1,26 +1,193 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --color-primary: #003057;
+  --color-primary-dark: #001e38;
+  --color-accent: #0f766e;
+  --color-accent-light: #0d9488;
+  --color-accent-hover: #115e59;
+  --color-accent-bright: #14b8a6;
+  --color-brand-teal: #139a8c;
+  --color-bg-light: #f8fafc;
+  --color-card-light: #ffffff;
+  --color-border-light: #e2e8f0;
+  --font-sans: var(--font-geist-sans), Arial, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* ==========================================
+   InspeksiKos Corporate Light Theme Skin Override
+   Converts dark AI glows to clean Navy & Teal
+   ========================================== */
+
+/* Main background overrides */
+.bg-\[\#080c14\],
+.bg-\[\#080d1a\],
+.bg-\[\#050810\] {
+  background-color: #f8fafc !important;
+}
+
+/* Navbar / Sticky header overrides */
+.bg-\[\#0c1220\]\/80 {
+  background-color: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(12px) !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+/* Card background overrides */
+.bg-\[\#0c1220\]\/70,
+.bg-\[\#0c1220\]\/75,
+.bg-\[\#0c1220\],
+.bg-\[\#0c1224\],
+.bg-\[\#0e1626\]\/70 {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05) !important;
+}
+
+/* Sub-panel, list item background overrides */
+.bg-\[\#0b111e\],
+.bg-\[\#090d16\],
+.bg-\[\#090d16\]\/80,
+.bg-\[\#090d16\]\/70,
+.bg-\[\#090e1a\],
+.bg-\[\#090e1a\]\/60,
+.bg-\[\#090e1a\]\/30,
+.bg-\[\#090e1a\]\/40,
+.bg-\[\#0e1626\],
+.bg-\[\#0e1626\]\/80,
+.bg-\[\#0e1626\]\/60,
+.bg-\[\#0a0f1b\]\/50,
+.bg-\[\#0a0e1a\],
+.bg-\[\#0f182c\],
+.bg-\[\#080d1a\],
+.bg-\[\#0e172a\],
+.bg-\[\#0f172a\],
+.bg-\[\#0e1626\] {
+  background-color: #f1f5f9 !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Active buttons and selections in lists */
+.bg-\[\#0f172a\]:hover {
+  background-color: #e2e8f0 !important;
+}
+
+/* Badge and notification alert backgrounds */
+.bg-\[\#0b172a\] {
+  background-color: #eff6ff !important;
+}
+.bg-\[\#1f160c\] {
+  background-color: #fffbeb !important;
+}
+
+/* Input elements bg overrides */
+input.bg-\[\#0e1626\],
+input.bg-\[\#080d1a\],
+textarea.bg-\[\#080d1a\],
+select.bg-\[\#080d1a\],
+div.bg-\[\#080d1a\] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #e2e8f0 !important;
+}
+
+/* Text color overrides */
+.text-gray-100 {
+  color: #0f172a !important;
+}
+.text-gray-200 {
+  color: #1e293b !important;
+}
+.text-gray-300 {
+  color: #334155 !important;
+}
+.text-gray-400 {
+  color: #64748b !important;
+}
+.text-gray-500 {
+  color: #94a3b8 !important;
+}
+.text-white {
+  color: #003057 !important;
+}
+.text-blue-400 {
+  color: #0d9488 !important; /* Re-map blue to Teal */
+}
+.text-indigo-400 {
+  color: #0f766e !important;
+}
+.text-blue-500 {
+  color: #0d9488 !important;
+}
+.text-indigo-500 {
+  color: #0f766e !important;
+}
+
+/* Glow effects and background radial dots removal */
+.bg-blue-600\/10,
+.bg-indigo-600\/8,
+.bg-blue-500\/5,
+.bg-indigo-600\/5,
+.bg-emerald-500\/5 {
+  display: none !important;
+}
+
+/* Border overrides */
+.border-gray-800,
+.border-gray-800\/80,
+.border-gray-800\/65,
+.border-gray-800\/60,
+.border-gray-850,
+.border-gray-855,
+.border-gray-700,
+.border-gray-700\/60,
+.border-gray-800\/85 {
+  border-color: #e2e8f0 !important;
+}
+
+.border-blue-900\/60 {
+  border-color: #93c5fd !important;
+}
+.border-blue-900\/30 {
+  border-color: #bfdbfe !important;
+}
+.border-indigo-900\/35 {
+  border-color: #e2e8f0 !important;
+}
+.border-amber-900\/40 {
+  border-color: #fde68a !important;
+}
+
+/* Custom check icon and active status fixes */
+.text-white .lucide,
+.text-gray-400 .lucide {
+  color: inherit !important;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

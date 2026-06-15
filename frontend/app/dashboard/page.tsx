@@ -1118,17 +1118,15 @@ export default function DashboardPage() {
       {/* Navbar */}
       <header className="relative bg-[#0c1220]/80 border-b border-gray-800/80 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-lg backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <Link href="/" className="h-9 w-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/10">
-            <span className="text-base font-bold text-white">🏠</span>
-          </Link>
-          <div>
-            <span className="text-sm font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-200 to-white bg-clip-text text-transparent">
+          <Link href="/" className="flex items-center gap-2.5">
+            <img src="/Logo InspeksiKos..webp" alt="InspeksiKos Logo" className="h-8 w-auto object-contain" />
+            <span className="text-sm font-extrabold tracking-tight text-[#003057] font-mono hidden sm:inline">
               InspeksiKos
             </span>
-            <span className="ml-2 text-[9px] px-2 py-0.5 bg-blue-950 text-blue-400 border border-blue-900/60 font-bold rounded-md uppercase tracking-wider">
-              {role}
-            </span>
-          </div>
+          </Link>
+          <span className="text-[9px] px-2 py-0.5 bg-teal-50 text-teal-800 border border-teal-200 font-extrabold rounded-md uppercase tracking-wider">
+            {role}
+          </span>
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2 px-3 py-1.5 bg-[#0f182c] border border-gray-800 rounded-xl hidden md:flex">
