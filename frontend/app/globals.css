@@ -176,6 +176,49 @@ div.bg-\[\#080d1a\] {
   color: inherit !important;
 }
 
+/* Ensure buttons and badges with dark backgrounds always have white text */
+button,
+.btn,
+.bg-primary,
+.bg-primary-dark,
+.bg-accent,
+.bg-accent-light,
+.bg-brand-teal,
+.bg-blue-600,
+.bg-teal-650,
+.bg-teal-600,
+.bg-rose-600,
+.bg-emerald-600,
+.bg-gradient-to-r,
+.bg-\[\#003057\],
+button.text-white,
+a.text-white,
+a.bg-gradient-to-r,
+.text-white-force {
+  color: #ffffff !important;
+}
+
+/* Ensure white text is applied to icons inside dark backgrounds */
+.bg-primary .lucide,
+.bg-primary-dark .lucide,
+.bg-accent .lucide,
+.bg-accent-light .lucide,
+.bg-brand-teal .lucide,
+.bg-blue-600 .lucide,
+.bg-teal-600 .lucide,
+.bg-gradient-to-r .lucide {
+  color: #ffffff !important;
+}
+
+/* Exceptions: secondary/border-only buttons should keep their original text colors */
+button.border-slate-250,
+button.border-slate-200,
+button.border-rose-200,
+button.text-rose-600,
+button.text-slate-650 {
+  color: inherit !important;
+}
+
 /* Scrollbars */
 ::-webkit-scrollbar {
   width: 8px;

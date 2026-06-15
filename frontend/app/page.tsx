@@ -27,20 +27,22 @@ export default function Home() {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#00305705_1px,transparent_1px),linear-gradient(to_bottom,#00305705_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
 
       {/* Header / Navbar */}
-      <header className="relative max-w-7xl mx-auto px-6 py-5 flex items-center justify-between z-10 border-b border-slate-200/60 bg-white/80 backdrop-blur-md sticky top-0">
-        <div className="flex items-center gap-3">
-          <img src="/Logo InspeksiKos..webp" alt="InspeksiKos Logo" className="h-9 w-auto object-contain" />
-          <span className="text-xl font-extrabold tracking-tight text-primary font-mono hidden sm:inline">
-            InspeksiKos
-          </span>
-        </div>
-        <div className="flex items-center gap-5">
-          <Link href="/login" className="text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-primary transition-all">
-            Masuk
-          </Link>
-          <Link href="/register" className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-primary hover:bg-primary-dark text-white rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98]">
-            Daftar
-          </Link>
+      <header className="w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/Logo InspeksiKos..webp" alt="InspeksiKos Logo" className="h-9 w-auto object-contain" />
+            <span className="text-xl font-extrabold tracking-tight text-primary font-mono hidden sm:inline">
+              InspeksiKos
+            </span>
+          </div>
+          <div className="flex items-center gap-5">
+            <Link href="/login" className="text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-primary transition-all">
+              Masuk
+            </Link>
+            <Link href="/register" className="px-5 py-2.5 text-xs font-bold uppercase tracking-wider bg-primary hover:bg-primary-dark text-white rounded-xl shadow-md hover:shadow-lg transition-all active:scale-[0.98]">
+              Daftar
+            </Link>
+          </div>
         </div>
       </header>
 

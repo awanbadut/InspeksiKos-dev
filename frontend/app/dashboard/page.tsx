@@ -1116,32 +1116,34 @@ export default function DashboardPage() {
       <div className="absolute bottom-10 left-[5%] w-[400px] h-[400px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
 
       {/* Navbar */}
-      <header className="relative bg-[#0c1220]/80 border-b border-gray-800/80 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-lg backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-2.5">
-            <img src="/Logo InspeksiKos..webp" alt="InspeksiKos Logo" className="h-8 w-auto object-contain" />
-            <span className="text-sm font-extrabold tracking-tight text-[#003057] font-mono hidden sm:inline">
-              InspeksiKos
-            </span>
-          </Link>
-          <span className="text-[9px] px-2 py-0.5 bg-teal-50 text-teal-800 border border-teal-200 font-extrabold rounded-md uppercase tracking-wider">
-            {role}
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#0f182c] border border-gray-800 rounded-xl hidden md:flex">
-            <User className="h-3.5 w-3.5 text-gray-400" />
-            <span className="text-[10px] font-bold text-gray-300">
-              {email}
+      <header className="w-full border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-2.5">
+              <img src="/Logo InspeksiKos..webp" alt="InspeksiKos Logo" className="h-8 w-auto object-contain" />
+              <span className="text-sm font-extrabold tracking-tight text-[#003057] font-mono hidden sm:inline">
+                InspeksiKos
+              </span>
+            </Link>
+            <span className="text-[9px] px-2 py-0.5 bg-teal-50 text-teal-800 border border-teal-200 font-extrabold rounded-md uppercase tracking-wider font-mono">
+              {role}
             </span>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-955/20 border border-transparent hover:border-red-900/30 rounded-xl transition-all cursor-pointer"
-          >
-            <LogOut className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Keluar</span>
-          </button>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl hidden md:flex">
+              <User className="h-3.5 w-3.5 text-slate-500" />
+              <span className="text-[10px] font-bold text-slate-700 font-mono">
+                {email}
+              </span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-rose-200 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-sm font-mono"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Keluar</span>
+            </button>
+          </div>
         </div>
       </header>
 
