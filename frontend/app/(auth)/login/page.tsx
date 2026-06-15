@@ -51,7 +51,7 @@ export default function LoginPage() {
         
         {/* Header */}
         <Link href="/" className="relative flex items-center gap-2.5 z-10 group">
-          <img src="/Logo InspeksiKos..webp" alt="InspeksiKos Logo" className="h-9 w-auto object-contain brightness-0 invert" />
+          <img src="/logo.webp" alt="InspeksiKos Logo" className="h-9 w-auto object-contain brightness-0 invert" />
           <span className="text-base font-extrabold tracking-tight text-white font-mono">
             InspeksiKos
           </span>
@@ -113,7 +113,7 @@ export default function LoginPage() {
           <div className="space-y-2 text-center">
             {/* Show logo on top for mobile */}
             <div className="flex justify-center lg:hidden mb-4">
-              <img src="/Logo InspeksiKos..webp" alt="InspeksiKos Logo" className="h-10 w-auto object-contain" />
+              <img src="/logo.webp" alt="InspeksiKos Logo" className="h-10 w-auto object-contain" />
             </div>
             <h1 className="text-xl font-extrabold tracking-tight text-primary">
               Selamat Datang Kembali

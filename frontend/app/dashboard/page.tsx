@@ -515,7 +515,7 @@ export default function DashboardPage() {
           mapInstance.setView([latitude, longitude], 15);
           L.marker([latitude, longitude], { icon: destinationIcon })
             .addTo(mapInstance)
-            .bindPopup(`<div class="p-1 font-sans"><h5 class="font-bold text-[11px] text-gray-900">${activeTask.property.name}</h5><p class="text-[9px] text-gray-500">${activeTask.property.address}</p></div>`);
+            .bindPopup(`<div class="p-1 font-sans"><h5 class="font-bold text-[11px] text-gray-900">${activeTask.property.name}</h5><p class="text-[9px] text-slate-400">${activeTask.property.address}</p></div>`);
         };
 
         const drawFallback = (currentLat: number, currentLng: number) => {
@@ -533,7 +533,7 @@ export default function DashboardPage() {
 
           L.marker([latitude, longitude], { icon: destinationIcon })
             .addTo(mapInstance)
-            .bindPopup(`<div class="p-1 font-sans"><h5 class="font-bold text-[11px] text-gray-900">${activeTask.property.name}</h5><p class="text-[9px] text-gray-500">${activeTask.property.address}</p></div>`);
+            .bindPopup(`<div class="p-1 font-sans"><h5 class="font-bold text-[11px] text-gray-900">${activeTask.property.name}</h5><p class="text-[9px] text-slate-400">${activeTask.property.address}</p></div>`);
 
           const bounds = L.latLngBounds([
             [currentLat, currentLng],
@@ -576,7 +576,7 @@ export default function DashboardPage() {
 
                   L.marker([latitude, longitude], { icon: destinationIcon })
                     .addTo(mapInstance)
-                    .bindPopup(`<div class="p-1 font-sans"><h5 class="font-bold text-[11px] text-gray-900">${activeTask.property.name}</h5><p class="text-[9px] text-gray-500">${activeTask.property.address}</p></div>`);
+                    .bindPopup(`<div class="p-1 font-sans"><h5 class="font-bold text-[11px] text-gray-900">${activeTask.property.name}</h5><p class="text-[9px] text-slate-400">${activeTask.property.address}</p></div>`);
 
                   const bounds = L.latLngBounds([
                     [currentLat, currentLng],
@@ -1106,7 +1106,7 @@ export default function DashboardPage() {
   );
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-gray-100 font-sans flex flex-col selection:bg-blue-600/30 selection:text-blue-200">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col selection:bg-blue-600/30 selection:text-blue-200">
       
       {/* Decorative Grid Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff03_1px,transparent_1px),linear-gradient(to_bottom,#ffffff03_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
@@ -1120,7 +1120,7 @@ export default function DashboardPage() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/" className="flex items-center gap-2.5">
-              <img src="/Logo InspeksiKos..webp" alt="InspeksiKos Logo" className="h-8 w-auto object-contain" />
+              <img src="/logo.webp" alt="InspeksiKos Logo" className="h-8 w-auto object-contain" />
               <span className="text-sm font-extrabold tracking-tight text-[#003057] font-mono hidden sm:inline">
                 InspeksiKos
               </span>
@@ -1148,14 +1148,14 @@ export default function DashboardPage() {
       </header>
 
       {/* Hero Welcome banner */}
-      <div className="relative bg-[#0b111e] border-b border-gray-800/60 py-10 px-8">
+      <div className="relative bg-slate-100 border-b border-slate-200/60 py-10 px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div>
             <span className="text-[9px] uppercase tracking-wider text-blue-400 font-bold bg-blue-950/50 px-2 py-1 rounded border border-blue-900/55 block w-fit mb-2">Panel Dasbor Utama</span>
             <h1 className="text-2xl md:text-3xl font-black mb-1 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent">
               Selamat Datang, {email?.split('@')[0]}!
             </h1>
-            <p className="text-xs text-gray-400 max-w-xl leading-relaxed">
+            <p className="text-xs text-slate-500 max-w-xl leading-relaxed">
               {role === 'mahasiswa'
                 ? 'Kelola pengajuan verifikasi properti kos Anda di Kota Padang untuk memvalidasi fasilitas iklan secara transparan.'
                 : 'Daftar kerja verifikator lapangan. Isi data TDS air, kecepatan internet, unggah bukti visual, dan jalankan audit AI.'}
@@ -1178,7 +1178,7 @@ export default function DashboardPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 gap-3">
             <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
-            <span className="text-xs font-semibold text-gray-500 font-mono">&gt; Memuat database...</span>
+            <span className="text-xs font-semibold text-slate-400 font-mono">&gt; Memuat database...</span>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -1188,21 +1188,21 @@ export default function DashboardPage() {
               
               {/* Interactive Leaflet Map for Student browsing */}
               {role === 'mahasiswa' && hasCompletedLocations && (
-                <div className="bg-[#0c1220]/70 border border-gray-800/80 rounded-2xl p-5 shadow-xl backdrop-blur-md">
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 mb-4 flex items-center gap-2">
+                <div className="bg-white/70 border border-slate-200/80 rounded-2xl p-5 shadow-xl backdrop-blur-md">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-4 flex items-center gap-2">
                     <Compass className="h-4 w-4 text-blue-500 animate-spin" style={{ animationDuration: '8s' }} />
                     Peta Sebaran Kos Terakreditasi di Kota Padang
                   </h2>
                   <div
                     id="all-properties-map-container"
-                    className="w-full h-72 sm:h-80 rounded-xl overflow-hidden bg-gray-950 border border-gray-850 z-10"
+                    className="w-full h-72 sm:h-80 rounded-xl overflow-hidden bg-gray-950 border border-slate-200 z-10"
                     style={{ minHeight: '280px' }}
                   />
                 </div>
               )}
 
               {role === 'mahasiswa' && validComparisonGroups.length > 0 && (
-                <div className="bg-[#0c1220]/75 border border-indigo-900/35 rounded-2xl p-5 shadow-2xl backdrop-blur-md mb-6 relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
+                <div className="bg-white/75 border border-indigo-900/35 rounded-2xl p-5 shadow-2xl backdrop-blur-md mb-6 relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
                   <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-indigo-500 via-blue-500 to-purple-500" />
                   <h2 className="text-xs font-bold uppercase tracking-wider text-indigo-400 mb-4 flex items-center gap-2">
                     <Sparkles className="h-4 w-4 text-indigo-400 animate-pulse" />
@@ -1212,10 +1212,10 @@ export default function DashboardPage() {
                     {validComparisonGroups.map((group) => {
                       const names = group.items.map(i => i.property.name).join(' vs ');
                       return (
-                        <div key={group.id} className="p-4 bg-[#090d16]/80 border border-gray-800 rounded-xl flex items-center justify-between gap-4">
+                        <div key={group.id} className="p-4 bg-slate-50/80 border border-slate-200 rounded-xl flex items-center justify-between gap-4">
                           <div className="space-y-1 min-w-0">
                             <p className="text-xs font-extrabold text-white truncate">{names}</p>
-                            <p className="text-[10px] text-gray-500 font-medium">Membandingkan {group.items.length} properti kos</p>
+                            <p className="text-[10px] text-slate-400 font-medium">Membandingkan {group.items.length} properti kos</p>
                           </div>
                           <button
                             onClick={() => {
@@ -1233,16 +1233,16 @@ export default function DashboardPage() {
                 </div>
               )}
 
-              <div className="bg-[#0c1220]/70 border border-gray-800/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-gray-800 pb-4">
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2">
+              <div className="bg-white/70 border border-slate-200/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-slate-200 pb-4">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
                     <ClipboardList className="h-4 w-4 text-blue-500" />
                     Daftar Permintaan Inspeksi ({displayedInspections.length})
                   </h2>
                   
                   <div className="flex items-center gap-2">
                     {role === 'inspektur' && (
-                      <div className="flex bg-[#090d16] p-0.5 rounded-lg border border-gray-800">
+                      <div className="flex bg-slate-50 p-0.5 rounded-lg border border-slate-200">
                         <button
                           type="button"
                           onClick={() => {
@@ -1252,7 +1252,7 @@ export default function DashboardPage() {
                           className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider rounded-md transition-all ${
                             activeTabInspector === 'my_tasks'
                               ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-gray-400 hover:text-white'
+                              : 'text-slate-500 hover:text-white'
                           }`}
                         >
                           📋 Tugas Saya
@@ -1266,7 +1266,7 @@ export default function DashboardPage() {
                           className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider rounded-md transition-all ${
                             activeTabInspector === 'available_orders'
                               ? 'bg-amber-600 text-white shadow-sm'
-                              : 'text-gray-400 hover:text-white'
+                              : 'text-slate-500 hover:text-white'
                           }`}
                         >
                           🔔 Orderan Baru
@@ -1275,7 +1275,7 @@ export default function DashboardPage() {
                     )}
                     <button
                       onClick={fetchInspections}
-                      className="p-2 text-gray-400 hover:text-white rounded-lg hover:bg-[#0f172a] border border-gray-850 hover:border-gray-800 transition-all"
+                      className="p-2 text-slate-500 hover:text-white rounded-lg hover:bg-slate-100 border border-slate-200 hover:border-slate-200 transition-all"
                     >
                       <RefreshCw className="h-3.5 w-3.5" />
                     </button>
@@ -1283,10 +1283,10 @@ export default function DashboardPage() {
                 </div>
 
                 {displayedInspections.length === 0 ? (
-                  <div className="text-center py-16 bg-[#090d16] rounded-xl border border-dashed border-gray-850">
+                  <div className="text-center py-16 bg-slate-50 rounded-xl border border-dashed border-slate-200">
                     <Building className="h-10 w-10 text-gray-650 mx-auto mb-3" />
-                    <p className="text-xs font-bold text-gray-400 mb-1">Belum Ada Sesi Inspeksi</p>
-                    <p className="text-[10px] text-gray-500 max-w-xs mx-auto leading-relaxed">
+                    <p className="text-xs font-bold text-slate-500 mb-1">Belum Ada Sesi Inspeksi</p>
+                    <p className="text-[10px] text-slate-400 max-w-xs mx-auto leading-relaxed">
                       {role === 'mahasiswa'
                         ? 'Ajukan inspeksi kos pertama Anda dengan mengklik tombol "Ajukan Inspeksi" di pojok kanan atas.'
                         : (activeTabInspector === 'my_tasks'
@@ -1307,7 +1307,7 @@ export default function DashboardPage() {
                               ? 'border-blue-500 bg-blue-950/10 shadow-[0_0_15px_-3px_rgba(59,130,246,0.1)]'
                               : isUnassigned
                               ? 'border-amber-900/40 bg-amber-955/5 hover:border-amber-700/60'
-                              : 'border-gray-800/80 bg-[#090e1a]/60 hover:border-gray-700/80'
+                              : 'border-slate-200/80 bg-slate-50/60 hover:border-slate-200/80'
                           }`}
                         >
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -1338,11 +1338,11 @@ export default function DashboardPage() {
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] text-gray-400 flex items-center gap-1">
-                                <MapPin className="h-3 w-3 text-gray-500" />
+                              <p className="text-[10px] text-slate-500 flex items-center gap-1">
+                                <MapPin className="h-3 w-3 text-slate-400" />
                                 {insp.property?.address}
                               </p>
-                              <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-[9px] text-gray-500 font-mono pt-1">
+                              <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-[9px] text-slate-400 font-mono pt-1">
                                 <span>
                                   Tgl: {new Date(insp.assigned_at).toLocaleDateString('id-ID')}
                                 </span>
@@ -1390,7 +1390,7 @@ export default function DashboardPage() {
                               {insp.status === 'completed' && (
                                 <button
                                   onClick={() => handleViewReport(insp)}
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border border-gray-800 bg-[#0e172a] hover:bg-gray-800 rounded-lg text-gray-300 transition-all cursor-pointer"
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border border-slate-200 bg-white hover:bg-gray-800 rounded-lg text-slate-600 transition-all cursor-pointer"
                                 >
                                   <Eye className="h-3.5 w-3.5" />
                                   Scorecard
@@ -1410,13 +1410,13 @@ export default function DashboardPage() {
             <div className="space-y-6">
               
               {role === 'inspektur' && activeTask ? (
-                <div className="bg-[#0c1220]/70 border border-blue-900/30 rounded-2xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden">
+                <div className="bg-white/70 border border-blue-900/30 rounded-2xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden">
                   
                   <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500 to-indigo-500" />
                   
-                  <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-5">
+                  <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-5">
                     <div>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-gray-400">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
                         Inspeksi Lapangan Aktif
                       </h3>
                       <p className="text-[11px] text-blue-400 font-bold mt-1">
@@ -1425,7 +1425,7 @@ export default function DashboardPage() {
                     </div>
                     <button
                       onClick={() => setActiveTask(null)}
-                      className="text-[10px] font-bold text-gray-500 hover:text-white transition-all uppercase tracking-wider"
+                      className="text-[10px] font-bold text-slate-400 hover:text-white transition-all uppercase tracking-wider"
                     >
                       Batal
                     </button>
@@ -1433,7 +1433,7 @@ export default function DashboardPage() {
 
                   {activeTask.status === 'assigned' ? (
                     <div className="text-center py-6 space-y-4">
-                      <p className="text-xs text-gray-400 leading-relaxed px-2">
+                      <p className="text-xs text-slate-500 leading-relaxed px-2">
                         Tekan mulai untuk memicu status kerja lapangan, mengaktifkan formulir input teknis, dan mengunggah bukti media.
                       </p>
                       <button
@@ -1448,8 +1448,8 @@ export default function DashboardPage() {
                       
                       {/* Navigation Map */}
                       {activeTask.property?.claim_data?.location && (
-                        <div className="border-b border-gray-800/80 pb-4">
-                          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center justify-between">
+                        <div className="border-b border-slate-200/80 pb-4">
+                          <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
                             <span className="flex items-center gap-1">
                               <MapPin className="h-3.5 w-3.5 text-red-500" />
                               Lokasi Kos Rute Lapangan
@@ -1465,14 +1465,14 @@ export default function DashboardPage() {
                           </h4>
                           <div
                             id="task-map-container"
-                            className="w-full h-56 rounded-xl overflow-hidden bg-gray-900 border border-gray-850 z-10 shadow-inner"
+                            className="w-full h-56 rounded-xl overflow-hidden bg-gray-900 border border-slate-200 z-10 shadow-inner"
                             style={{ minHeight: '224px' }}
                           />
                         </div>
                       )}
 
                       {/* Step-by-Step Wizard Stepper */}
-                      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-gray-800/60 scrollbar-none">
+                      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-200/60 scrollbar-none">
                         {activeSteps.map((step, idx) => (
                           <button
                             key={step.key}
@@ -1483,7 +1483,7 @@ export default function DashboardPage() {
                                 ? 'bg-blue-600 border-blue-500 text-white shadow-sm'
                                 : idx < currentStep
                                 ? 'bg-emerald-955 border-emerald-900/40 text-emerald-400'
-                                : 'bg-[#0f172a] border-gray-800 text-gray-500 hover:text-gray-300'
+                                : 'bg-slate-100 border-slate-200 text-slate-400 hover:text-slate-600'
                             }`}
                           >
                             {idx + 1}. {step.label}
@@ -1493,13 +1493,13 @@ export default function DashboardPage() {
 
                       {/* Active Step Panel */}
                       {currentActiveStep && (
-                        <div className="p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-855 space-y-4">
-                          <div className="flex items-center justify-between border-b border-gray-855 pb-2">
+                        <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200 space-y-4">
+                          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                             <div>
-                              <h4 className="text-[10px] font-bold text-gray-300 uppercase tracking-wider">
+                              <h4 className="text-[10px] font-bold text-slate-600 uppercase tracking-wider">
                                 Lgkh {currentStep + 1} / {activeSteps.length}: {currentActiveStep.label}
                               </h4>
-                              <p className="text-[9px] text-gray-500 mt-0.5">{currentActiveStep.desc}</p>
+                              <p className="text-[9px] text-slate-400 mt-0.5">{currentActiveStep.desc}</p>
                             </div>
                             <div>
                               {currentActiveStep.type === 'boolean' ? (
@@ -1516,7 +1516,7 @@ export default function DashboardPage() {
 
                           {/* Pilihan Penilaian */}
                           <div className="space-y-1.5">
-                            <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block">
+                            <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
                               Hasil Penilaian Lapangan
                             </label>
                             {currentActiveStep.type === 'boolean' ? (
@@ -1527,7 +1527,7 @@ export default function DashboardPage() {
                                   className={`p-2.5 rounded-xl border text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                                     evaluations[currentActiveStep.key] === true
                                       ? 'border-emerald-500/80 bg-emerald-950/20 text-emerald-400 shadow-sm'
-                                      : 'border-gray-800 bg-[#0e1626] text-gray-400 hover:text-white'
+                                      : 'border-slate-200 bg-white text-slate-500 hover:text-white'
                                   }`}
                                 >
                                   <CheckCircle2 className="h-3.5 w-3.5" />
@@ -1539,7 +1539,7 @@ export default function DashboardPage() {
                                   className={`p-2.5 rounded-xl border text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                                     evaluations[currentActiveStep.key] === false
                                       ? 'border-red-500/80 bg-red-955/20 text-red-400 shadow-sm'
-                                      : 'border-gray-800 bg-[#0e1626] text-gray-400 hover:text-white'
+                                      : 'border-slate-200 bg-white text-slate-500 hover:text-white'
                                   }`}
                                 >
                                   <XCircle className="h-3.5 w-3.5" />
@@ -1557,9 +1557,9 @@ export default function DashboardPage() {
                                       value={tdsInput}
                                       onChange={(e) => setTdsInput(e.target.value)}
                                       placeholder="Masukkan kadar air TDS (contoh: 120)"
-                                      className="w-full pl-9 pr-12 py-2 bg-[#0e1626] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white"
+                                      className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
                                     />
-                                    <span className="absolute right-3 top-2.5 text-[9px] font-bold text-gray-500">ppm</span>
+                                    <span className="absolute right-3 top-2.5 text-[9px] font-bold text-slate-400">ppm</span>
                                   </div>
                                 ) : (
                                   <div className="relative">
@@ -1570,9 +1570,9 @@ export default function DashboardPage() {
                                       value={internetInput}
                                       onChange={(e) => setInternetInput(e.target.value)}
                                       placeholder="Masukkan internet speedtest (contoh: 30)"
-                                      className="w-full pl-9 pr-12 py-2 bg-[#0e1626] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white"
+                                      className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
                                     />
-                                    <span className="absolute right-3 top-2.5 text-[9px] font-bold text-gray-500">Mbps</span>
+                                    <span className="absolute right-3 top-2.5 text-[9px] font-bold text-slate-400">Mbps</span>
                                   </div>
                                 )}
                               </div>
@@ -1580,11 +1580,11 @@ export default function DashboardPage() {
                           </div>
 
                           {/* Unggah Bukti Media */}
-                          <div className="grid grid-cols-1 gap-3 pt-2 border-t border-gray-855">
+                          <div className="grid grid-cols-1 gap-3 pt-2 border-t border-slate-200">
                             
                             {/* Foto Aktual */}
                             <div className="space-y-1.5">
-                              <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                              <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
                                 <Upload className="h-3 w-3 text-blue-400" />
                                 Foto Bukti Lapangan
                               </label>
@@ -1594,20 +1594,20 @@ export default function DashboardPage() {
                                 
                                 if (uploadedPhoto) {
                                   return (
-                                    <div className="p-2.5 bg-[#0a0e1a] border border-gray-800 rounded-xl flex items-center justify-between gap-3">
+                                    <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3">
                                       <div className="flex items-center gap-2.5">
-                                        <div className="relative h-10 w-10 rounded-lg border border-gray-800 overflow-hidden bg-gray-900 group cursor-pointer" onClick={() => window.open(uploadedPhoto.photo_url, '_blank')}>
+                                        <div className="relative h-10 w-10 rounded-lg border border-slate-200 overflow-hidden bg-gray-900 group cursor-pointer" onClick={() => window.open(uploadedPhoto.photo_url, '_blank')}>
                                           <img src={uploadedPhoto.photo_url} alt={currentActiveStep.label} className="h-full w-full object-cover" />
                                           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <Eye className="h-3 w-3 text-white" />
                                           </div>
                                         </div>
                                         <div>
-                                          <p className="text-[9px] font-bold text-gray-300 truncate max-w-[80px]">Foto Tersimpan</p>
-                                          <p className="text-[8px] text-gray-500">Bukti visual</p>
+                                          <p className="text-[9px] font-bold text-slate-600 truncate max-w-[80px]">Foto Tersimpan</p>
+                                          <p className="text-[8px] text-slate-400">Bukti visual</p>
                                         </div>
                                       </div>
-                                      <label className="cursor-pointer px-2.5 py-1.5 text-[9px] font-bold bg-[#0f172a] hover:bg-gray-800 border border-gray-800 rounded-lg text-gray-300 transition-all">
+                                      <label className="cursor-pointer px-2.5 py-1.5 text-[9px] font-bold bg-slate-100 hover:bg-gray-800 border border-slate-200 rounded-lg text-slate-600 transition-all">
                                         {isUploading ? 'Mengunggah...' : 'Ubah Foto'}
                                         <input
                                           type="file"
@@ -1624,17 +1624,17 @@ export default function DashboardPage() {
                                   );
                                 } else {
                                   return (
-                                    <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-gray-800 hover:border-blue-500 bg-[#090e1a]/30 hover:bg-blue-955/5 rounded-xl transition-all h-20 text-center">
+                                    <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-slate-200 hover:border-blue-500 bg-slate-50/30 hover:bg-blue-955/5 rounded-xl transition-all h-20 text-center">
                                       {isUploading ? (
                                         <>
                                           <Loader2 className="h-4 w-4 animate-spin text-blue-500 mb-1" />
-                                          <span className="text-[8px] font-bold text-gray-500 font-mono">Mengunggah...</span>
+                                          <span className="text-[8px] font-bold text-slate-400 font-mono">Mengunggah...</span>
                                         </>
                                       ) : (
                                         <>
-                                          <Upload className="h-4 w-4 text-gray-500 mb-1" />
-                                          <span className="text-[9px] font-bold text-gray-300">Unggah Foto Aktual</span>
-                                          <span className="text-[8px] text-gray-500">Format gambar JPEG, PNG, WEBP</span>
+                                          <Upload className="h-4 w-4 text-slate-400 mb-1" />
+                                          <span className="text-[9px] font-bold text-slate-600">Unggah Foto Aktual</span>
+                                          <span className="text-[8px] text-slate-400">Format gambar JPEG, PNG, WEBP</span>
                                         </>
                                       )}
                                       <input
@@ -1655,7 +1655,7 @@ export default function DashboardPage() {
 
                             {/* Video Aktual */}
                             <div className="space-y-1.5">
-                              <label className="text-[9px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1">
+                              <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
                                 <Upload className="h-3 w-3 text-purple-400" />
                                 Video Bukti Lapangan
                               </label>
@@ -1666,20 +1666,20 @@ export default function DashboardPage() {
 
                                 if (uploadedVideo) {
                                   return (
-                                    <div className="p-2.5 bg-[#0a0e1a] border border-gray-800 rounded-xl flex items-center justify-between gap-3">
+                                    <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3">
                                       <div className="flex items-center gap-2.5">
-                                        <div className="relative h-10 w-10 rounded-lg border border-gray-800 overflow-hidden bg-black group cursor-pointer" onClick={() => window.open(uploadedVideo.photo_url, '_blank')}>
+                                        <div className="relative h-10 w-10 rounded-lg border border-slate-200 overflow-hidden bg-black group cursor-pointer" onClick={() => window.open(uploadedVideo.photo_url, '_blank')}>
                                           <video src={uploadedVideo.photo_url} className="h-full w-full object-cover" />
                                           <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <Eye className="h-3 w-3 text-white" />
                                           </div>
                                         </div>
                                         <div>
-                                          <p className="text-[9px] font-bold text-gray-300 truncate max-w-[80px]">Video Tersimpan</p>
-                                          <p className="text-[8px] text-gray-500">Bukti video</p>
+                                          <p className="text-[9px] font-bold text-slate-600 truncate max-w-[80px]">Video Tersimpan</p>
+                                          <p className="text-[8px] text-slate-400">Bukti video</p>
                                         </div>
                                       </div>
-                                      <label className="cursor-pointer px-2.5 py-1.5 text-[9px] font-bold bg-[#0f172a] hover:bg-gray-800 border border-gray-800 rounded-lg text-gray-300 transition-all">
+                                      <label className="cursor-pointer px-2.5 py-1.5 text-[9px] font-bold bg-slate-100 hover:bg-gray-800 border border-slate-200 rounded-lg text-slate-600 transition-all">
                                         {isUploading ? 'Mengunggah...' : 'Ubah Video'}
                                         <input
                                           type="file"
@@ -1696,17 +1696,17 @@ export default function DashboardPage() {
                                   );
                                 } else {
                                   return (
-                                    <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-gray-800 hover:border-purple-500 bg-[#090e1a]/30 hover:bg-purple-955/5 rounded-xl transition-all h-20 text-center">
+                                    <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-slate-200 hover:border-purple-500 bg-slate-50/30 hover:bg-purple-955/5 rounded-xl transition-all h-20 text-center">
                                       {isUploading ? (
                                         <>
                                           <Loader2 className="h-4 w-4 animate-spin text-purple-500 mb-1" />
-                                          <span className="text-[8px] font-bold text-gray-500 font-mono">Mengunggah...</span>
+                                          <span className="text-[8px] font-bold text-slate-400 font-mono">Mengunggah...</span>
                                         </>
                                       ) : (
                                         <>
-                                          <Upload className="h-4 w-4 text-gray-500 mb-1" />
-                                          <span className="text-[9px] font-bold text-gray-300">Unggah Video Aktual</span>
-                                          <span className="text-[8px] text-gray-500">Format MP4, MOV, WebM</span>
+                                          <Upload className="h-4 w-4 text-slate-400 mb-1" />
+                                          <span className="text-[9px] font-bold text-slate-600">Unggah Video Aktual</span>
+                                          <span className="text-[8px] text-slate-400">Format MP4, MOV, WebM</span>
                                         </>
                                       )}
                                       <input
@@ -1728,12 +1728,12 @@ export default function DashboardPage() {
                           </div>
 
                           {/* Tombol Navigasi Wizard */}
-                          <div className="flex items-center justify-between pt-3 border-t border-gray-855 gap-2">
+                          <div className="flex items-center justify-between pt-3 border-t border-slate-200 gap-2">
                             <button
                               type="button"
                               disabled={currentStep === 0 || techSaving}
                               onClick={() => handleSaveStepProgress(currentStep - 1)}
-                              className="px-3.5 py-2 border border-gray-800 bg-[#0f172a] hover:bg-gray-800 text-gray-400 hover:text-white rounded-lg text-[10px] font-bold disabled:opacity-30 transition-all cursor-pointer uppercase tracking-wider"
+                              className="px-3.5 py-2 border border-slate-200 bg-slate-100 hover:bg-gray-800 text-slate-500 hover:text-white rounded-lg text-[10px] font-bold disabled:opacity-30 transition-all cursor-pointer uppercase tracking-wider"
                             >
                               Sebelumnya
                             </button>
@@ -1766,12 +1766,12 @@ export default function DashboardPage() {
 
                       {/* Run AI Scorecard Audit */}
                       {currentStep === activeSteps.length - 1 && (
-                        <div className="border-t border-gray-855 pt-4 space-y-3">
-                          <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1">
+                        <div className="border-t border-slate-200 pt-4 space-y-3">
+                          <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1">
                             <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
                             Langkah Akhir: Evaluasi
                           </h4>
-                          <p className="text-[10px] text-gray-500 leading-relaxed font-mono">
+                          <p className="text-[10px] text-slate-400 leading-relaxed font-mono">
                             Menjalankan deteksi AI Vision pada berkas bukti visual dan menghitung skor akhir berdasarkan bobot kepatuhan.
                           </p>
                           {auditError && (
@@ -1802,14 +1802,14 @@ export default function DashboardPage() {
                 </div>
               ) : (
                 role === 'mahasiswa' ? (
-                  <div className="bg-[#0c1220]/70 border border-gray-800/85 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-6">
+                  <div className="bg-white/70 border border-slate-200/85 rounded-2xl p-6 shadow-xl backdrop-blur-md space-y-6">
                     
                     <div>
-                      <h3 className="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-1.5">
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
                         <Gauge className="h-4 w-4 text-blue-500" />
                         Statistik Kepatuhan Properti
                       </h3>
-                      <p className="text-[10px] text-gray-500 mt-1">
+                      <p className="text-[10px] text-slate-400 mt-1">
                         Analisis kos terinspeksi milik Anda di Kota Padang
                       </p>
                     </div>
@@ -1817,8 +1817,8 @@ export default function DashboardPage() {
                     {totalAudited === 0 ? (
                       <div className="text-center py-8">
                         <Building className="h-7 w-7 text-gray-600 mx-auto mb-2" />
-                        <h4 className="text-[10px] font-bold text-gray-400">Belum Ada Data Audit</h4>
-                        <p className="text-[9px] text-gray-500 max-w-[180px] mx-auto mt-1 leading-relaxed">
+                        <h4 className="text-[10px] font-bold text-slate-500">Belum Ada Data Audit</h4>
+                        <p className="text-[9px] text-slate-400 max-w-[180px] mx-auto mt-1 leading-relaxed">
                           Setelah inspektur menyelesaikan audit lapangan, grafik data kualitas kos Anda akan muncul di sini.
                         </p>
                       </div>
@@ -1826,8 +1826,8 @@ export default function DashboardPage() {
                       <div className="space-y-6">
                         
                         {/* Donut Chart - Avg Score */}
-                        <div className="flex flex-col items-center justify-center p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-855">
-                          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-2 font-mono">
+                        <div className="flex flex-col items-center justify-center p-4 bg-slate-50/50 rounded-xl border border-slate-200">
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-2 font-mono">
                             SKOR VALIDITAS RATA-RATA
                           </span>
                           <div className="relative flex items-center justify-center h-28 w-28">
@@ -1851,19 +1851,19 @@ export default function DashboardPage() {
                             </svg>
                             <div className="absolute flex flex-col items-center justify-center">
                               <span className="text-xl font-black text-white">{avgScore.toFixed(0)}%</span>
-                              <span className="text-[8px] font-bold text-gray-500 uppercase font-mono tracking-wide">Skor</span>
+                              <span className="text-[8px] font-bold text-slate-400 uppercase font-mono tracking-wide">Skor</span>
                             </div>
                           </div>
                         </div>
 
                         {/* Confidence Level Progress Bars */}
-                        <div className="space-y-3.5 p-4 bg-[#0a0f1b]/50 rounded-xl border border-gray-855">
-                          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider block font-mono border-b border-gray-855 pb-1.5">
+                        <div className="space-y-3.5 p-4 bg-slate-50/50 rounded-xl border border-slate-200">
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block font-mono border-b border-slate-200 pb-1.5">
                             STATUS KEPATUHAN KOS
                           </span>
                           
                           <div className="space-y-1">
-                            <div className="flex justify-between text-[9px] font-bold text-gray-400">
+                            <div className="flex justify-between text-[9px] font-bold text-slate-500">
                               <span className="flex items-center gap-1.5">
                                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                                 VALID ({validCount})
@@ -1876,7 +1876,7 @@ export default function DashboardPage() {
                           </div>
                           
                           <div className="space-y-1">
-                            <div className="flex justify-between text-[9px] font-bold text-gray-400">
+                            <div className="flex justify-between text-[9px] font-bold text-slate-500">
                               <span className="flex items-center gap-1.5">
                                 <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
                                 PARTIAL VALID ({partialCount})
@@ -1889,7 +1889,7 @@ export default function DashboardPage() {
                           </div>
 
                           <div className="space-y-1">
-                            <div className="flex justify-between text-[9px] font-bold text-gray-400">
+                            <div className="flex justify-between text-[9px] font-bold text-slate-500">
                               <span className="flex items-center gap-1.5">
                                 <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
                                 FATAL FRAUD ({fraudCount})
@@ -1907,12 +1907,12 @@ export default function DashboardPage() {
                           <div className="p-3 bg-blue-955/20 border border-blue-900/30 rounded-xl text-center">
                             <span className="text-[8px] font-bold text-blue-400 block mb-1 uppercase font-mono tracking-wider">Rata-Rata TDS</span>
                             <span className="text-sm font-black text-white">{avgTds.toFixed(0)} ppm</span>
-                            <span className="text-[8px] text-gray-500 block mt-1 font-mono">{avgTds <= 300 ? 'Air Bersih' : 'Kualitas Rendah'}</span>
+                            <span className="text-[8px] text-slate-400 block mt-1 font-mono">{avgTds <= 300 ? 'Air Bersih' : 'Kualitas Rendah'}</span>
                           </div>
                           <div className="p-3 bg-orange-955/20 border border-orange-900/30 rounded-xl text-center">
                             <span className="text-[8px] font-bold text-orange-400 block mb-1 uppercase font-mono tracking-wider">Rata-Rata Speed</span>
                             <span className="text-sm font-black text-white">{avgSpeed.toFixed(0)} Mbps</span>
-                            <span className="text-[8px] text-gray-500 block mt-1 font-mono">{avgSpeed >= 15 ? 'Internet Cepat' : 'Internet Buffering'}</span>
+                            <span className="text-[8px] text-slate-400 block mt-1 font-mono">{avgSpeed >= 15 ? 'Internet Cepat' : 'Internet Buffering'}</span>
                           </div>
                         </div>
 
@@ -1920,10 +1920,10 @@ export default function DashboardPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="bg-[#0c1220]/70 border border-gray-800/85 rounded-2xl p-8 shadow-xl backdrop-blur-md text-center py-12">
+                  <div className="bg-white/70 border border-slate-200/85 rounded-2xl p-8 shadow-xl backdrop-blur-md text-center py-12">
                     <Compass className="h-8 w-8 text-gray-600 mx-auto mb-3 animate-spin" style={{ animationDuration: '6s' }} />
-                    <h3 className="text-xs font-bold text-gray-300 uppercase tracking-wider mb-1">Pilih Sesi Kerja</h3>
-                    <p className="text-[10px] text-gray-500 max-w-[200px] mx-auto leading-relaxed">
+                    <h3 className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Pilih Sesi Kerja</h3>
+                    <p className="text-[10px] text-slate-400 max-w-[200px] mx-auto leading-relaxed">
                       Pilih salah satu tugas dari daftar di samping untuk memulai pengisian berkas audit lapangan.
                     </p>
                   </div>
@@ -1938,17 +1938,17 @@ export default function DashboardPage() {
        {/* Modal - Request Inspection (Mahasiswa) - Gojek Style Wizard */}
       {showRequestModal && (
         <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-40 backdrop-blur-sm">
-          <div className="bg-[#0c1220] rounded-2xl w-full max-w-lg p-6 shadow-2xl relative border border-gray-800 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl relative border border-slate-200 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
             
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-gray-800 pb-3 mb-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
               <h3 className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
                 <span>⚡ Pesan Verifikator Kos (Gojek-Style)</span>
               </h3>
               <button
                 type="button"
                 onClick={handleCloseRequestModal}
-                className="text-gray-400 hover:text-white font-bold text-[10px] uppercase tracking-wider"
+                className="text-slate-500 hover:text-white font-bold text-[10px] uppercase tracking-wider"
               >
                 Tutup
               </button>
@@ -1963,7 +1963,7 @@ export default function DashboardPage() {
             {/* STEP 1: CATEGORY SELECTION */}
             {currentStepModal === 1 && (
               <div className="space-y-5 py-2">
-                <p className="text-[10px] text-gray-400 leading-relaxed">
+                <p className="text-[10px] text-slate-500 leading-relaxed">
                   Pilih jenis layanan verifikasi kos yang Anda inginkan. Sistem kami akan menghubungkan Anda dengan Inspektur terdekat untuk melakukan audit langsung di lapangan.
                 </p>
 
@@ -1974,7 +1974,7 @@ export default function DashboardPage() {
                     className={`p-4 rounded-xl border flex items-center gap-4 cursor-pointer transition-all ${
                       orderCategory === 'single'
                         ? 'border-blue-500 bg-blue-950/10'
-                        : 'border-gray-800 bg-[#090e1a]/40 hover:border-gray-700'
+                        : 'border-slate-200 bg-slate-50/40 hover:border-slate-200'
                     }`}
                   >
                     <input
@@ -1992,7 +1992,7 @@ export default function DashboardPage() {
                         <span className="text-xs font-bold text-white block">Inspeksi Tunggal</span>
                         <span className="text-[10px] font-black text-blue-400">Rp 50.000</span>
                       </div>
-                      <span className="text-[9px] text-gray-500 block leading-relaxed mt-0.5">
+                      <span className="text-[9px] text-slate-400 block leading-relaxed mt-0.5">
                         Verifikasi 1 properti kos. Dapatkan scorecard Gemini AI untuk fasilitas iklan.
                       </span>
                     </div>
@@ -2004,7 +2004,7 @@ export default function DashboardPage() {
                     className={`p-4 rounded-xl border flex items-center gap-4 cursor-pointer transition-all ${
                       orderCategory === 'multi'
                         ? 'border-blue-500 bg-blue-950/10'
-                        : 'border-gray-800 bg-[#090e1a]/40 hover:border-gray-700'
+                        : 'border-slate-200 bg-slate-50/40 hover:border-slate-200'
                     }`}
                   >
                     <input
@@ -2020,9 +2020,9 @@ export default function DashboardPage() {
                     <div className="text-left flex-1 min-w-0">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-bold text-white block">Multi-Kos (Grup Banding)</span>
-                        <span className="text-[10px] font-black text-purple-400">Rp 45.000 <span className="text-[8px] font-normal text-gray-400">/ kos</span></span>
+                        <span className="text-[10px] font-black text-purple-400">Rp 45.000 <span className="text-[8px] font-normal text-slate-500">/ kos</span></span>
                       </div>
-                      <span className="text-[9px] text-gray-500 block leading-relaxed mt-0.5">
+                      <span className="text-[9px] text-slate-400 block leading-relaxed mt-0.5">
                         Verifikasi 2 sampai 5 kos secara bersamaan. Dapatkan lembar perbandingan dasbor interaktif.
                       </span>
                     </div>
@@ -2049,30 +2049,30 @@ export default function DashboardPage() {
                   /* Form Single Kos */
                   <form onSubmit={(e) => { e.preventDefault(); handleCreateOrderInvoice(); }} className="space-y-4">
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Nama Properti Kos</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Nama Properti Kos</label>
                       <input
                         type="text"
                         required
                         value={propertyName}
                         onChange={(e) => setPropertyName(e.target.value)}
                         placeholder="Contoh: Kos Anggrek Indah TRPL"
-                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Alamat Lengkap</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Alamat Lengkap</label>
                       <input
                         type="text"
                         required
                         value={propertyAddress}
                         onChange={(e) => setPropertyAddress(e.target.value)}
                         placeholder="Jl. Limau Manis No. 40, Padang"
-                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
                       />
                     </div>
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between mb-1">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Lokasi Koordinat Kos</label>
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Lokasi Koordinat Kos</label>
                         <button
                           type="button"
                           onClick={() => setShowMapPicker(!showMapPicker)}
@@ -2082,39 +2082,39 @@ export default function DashboardPage() {
                         </button>
                       </div>
                       {showMapPicker && (
-                        <div className="border border-gray-800 rounded-xl p-2 bg-[#090d16] space-y-2">
+                        <div className="border border-slate-200 rounded-xl p-2 bg-slate-50 space-y-2">
                           <div
                             id="map-picker-container"
-                            className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-gray-850 z-10"
+                            className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-slate-200 z-10"
                             style={{ minHeight: '192px' }}
                           />
                         </div>
                       )}
                       <div className="grid grid-cols-2 gap-2">
-                        <input type="text" readOnly placeholder="Latitude" value={selectedLat ? selectedLat.toFixed(6) : ''} className="w-full px-3 py-2 bg-[#080d1a] border border-gray-850 rounded-xl text-xs text-gray-400 font-mono" />
-                        <input type="text" readOnly placeholder="Longitude" value={selectedLng ? selectedLng.toFixed(6) : ''} className="w-full px-3 py-2 bg-[#080d1a] border border-gray-850 rounded-xl text-xs text-gray-400 font-mono" />
+                        <input type="text" readOnly placeholder="Latitude" value={selectedLat ? selectedLat.toFixed(6) : ''} className="w-full px-3 py-2 bg-[#080d1a] border border-slate-200 rounded-xl text-xs text-slate-500 font-mono" />
+                        <input type="text" readOnly placeholder="Longitude" value={selectedLng ? selectedLng.toFixed(6) : ''} className="w-full px-3 py-2 bg-[#080d1a] border border-slate-200 rounded-xl text-xs text-slate-500 font-mono" />
                       </div>
                     </div>
                     <div className="space-y-1.5">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Deskripsi Fasilitas Iklan</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Deskripsi Fasilitas Iklan</label>
                       <textarea
                         value={propertyDesc}
                         onChange={(e) => setPropertyDesc(e.target.value)}
                         placeholder="Catatan mengenai fasilitas..."
                         rows={2}
-                        className="w-full px-3.5 py-2 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
+                        className="w-full px-3.5 py-2 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
                       />
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase block font-mono border-b border-gray-850 pb-1">Klaim Fasilitas Iklan</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase block font-mono border-b border-slate-200 pb-1">Klaim Fasilitas Iklan</label>
                       <div className="grid grid-cols-2 gap-2">
                         {Object.keys(claims).map((facility) => (
-                          <label key={facility} className="flex items-center gap-2 p-2 bg-[#090e1a] border border-gray-850 rounded-xl text-[10px] text-gray-300 cursor-pointer">
+                          <label key={facility} className="flex items-center gap-2 p-2 bg-slate-50 border border-slate-200 rounded-xl text-[10px] text-slate-600 cursor-pointer">
                             <input
                               type="checkbox"
                               checked={(claims as any)[facility]}
                               onChange={(e) => setClaims({ ...claims, [facility]: e.target.checked })}
-                              className="rounded border-gray-800 text-blue-600 focus:ring-0 bg-gray-900"
+                              className="rounded border-slate-200 text-blue-600 focus:ring-0 bg-gray-900"
                             />
                             <span className="capitalize">{facility.replace(/_/g, ' ')}</span>
                           </label>
@@ -2135,7 +2135,7 @@ export default function DashboardPage() {
                               setCustomFacilitySingle('');
                             }
                           }}
-                          className="flex-1 px-3 py-1.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-[10px] text-white placeholder-gray-600 focus:outline-none"
+                          className="flex-1 px-3 py-1.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-[10px] text-white placeholder-gray-600 focus:outline-none"
                         />
                         <button
                           type="button"
@@ -2148,16 +2148,16 @@ export default function DashboardPage() {
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <label className="text-[9px] font-bold text-gray-400 block font-mono uppercase">TDS Air (ppm)</label>
+                        <label className="text-[9px] font-bold text-slate-500 block font-mono uppercase">TDS Air (ppm)</label>
                         <input type="number" required value={tdsExpectation} onChange={(e) => setTdsExpectation(Number(e.target.value))} className="w-full px-3 py-2 bg-[#080d1a] border border-gray-805 rounded-xl text-xs text-white" />
                       </div>
                       <div>
-                        <label className="text-[9px] font-bold text-gray-400 block font-mono uppercase">Wifi (Mbps)</label>
+                        <label className="text-[9px] font-bold text-slate-500 block font-mono uppercase">Wifi (Mbps)</label>
                         <input type="number" required value={internetExpectation} onChange={(e) => setInternetExpectation(Number(e.target.value))} className="w-full px-3 py-2 bg-[#080d1a] border border-gray-805 rounded-xl text-xs text-white" />
                       </div>
                     </div>
-                    <div className="flex items-center justify-between border-t border-gray-850 pt-4 mt-6">
-                      <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-white uppercase">Kembali</button>
+                    <div className="flex items-center justify-between border-t border-slate-200 pt-4 mt-6">
+                      <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white uppercase">Kembali</button>
                       <button type="submit" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider">Lanjut Bayar</button>
                     </div>
                   </form>
@@ -2184,8 +2184,8 @@ export default function DashboardPage() {
 
                     <div className="space-y-4 max-h-[42vh] overflow-y-auto pr-1">
                       {multiProperties.map((p, idx) => (
-                        <div key={idx} className="p-4 bg-[#090d16]/70 border border-gray-850 rounded-xl space-y-3 relative">
-                          <div className="flex items-center justify-between border-b border-gray-850 pb-2">
+                        <div key={idx} className="p-4 bg-slate-50/70 border border-slate-200 rounded-xl space-y-3 relative">
+                          <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                             <span className="text-[10px] font-bold text-white uppercase">Kos Properti #{idx + 1}</span>
                             {multiProperties.length > 2 && (
                               <button
@@ -2213,7 +2213,7 @@ export default function DashboardPage() {
                                 copy[idx].name = e.target.value;
                                 setMultiProperties(copy);
                               }}
-                              className="w-full px-3 py-2 bg-[#080d1a] border border-gray-850 rounded-lg text-xs text-white"
+                              className="w-full px-3 py-2 bg-[#080d1a] border border-slate-200 rounded-lg text-xs text-white"
                             />
                             <input
                               type="text"
@@ -2225,13 +2225,13 @@ export default function DashboardPage() {
                                 copy[idx].address = e.target.value;
                                 setMultiProperties(copy);
                               }}
-                              className="w-full px-3 py-2 bg-[#080d1a] border border-gray-850 rounded-lg text-xs text-white"
+                              className="w-full px-3 py-2 bg-[#080d1a] border border-slate-200 rounded-lg text-xs text-white"
                             />
                           </div>
 
                           <div className="space-y-1.5">
                             <div className="flex items-center justify-between">
-                              <span className="text-[9px] font-bold text-gray-500 uppercase font-mono">Pin Lokasi</span>
+                              <span className="text-[9px] font-bold text-slate-400 uppercase font-mono">Pin Lokasi</span>
                               <button
                                 type="button"
                                 onClick={() => {
@@ -2245,25 +2245,25 @@ export default function DashboardPage() {
                               </button>
                             </div>
                             {p.showPicker && (
-                              <div className="border border-gray-850 rounded-xl p-2 bg-[#090d16] space-y-2">
+                              <div className="border border-slate-200 rounded-xl p-2 bg-slate-50 space-y-2">
                                 <div
                                   id={`map-picker-container-${idx}`}
-                                  className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-gray-850 z-10"
+                                  className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-slate-200 z-10"
                                   style={{ minHeight: '192px' }}
                                 />
                               </div>
                             )}
-                            <div className="grid grid-cols-2 gap-2 text-[9px] font-mono text-gray-500">
+                            <div className="grid grid-cols-2 gap-2 text-[9px] font-mono text-slate-400">
                               <span>Lat: {p.lat ? p.lat.toFixed(5) : '-'}</span>
                               <span>Lng: {p.lng ? p.lng.toFixed(5) : '-'}</span>
                             </div>
                           </div>
 
                           <div className="space-y-1.5">
-                            <span className="text-[9px] font-bold text-gray-400 block font-mono border-b border-gray-855 pb-0.5">Fasilitas</span>
+                            <span className="text-[9px] font-bold text-slate-500 block font-mono border-b border-slate-200 pb-0.5">Fasilitas</span>
                             <div className="grid grid-cols-3 gap-1.5">
                               {Object.keys(p.claims).map((facility) => (
-                                <label key={facility} className="flex items-center gap-1 p-1 bg-[#090e1a] border border-gray-850 rounded-lg text-[9px] text-gray-300 cursor-pointer">
+                                <label key={facility} className="flex items-center gap-1 p-1 bg-slate-50 border border-slate-200 rounded-lg text-[9px] text-slate-600 cursor-pointer">
                                   <input
                                     type="checkbox"
                                     checked={(p.claims as any)[facility]}
@@ -2272,7 +2272,7 @@ export default function DashboardPage() {
                                       copy[idx].claims[facility] = e.target.checked;
                                       setMultiProperties(copy);
                                     }}
-                                    className="rounded border-gray-800 text-blue-600 focus:ring-0 scale-75 bg-gray-900"
+                                    className="rounded border-slate-200 text-blue-600 focus:ring-0 scale-75 bg-gray-900"
                                   />
                                   <span className="capitalize truncate">{facility.replace(/_/g, ' ')}</span>
                                 </label>
@@ -2298,7 +2298,7 @@ export default function DashboardPage() {
                                     setCustomFacilityMulti((prev) => ({ ...prev, [idx]: '' }));
                                   }
                                 }}
-                                className="flex-1 px-2 py-1 bg-[#080d1a] border border-gray-850 focus:border-indigo-500 rounded-md text-[9px] text-white focus:outline-none placeholder-gray-650"
+                                className="flex-1 px-2 py-1 bg-[#080d1a] border border-slate-200 focus:border-indigo-500 rounded-md text-[9px] text-white focus:outline-none placeholder-gray-650"
                               />
                               <button
                                 type="button"
@@ -2313,8 +2313,8 @@ export default function DashboardPage() {
                       ))}
                     </div>
 
-                    <div className="flex items-center justify-between border-t border-gray-850 pt-4 mt-6">
-                      <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-white uppercase">Kembali</button>
+                    <div className="flex items-center justify-between border-t border-slate-200 pt-4 mt-6">
+                      <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white uppercase">Kembali</button>
                       <button
                         type="button"
                         onClick={handleCreateOrderInvoice}
@@ -2333,15 +2333,15 @@ export default function DashboardPage() {
             {/* STEP 3: QRIS PAYMENT */}
             {currentStepModal === 3 && (
               <div className="space-y-5 py-2 text-center">
-                <div className="p-4 bg-[#090d16] border border-gray-855 rounded-xl text-left space-y-2">
-                  <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-wider font-mono">Invoice Ringkasan Transaksi</h4>
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-left space-y-2">
+                  <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono">Invoice Ringkasan Transaksi</h4>
                   <div className="text-xs space-y-1">
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Jenis Layanan:</span>
+                      <span className="text-slate-500">Jenis Layanan:</span>
                       <span className="text-white font-bold">{orderCategory === 'single' ? 'Inspeksi Tunggal (1 Properti)' : `Multi-Kos (${multiProperties.length} Properti)`}</span>
                     </div>
-                    <div className="flex justify-between border-t border-gray-850 pt-1 mt-1 font-extrabold text-sm">
-                      <span className="text-gray-300">Total Tagihan:</span>
+                    <div className="flex justify-between border-t border-slate-200 pt-1 mt-1 font-extrabold text-sm">
+                      <span className="text-slate-600">Total Tagihan:</span>
                       <span className="text-emerald-400">
                         {orderCategory === 'single' ? 'Rp 50.000' : `Rp ${(multiProperties.length * 45000).toLocaleString('id-ID')}`}
                       </span>
@@ -2358,25 +2358,25 @@ export default function DashboardPage() {
                   return (
                     <div className="space-y-4">
                       {isSandbox ? (
-                        <div className="bg-[#0b172a] border border-blue-900/60 rounded-xl p-3.5 text-center space-y-1.5 max-w-sm mx-auto shadow-inner">
+                        <div className="bg-blue-50 border border-blue-900/60 rounded-xl p-3.5 text-center space-y-1.5 max-w-sm mx-auto shadow-inner">
                           <div className="flex items-center justify-center gap-1.5 text-blue-400">
                             <ShieldCheck className="h-4 w-4" />
                             <span className="text-xs font-bold font-mono tracking-wider uppercase text-blue-300">Midtrans Sandbox Active</span>
                           </div>
-                          <p className="text-[10px] text-gray-400 leading-relaxed">
+                          <p className="text-[10px] text-slate-500 leading-relaxed">
                             Menggunakan gerbang pembayaran resmi Midtrans Sandbox. Pindai kode QRIS di bawah atau klik tombol untuk membayar.
                           </p>
                         </div>
                       ) : (
-                        <div className="bg-[#1f160c] border border-amber-900/40 rounded-xl p-3.5 text-center space-y-1.5 max-w-sm mx-auto shadow-inner">
+                        <div className="bg-amber-50 border border-amber-900/40 rounded-xl p-3.5 text-center space-y-1.5 max-w-sm mx-auto shadow-inner">
                           <span className="text-[10px] font-bold text-amber-400 font-mono tracking-wider uppercase">Mode Simulator Pembayaran</span>
-                          <p className="text-[10px] text-gray-400 leading-relaxed">
+                          <p className="text-[10px] text-slate-500 leading-relaxed">
                             Kunci API Midtrans belum dikonfigurasi. Menggunakan simulator internal InspeksiKos.
                           </p>
                         </div>
                       )}
 
-                      <div className="border border-gray-800 rounded-2xl p-5 bg-white max-w-[240px] mx-auto space-y-3 shadow-inner">
+                      <div className="border border-slate-200 rounded-2xl p-5 bg-white max-w-[240px] mx-auto space-y-3 shadow-inner">
                         {/* QRIS Header */}
                         <div className="flex items-center justify-between border-b border-gray-200 pb-1.5">
                           <span className="text-xs font-extrabold text-[#da251d]">QRIS</span>
@@ -2388,13 +2388,13 @@ export default function DashboardPage() {
                           {activeRequestInspectionIds.length > 0 ? (
                             <img src={qrUrl} alt="QR Code" className="w-[140px] h-[140px]" />
                           ) : (
-                            <div className="w-[140px] h-[140px] flex items-center justify-center text-gray-400 text-[10px] font-mono">
+                            <div className="w-[140px] h-[140px] flex items-center justify-center text-slate-500 text-[10px] font-mono">
                               Memuat QR Code...
                             </div>
                           )}
                         </div>
 
-                        <p className="text-[8px] text-gray-500 font-bold uppercase tracking-wider font-mono">
+                        <p className="text-[8px] text-slate-400 font-bold uppercase tracking-wider font-mono">
                           {isSandbox ? 'MIDTRANS SECURE SANDBOX' : 'INSPEKSIKOS ON-DEMAND'}<br />
                           NMID: {isSandbox ? 'ID202688776655' : 'ID1020304050'}
                         </p>
@@ -2431,12 +2431,12 @@ export default function DashboardPage() {
                   Silakan scan QRIS di atas dengan aplikasi pembayaran Anda (Gopay, OVO, Dana, LinkAja) atau klik tombol di atas untuk melanjutkan pembayaran.
                 </p>
 
-                <div className="flex items-center justify-between border-t border-gray-850 pt-4 mt-6">
-                  <button type="button" onClick={() => setCurrentStepModal(2)} className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-white uppercase">Kembali</button>
+                <div className="flex items-center justify-between border-t border-slate-200 pt-4 mt-6">
+                  <button type="button" onClick={() => setCurrentStepModal(2)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white uppercase">Kembali</button>
                   <button
                     type="button"
                     disabled={true}
-                    className="px-5 py-2.5 bg-gray-800 text-gray-500 border border-gray-700/60 font-bold rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-not-allowed w-56"
+                    className="px-5 py-2.5 bg-gray-800 text-slate-400 border border-slate-200/60 font-bold rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-not-allowed w-56"
                   >
                     <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-500" />
                     Menunggu Pembayaran...
@@ -2462,7 +2462,7 @@ export default function DashboardPage() {
 
                     <div className="space-y-1">
                       <h4 className="text-xs font-extrabold text-white uppercase tracking-wider">Mencari Inspektur...</h4>
-                      <p className="text-[9px] text-gray-500 max-w-xs mx-auto leading-relaxed">
+                      <p className="text-[9px] text-slate-400 max-w-xs mx-auto leading-relaxed">
                         Menghubungkan dengan verifikasi bersertifikat terdekat dari lokasi kosan untuk langsung mengaudit ke lapangan.
                       </p>
                     </div>
@@ -2475,18 +2475,18 @@ export default function DashboardPage() {
 
                     <div className="space-y-1">
                       <h4 className="text-xs font-extrabold text-white uppercase tracking-wider text-emerald-400">Inspektur Ditemukan!</h4>
-                      <p className="text-[9px] text-gray-500 max-w-xs mx-auto leading-relaxed">
+                      <p className="text-[9px] text-slate-400 max-w-xs mx-auto leading-relaxed">
                         Inspektur mitra kami telah menerima pesanan verifikasi Anda.
                       </p>
                     </div>
 
                     {/* Driver Card */}
                     {mockInspector && (
-                      <div className="p-4 bg-[#090d16] border border-gray-850 rounded-xl flex items-center gap-4 text-left max-w-xs mx-auto">
-                        <img src={mockInspector.avatar} alt={mockInspector.name} className="w-10 h-10 rounded-full border border-gray-800 object-cover" />
+                      <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-4 text-left max-w-xs mx-auto">
+                        <img src={mockInspector.avatar} alt={mockInspector.name} className="w-10 h-10 rounded-full border border-slate-200 object-cover" />
                         <div className="flex-1 min-w-0">
                           <span className="text-[10px] font-extrabold text-white block truncate">{mockInspector.name}</span>
-                          <span className="text-[9px] text-gray-500 font-medium block">⭐ {mockInspector.rating} • Mitra Lapangan</span>
+                          <span className="text-[9px] text-slate-400 font-medium block">⭐ {mockInspector.rating} • Mitra Lapangan</span>
                           <span className="text-[9px] text-blue-400 font-mono block mt-0.5">{mockInspector.phone}</span>
                         </div>
                       </div>
@@ -2512,14 +2512,14 @@ export default function DashboardPage() {
       {/* Modal - Multi-Kos Comparison Panel */}
       {showComparisonModal && selectedComparisonGroup.length >= 2 && (
         <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-40 backdrop-blur-sm">
-          <div className="bg-[#0c1220] rounded-2xl w-full max-w-4xl p-6 shadow-2xl relative border border-gray-800 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-5">
+          <div className="bg-white rounded-2xl w-full max-w-4xl p-6 shadow-2xl relative border border-slate-200 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-5">
               <div>
                 <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
                   <Sparkles className="h-4 w-4 text-indigo-400 animate-pulse" />
                   Hasil Analisis Komparatif Properti Kos
                 </h3>
-                <p className="text-[10px] text-gray-500 mt-1 leading-relaxed font-medium">
+                <p className="text-[10px] text-slate-400 mt-1 leading-relaxed font-medium">
                   Perbandingan data iklan vs hasil verifikasi lapangan (TDS air, Wifi speed, fasilitas) bersertifikasi AI.
                 </p>
               </div>
@@ -2529,7 +2529,7 @@ export default function DashboardPage() {
                   setShowComparisonModal(false);
                   setSelectedComparisonGroup([]);
                 }}
-                className="text-gray-400 hover:text-white font-extrabold text-[10px] uppercase tracking-wider"
+                className="text-slate-500 hover:text-white font-extrabold text-[10px] uppercase tracking-wider"
               >
                 Tutup
               </button>
@@ -2549,7 +2549,7 @@ export default function DashboardPage() {
                   <h4 className="text-xs font-bold text-indigo-300 flex items-center gap-1.5 mb-1">
                     🌟 Pilihan Utama: {bestKos.property.name}
                   </h4>
-                  <p className="text-[10px] text-gray-400 leading-relaxed font-medium">
+                  <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
                     Berdasarkan verifikasi lapangan, properti ini memiliki tingkat akreditasi tertinggi sebesar <strong className="text-emerald-400 font-extrabold">{bestKos.audit_report?.score}%</strong> dengan kualitas air bersih ({bestKos.tds_value} ppm) dan kecepatan internet ({bestKos.internet_speed} Mbps) yang paling unggul.
                   </p>
                 </div>
@@ -2557,13 +2557,13 @@ export default function DashboardPage() {
             })()}
 
             {/* Comparison Table */}
-            <div className="overflow-x-auto border border-gray-800 rounded-xl bg-[#090d16]/50 shadow-inner">
+            <div className="overflow-x-auto border border-slate-200 rounded-xl bg-slate-50/50 shadow-inner">
               <table className="w-full text-left border-collapse text-[11px]">
                 <thead>
-                  <tr className="border-b border-gray-800 bg-gray-950/40 text-[9px] uppercase font-bold text-gray-400 tracking-wider">
+                  <tr className="border-b border-slate-200 bg-gray-950/40 text-[9px] uppercase font-bold text-slate-500 tracking-wider">
                     <th className="p-3 w-1/4">Parameter</th>
                     {selectedComparisonGroup.map((insp) => (
-                      <th key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60 font-black text-white">
+                      <th key={insp.inspection_id} className="p-3 text-center border-l border-slate-200/60 font-black text-white">
                         {insp.property.name}
                       </th>
                     ))}
@@ -2572,9 +2572,9 @@ export default function DashboardPage() {
                 <tbody className="divide-y divide-gray-850 font-medium">
                   {/* Score */}
                   <tr>
-                    <td className="p-3 font-semibold text-gray-300">Skor Akreditasi</td>
+                    <td className="p-3 font-semibold text-slate-600">Skor Akreditasi</td>
                     {selectedComparisonGroup.map((insp) => (
-                      <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
+                      <td key={insp.inspection_id} className="p-3 text-center border-l border-slate-200/60">
                         <span className="font-extrabold text-xs text-blue-400">
                           {insp.audit_report?.score}%
                         </span>
@@ -2583,9 +2583,9 @@ export default function DashboardPage() {
                   </tr>
                   {/* Validity status */}
                   <tr>
-                    <td className="p-3 font-semibold text-gray-300">Status Validitas</td>
+                    <td className="p-3 font-semibold text-slate-600">Status Validitas</td>
                     {selectedComparisonGroup.map((insp) => (
-                      <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
+                      <td key={insp.inspection_id} className="p-3 text-center border-l border-slate-200/60">
                         <span className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider ${
                           insp.audit_report?.confidence_level === 'VALID'
                             ? 'bg-emerald-955 text-emerald-400'
@@ -2600,11 +2600,11 @@ export default function DashboardPage() {
                   </tr>
                   {/* Water TDS */}
                   <tr>
-                    <td className="p-3 font-semibold text-gray-300">Kualitas Air (TDS)</td>
+                    <td className="p-3 font-semibold text-slate-600">Kualitas Air (TDS)</td>
                     {selectedComparisonGroup.map((insp) => (
-                      <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60 font-mono text-gray-200">
+                      <td key={insp.inspection_id} className="p-3 text-center border-l border-slate-200/60 font-mono text-gray-200">
                         {insp.tds_value} ppm
-                        <span className="block text-[8px] text-gray-500 font-bold uppercase mt-0.5">
+                        <span className="block text-[8px] text-slate-400 font-bold uppercase mt-0.5">
                           {Number(insp.tds_value) <= 300 ? '🟢 Sangat Baik' : Number(insp.tds_value) <= 500 ? '🟡 Layak' : '🔴 Buruk'}
                         </span>
                       </td>
@@ -2612,11 +2612,11 @@ export default function DashboardPage() {
                   </tr>
                   {/* Internet Speed */}
                   <tr>
-                    <td className="p-3 font-semibold text-gray-300">Kecepatan WiFi</td>
+                    <td className="p-3 font-semibold text-slate-600">Kecepatan WiFi</td>
                     {selectedComparisonGroup.map((insp) => (
-                      <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60 font-mono text-gray-200">
+                      <td key={insp.inspection_id} className="p-3 text-center border-l border-slate-200/60 font-mono text-gray-200">
                         {insp.internet_speed} Mbps
-                        <span className="block text-[8px] text-gray-500 font-bold uppercase mt-0.5">
+                        <span className="block text-[8px] text-slate-400 font-bold uppercase mt-0.5">
                           {Number(insp.internet_speed) >= 20 ? '🟢 Cepat' : Number(insp.internet_speed) >= 10 ? '🟡 Cukup' : '🔴 Lambat'}
                         </span>
                       </td>
@@ -2624,9 +2624,9 @@ export default function DashboardPage() {
                   </tr>
                   {/* Address */}
                   <tr>
-                    <td className="p-3 font-semibold text-gray-300">Alamat Properti</td>
+                    <td className="p-3 font-semibold text-slate-600">Alamat Properti</td>
                     {selectedComparisonGroup.map((insp) => (
-                      <td key={insp.inspection_id} className="p-3 border-l border-gray-800/60 text-gray-400 max-w-[200px] leading-relaxed">
+                      <td key={insp.inspection_id} className="p-3 border-l border-slate-200/60 text-slate-500 max-w-[200px] leading-relaxed">
                         {insp.property.address}
                       </td>
                     ))}
@@ -2645,14 +2645,14 @@ export default function DashboardPage() {
                     return Array.from(allKeys).map((facilityKey) => {
                       return (
                         <tr key={facilityKey}>
-                          <td className="p-3 font-semibold text-gray-300 capitalize">
+                          <td className="p-3 font-semibold text-slate-600 capitalize">
                             Fasilitas {facilityKey.replace(/_/g, ' ')}
                           </td>
                           {selectedComparisonGroup.map((insp) => {
                             const claim = insp.property?.claim_data?.fasilitas?.[facilityKey]?.ada;
                             const actual = insp.inspector_data?.fasilitas?.[facilityKey]?.ada ?? claim;
                             return (
-                              <td key={insp.inspection_id} className="p-3 text-center border-l border-gray-800/60">
+                              <td key={insp.inspection_id} className="p-3 text-center border-l border-slate-200/60">
                                 {claim === undefined ? (
                                   <span className="text-gray-550 font-mono text-[8px] uppercase">TDK DIKLAIM</span>
                                 ) : actual ? (
@@ -2677,20 +2677,20 @@ export default function DashboardPage() {
       {/* Modal - Report Scorecard Detail */}
       {showReportModal && selectedInspection && selectedInspection.audit_report && (
         <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-40 backdrop-blur-sm">
-          <div className="bg-[#0c1220] rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative border border-gray-800 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative border border-slate-200 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
             
-            <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-4">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
               <div>
                 <h3 className="text-sm font-extrabold uppercase tracking-wider text-white">
                   Laporan Audit Scorecard
                 </h3>
-                <p className="text-[10px] text-gray-500 mt-1 font-mono">
+                <p className="text-[10px] text-slate-400 mt-1 font-mono">
                   {selectedInspection.property?.name} — {selectedInspection.property?.address}
                 </p>
               </div>
               <button
                 onClick={() => setShowReportModal(false)}
-                className="text-xs font-bold text-gray-500 hover:text-white transition-all"
+                className="text-xs font-bold text-slate-400 hover:text-white transition-all"
               >
                 Tutup
               </button>
@@ -2699,8 +2699,8 @@ export default function DashboardPage() {
             {/* Main Score Visual */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               
-              <div className="bg-[#0a0f1b]/60 border border-gray-855 p-4 rounded-xl text-center flex flex-col justify-center items-center">
-                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
+              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Skor Validitas
                 </span>
                 <span className="text-3xl font-black text-blue-500 mt-1">
@@ -2708,8 +2708,8 @@ export default function DashboardPage() {
                 </span>
               </div>
 
-              <div className="bg-[#0a0f1b]/60 border border-gray-855 p-4 rounded-xl text-center flex flex-col justify-center items-center">
-                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
+              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Tingkat Kepercayaan
                 </span>
                 <span
@@ -2725,8 +2725,8 @@ export default function DashboardPage() {
                 </span>
               </div>
 
-              <div className="bg-[#0a0f1b]/60 border border-gray-855 p-4 rounded-xl flex flex-col justify-center items-center text-center">
-                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
+              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl flex flex-col justify-center items-center text-center">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Laporan Resmi PDF
                 </span>
                 {selectedInspection.audit_report.pdf_url ? (
@@ -2748,7 +2748,7 @@ export default function DashboardPage() {
 
             {/* Comparison Details */}
             <div className="space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-855 pb-2 flex items-center gap-1.5">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-2 flex items-center gap-1.5">
                 <ClipboardList className="h-4 w-4 text-blue-500" />
                 Kecocokan Fasilitas Lapangan (AI Vision)
               </h4>
@@ -2759,10 +2759,10 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={i}
-                      className="flex items-center justify-between p-3 bg-[#0a0f1b]/30 rounded-xl border border-gray-855"
+                      className="flex items-center justify-between p-3 bg-[#0a0f1b]/30 rounded-xl border border-slate-200"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold capitalize text-gray-300">
+                        <span className="text-xs font-bold capitalize text-slate-600">
                           {item.facility.replace(/_/g, ' ')}
                         </span>
                       </div>
@@ -2778,7 +2778,7 @@ export default function DashboardPage() {
                           </span>
                         )}
                         {item.status === 'NEUTRAL' && (
-                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-gray-500 bg-gray-900/40 px-2 py-0.5 rounded-md border border-gray-800/60 tracking-wider">
+                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-slate-400 bg-gray-900/40 px-2 py-0.5 rounded-md border border-slate-200/60 tracking-wider">
                             TIDAK DIKLAIM
                           </span>
                         )}
@@ -2789,31 +2789,31 @@ export default function DashboardPage() {
               </div>
 
               {/* Technical breakdown */}
-              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-855 pb-2 pt-2 flex items-center gap-1.5">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-2 pt-2 flex items-center gap-1.5">
                 <Gauge className="h-4 w-4 text-indigo-500" />
                 Data Teknis Pengukuran
               </h4>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-3 bg-[#0a0f1b]/50 rounded-xl border border-gray-855">
-                  <span className="text-[9px] font-bold text-gray-500 block mb-1 font-mono uppercase tracking-wider">
+                <div className="p-3 bg-slate-50/50 rounded-xl border border-slate-200">
+                  <span className="text-[9px] font-bold text-slate-400 block mb-1 font-mono uppercase tracking-wider">
                     TDS Air Aktual
                   </span>
                   <span className="text-base font-black text-white">
                     {selectedInspection.tds_value} ppm
                   </span>
-                  <span className="text-[8px] text-gray-500 block mt-1 font-mono">
+                  <span className="text-[8px] text-slate-400 block mt-1 font-mono">
                     Klaim Maks: {selectedInspection.property?.claim_data?.fasilitas?.kualitas_air?.nilai || 500} ppm
                   </span>
                 </div>
-                <div className="p-3 bg-[#0a0f1b]/50 rounded-xl border border-gray-855">
-                  <span className="text-[9px] font-bold text-gray-500 block mb-1 font-mono uppercase tracking-wider">
+                <div className="p-3 bg-slate-50/50 rounded-xl border border-slate-200">
+                  <span className="text-[9px] font-bold text-slate-400 block mb-1 font-mono uppercase tracking-wider">
                     Speed Internet
                   </span>
                   <span className="text-base font-black text-white">
                     {selectedInspection.internet_speed} Mbps
                   </span>
-                  <span className="text-[8px] text-gray-500 block mt-1 font-mono">
+                  <span className="text-[8px] text-slate-400 block mt-1 font-mono">
                     Klaim Min: {selectedInspection.property?.claim_data?.fasilitas?.kecepatan_internet?.nilai || 10} Mbps
                   </span>
                 </div>
@@ -2821,7 +2821,7 @@ export default function DashboardPage() {
             </div>
 
             {/* Chatbot Gemini Section */}
-            <div className="border-t border-gray-855 pt-4 mt-6">
+            <div className="border-t border-slate-200 pt-4 mt-6">
               <button
                 type="button"
                 onClick={() => {
@@ -2849,7 +2849,7 @@ export default function DashboardPage() {
               </button>
 
               {showChat && (
-                <div className="mt-3 bg-[#090e1a] rounded-xl border border-gray-800 overflow-hidden flex flex-col h-72 shadow-inner">
+                <div className="mt-3 bg-slate-50 rounded-xl border border-slate-200 overflow-hidden flex flex-col h-72 shadow-inner">
                   
                   {/* Chat message list */}
                   <div className="flex-1 p-3 overflow-y-auto space-y-3 max-h-56 text-[10px] leading-relaxed scrollbar-none">
@@ -2864,7 +2864,7 @@ export default function DashboardPage() {
                           className={`max-w-[80%] rounded-xl p-2.5 ${
                             chat.role === 'user'
                               ? 'bg-blue-600 text-white rounded-tr-none shadow-md'
-                              : 'bg-[#0f172a] text-gray-200 border border-gray-800 rounded-tl-none'
+                              : 'bg-slate-100 text-gray-200 border border-slate-200 rounded-tl-none'
                           }`}
                         >
                           <p className="whitespace-pre-line font-sans">{chat.parts[0].text}</p>
@@ -2873,7 +2873,7 @@ export default function DashboardPage() {
                     ))}
                     {chatLoading && (
                       <div className="flex justify-start">
-                        <div className="bg-[#0f172a] text-gray-500 border border-gray-800 rounded-xl rounded-tl-none p-2.5 flex items-center gap-1.5 font-mono">
+                        <div className="bg-slate-100 text-slate-400 border border-slate-200 rounded-xl rounded-tl-none p-2.5 flex items-center gap-1.5 font-mono">
                           <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
                           <span>AI sedang merespon...</span>
                         </div>
@@ -2882,13 +2882,13 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Input form */}
-                  <form onSubmit={handleSendChatMessage} className="p-2 bg-[#0c1220] border-t border-gray-800 flex gap-2">
+                  <form onSubmit={handleSendChatMessage} className="p-2 bg-white border-t border-slate-200 flex gap-2">
                     <input
                       type="text"
                       value={chatMessage}
                       onChange={(e) => setChatMessage(e.target.value)}
                       placeholder="Tanyakan mengenai hasil audit kos ke AI..."
-                      className="flex-1 px-3 py-2 bg-[#080d1a] border border-gray-800 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 placeholder-gray-650"
+                      className="flex-1 px-3 py-2 bg-[#080d1a] border border-slate-200 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 placeholder-gray-650"
                       disabled={chatLoading}
                     />
                     <button
@@ -2903,7 +2903,7 @@ export default function DashboardPage() {
               )}
             </div>
 
-            <div className="flex justify-end border-t border-gray-855 pt-4 mt-6">
+            <div className="flex justify-end border-t border-slate-200 pt-4 mt-6">
               <button
                 onClick={() => setShowReportModal(false)}
                 className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer uppercase tracking-wider"

@@ -211,7 +211,7 @@ export default function AdminDashboardPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#080c14] text-gray-100 font-sans flex flex-col selection:bg-blue-600/30 selection:text-blue-200">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col selection:bg-blue-600/30 selection:text-blue-200">
       
       {/* Decorative Grid Overlay */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff02_1px,transparent_1px),linear-gradient(to_bottom,#ffffff02_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
@@ -221,46 +221,46 @@ export default function AdminDashboardPage() {
       <div className="absolute bottom-10 left-[5%] w-[400px] h-[400px] rounded-full bg-indigo-500/5 blur-[120px] pointer-events-none" />
 
       {/* Navbar */}
-      <header className="relative bg-[#0c1220]/80 border-b border-gray-800/80 px-6 py-4 flex items-center justify-between sticky top-0 z-30 shadow-lg backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <Link href="/" className="h-9 w-9 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/10">
-            <span className="text-base font-bold text-white">🏠</span>
-          </Link>
-          <div>
-            <span className="text-sm font-extrabold tracking-tight bg-gradient-to-r from-blue-400 via-indigo-200 to-white bg-clip-text text-transparent">
-              InspeksiKos
-            </span>
-            <span className="ml-2 text-[9px] px-2 py-0.5 bg-red-950 text-red-400 border border-red-900/60 font-bold rounded-md uppercase tracking-wider">
+      <header className="w-full border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-30">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-2.5">
+              <img src="/logo.webp" alt="InspeksiKos Logo" className="h-8 w-auto object-contain" />
+              <span className="text-sm font-extrabold tracking-tight text-[#003057] font-mono hidden sm:inline">
+                InspeksiKos
+              </span>
+            </Link>
+            <span className="text-[9px] px-2 py-0.5 bg-rose-50 text-rose-800 border border-rose-200 font-extrabold rounded-md uppercase tracking-wider font-mono">
               Admin Panel
             </span>
           </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-[#0f182c] border border-gray-800 rounded-xl hidden md:flex">
-            <User className="h-3.5 w-3.5 text-gray-400" />
-            <span className="text-[10px] font-bold text-gray-300">
-              {email}
-            </span>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-205 rounded-xl hidden md:flex">
+              <User className="h-3.5 w-3.5 text-slate-500" />
+              <span className="text-[10px] font-bold text-slate-700 font-mono">
+                {email}
+              </span>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-rose-200 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-sm font-mono"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Keluar</span>
+            </button>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-red-400 hover:text-red-300 hover:bg-red-950/20 border border-transparent hover:border-red-900/30 rounded-xl transition-all cursor-pointer"
-          >
-            <LogOut className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Keluar</span>
-          </button>
         </div>
       </header>
 
       {/* Hero Header */}
-      <div className="relative bg-[#0b111e] border-b border-gray-800/60 py-10 px-8">
+      <div className="relative bg-slate-100 border-b border-slate-200/60 py-10 px-8">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div>
             <span className="text-[9px] uppercase tracking-wider text-red-400 font-bold bg-red-950/50 px-2 py-1 rounded border border-red-900/55 block w-fit mb-2">Panel Kontrol Administrator</span>
             <h1 className="text-2xl md:text-3xl font-black mb-1 bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent">
               Dasbor Administrasi
             </h1>
-            <p className="text-xs text-gray-400 max-w-xl leading-relaxed">
+            <p className="text-xs text-slate-500 max-w-xl leading-relaxed">
               Kelola penugasan kerja untuk verifikator lapangan, pantau status audit properti mahasiswa, daftarkan akun verifikator baru, dan ubah bobot penilaian.
             </p>
           </div>
@@ -275,14 +275,14 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Main Tabs Navigation */}
-      <div className="border-b border-gray-800/60 bg-[#0c1220]/40 px-8 z-10">
+      <div className="border-b border-slate-200/60 bg-white/40 px-8 z-10">
         <div className="max-w-7xl mx-auto flex gap-6 overflow-x-auto scrollbar-none">
           <button
             onClick={() => setActiveTab('inspections')}
             className={`py-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'inspections'
                 ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-gray-500 hover:text-gray-300'
+                : 'border-transparent text-slate-400 hover:text-slate-650'
             }`}
           >
             <ClipboardList className="h-4 w-4" />
@@ -293,7 +293,7 @@ export default function AdminDashboardPage() {
             className={`py-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'inspectors'
                 ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-gray-500 hover:text-gray-300'
+                : 'border-transparent text-slate-400 hover:text-slate-650'
             }`}
           >
             <UserPlus className="h-4 w-4" />
@@ -304,7 +304,7 @@ export default function AdminDashboardPage() {
             className={`py-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'users'
                 ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-gray-500 hover:text-gray-300'
+                : 'border-transparent text-slate-400 hover:text-slate-650'
             }`}
           >
             <Users className="h-4 w-4" />
@@ -315,7 +315,7 @@ export default function AdminDashboardPage() {
             className={`py-4 text-xs font-bold uppercase tracking-wider border-b-2 transition-all flex items-center gap-1.5 whitespace-nowrap ${
               activeTab === 'rules'
                 ? 'border-blue-500 text-blue-400'
-                : 'border-transparent text-gray-500 hover:text-gray-300'
+                : 'border-transparent text-slate-400 hover:text-slate-650'
             }`}
           >
             <Settings className="h-4 w-4" />
@@ -329,29 +329,29 @@ export default function AdminDashboardPage() {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
-            <span className="text-xs font-semibold text-gray-500 font-mono">&gt; Menghubungkan...</span>
+            <span className="text-xs font-semibold text-slate-400 font-mono">&gt; Menghubungkan...</span>
           </div>
         ) : (
           <div className="space-y-6">
             
             {/* Tab 1: Inspections */}
             {activeTab === 'inspections' && (
-              <div className="bg-[#0c1220]/75 border border-gray-800/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 mb-6 flex items-center gap-2">
+              <div className="bg-white/75 border border-slate-200/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-650 mb-6 flex items-center gap-2">
                   <ClipboardList className="h-4 w-4 text-blue-500" />
                   Daftar Sesi Pengajuan Lapangan
                 </h2>
 
                 {inspections.length === 0 ? (
-                  <div className="text-center py-16 bg-[#090d16] rounded-xl border border-dashed border-gray-850">
+                  <div className="text-center py-16 bg-slate-50 rounded-xl border border-dashed border-slate-200">
                     <Building className="h-8 w-8 text-gray-650 mx-auto mb-2" />
-                    <p className="text-xs font-semibold text-gray-500 font-mono">Belum ada pengajuan inspeksi</p>
+                    <p className="text-xs font-semibold text-slate-400 font-mono">Belum ada pengajuan inspeksi</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto scrollbar-none">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
-                        <tr className="border-b border-gray-800 text-gray-500 font-bold">
+                        <tr className="border-b border-slate-200 text-slate-400 font-bold">
                           <th className="pb-3 pr-4">NAMA KOS</th>
                           <th className="pb-3 px-4">ALAMAT</th>
                           <th className="pb-3 px-4">STATUS</th>
@@ -365,7 +365,7 @@ export default function AdminDashboardPage() {
                             <td className="py-4 pr-4 font-bold text-white">
                               {insp.property?.name}
                             </td>
-                            <td className="py-4 px-4 text-gray-400 max-w-xs truncate">
+                            <td className="py-4 px-4 text-slate-500 max-w-xs truncate">
                               {insp.property?.address}
                             </td>
                             <td className="py-4 px-4">
@@ -385,7 +385,7 @@ export default function AdminDashboardPage() {
                                   : 'Ditugaskan'}
                               </span>
                             </td>
-                            <td className="py-4 px-4 font-semibold text-gray-300">
+                            <td className="py-4 px-4 font-semibold text-slate-650">
                               {insp.inspector ? (
                                 <span className="flex items-center gap-1.5">
                                   <User className="h-3.5 w-3.5 text-gray-550" />
@@ -407,7 +407,7 @@ export default function AdminDashboardPage() {
                               {insp.status === 'completed' && (
                                 <button
                                   onClick={() => handleViewReport(insp)}
-                                  className="inline-flex items-center gap-1 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border border-gray-800 bg-[#0e172a] hover:bg-gray-800 text-gray-300 rounded-lg transition-all cursor-pointer"
+                                  className="inline-flex items-center gap-1 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border border-slate-200 bg-white hover:bg-gray-800 text-slate-650 rounded-lg transition-all cursor-pointer"
                                 >
                                   <Eye className="h-3.5 w-3.5" /> Laporan
                                 </button>
@@ -427,12 +427,12 @@ export default function AdminDashboardPage() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* Registration form */}
-                <div className="lg:col-span-1 bg-[#0c1220]/75 border border-gray-800/80 rounded-2xl p-6 shadow-xl backdrop-blur-md h-fit">
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 mb-2 flex items-center gap-2">
+                <div className="lg:col-span-1 bg-white/75 border border-slate-200/80 rounded-2xl p-6 shadow-xl backdrop-blur-md h-fit">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-slate-650 mb-2 flex items-center gap-2">
                     <UserPlus className="h-4 w-4 text-blue-500" />
                     Daftar Verifikator Baru
                   </h2>
-                  <p className="text-[10px] text-gray-500 mb-6 leading-relaxed">
+                  <p className="text-[10px] text-slate-400 mb-6 leading-relaxed">
                     Buat akun petugas verifikator lapangan resmi. Pendaftaran publik langsung hanya diizinkan untuk mahasiswa.
                   </p>
 
@@ -451,62 +451,62 @@ export default function AdminDashboardPage() {
                   <form onSubmit={handleCreateInspector} className="space-y-4">
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Nama Depan</label>
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Nama Depan</label>
                         <input
                           type="text"
                           required
                           value={newFirstName}
                           onChange={(e) => setNewFirstName(e.target.value)}
                           placeholder="Annie"
-                          className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white"
+                          className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Nama Belakang</label>
+                        <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Nama Belakang</label>
                         <input
                           type="text"
                           required
                           value={newLastName}
                           onChange={(e) => setNewLastName(e.target.value)}
                           placeholder="Hartmann"
-                          className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white"
+                          className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">No Handphone</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">No Handphone</label>
                       <input
                         type="text"
                         required
                         value={newPhone}
                         onChange={(e) => setNewPhone(e.target.value)}
                         placeholder="08123456789"
-                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white"
+                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Email Verifikator</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Email Verifikator</label>
                       <input
                         type="email"
                         required
                         value={newEmail}
                         onChange={(e) => setNewEmail(e.target.value)}
                         placeholder="annie.h@inspeksikos.com"
-                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white"
+                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
                       />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Kata Sandi</label>
+                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Kata Sandi</label>
                       <input
                         type="password"
                         required
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="••••••"
-                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white"
+                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
                       />
                     </div>
 
@@ -522,29 +522,29 @@ export default function AdminDashboardPage() {
                 </div>
 
                 {/* Inspectors list */}
-                <div className="lg:col-span-2 bg-[#0c1220]/75 border border-gray-800/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 mb-6 flex items-center gap-2">
+                <div className="lg:col-span-2 bg-white/75 border border-slate-200/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-slate-650 mb-6 flex items-center gap-2">
                     <Users className="h-4 w-4 text-blue-500" />
                     Daftar Verifikator Aktif ({inspectors.length})
                   </h2>
 
                   {inspectors.length === 0 ? (
-                    <div className="text-center py-16 bg-[#090d16] rounded-xl border border-dashed border-gray-850">
+                    <div className="text-center py-16 bg-slate-50 rounded-xl border border-dashed border-slate-200">
                       <User className="h-8 w-8 text-gray-650 mx-auto mb-2" />
-                      <p className="text-xs font-semibold text-gray-500 font-mono">Belum ada verifikator terdaftar</p>
+                      <p className="text-xs font-semibold text-slate-400 font-mono">Belum ada verifikator terdaftar</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
                       {inspectors.map((insp: any) => (
                         <div
                           key={insp.user_id}
-                          className="p-4 bg-[#090e1a]/60 border border-gray-800/80 hover:border-gray-700/80 rounded-xl flex justify-between items-center transition-all"
+                          className="p-4 bg-slate-50/60 border border-slate-200/80 hover:border-slate-200/80 rounded-xl flex justify-between items-center transition-all"
                         >
                           <div>
                             <p className="text-xs font-bold text-white">
                               {insp.first_name} {insp.last_name}
                             </p>
-                            <p className="text-[10px] text-gray-400 mt-0.5">{insp.email}</p>
+                            <p className="text-[10px] text-slate-500 mt-0.5">{insp.email}</p>
                             <p className="text-[9px] text-gray-550 font-mono mt-1">Hp: {insp.phone_number}</p>
                           </div>
                           <span className="text-[8px] font-bold bg-indigo-950 text-indigo-400 border border-indigo-900/50 px-2 py-1 rounded-md uppercase tracking-wider">
@@ -560,8 +560,8 @@ export default function AdminDashboardPage() {
 
             {/* Tab 3: All Users */}
             {activeTab === 'users' && (
-              <div className="bg-[#0c1220]/75 border border-gray-800/80 rounded-2xl p-6 shadow-xl backdrop-blur-md font-sans">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 mb-6 flex items-center gap-2">
+              <div className="bg-white/75 border border-slate-200/80 rounded-2xl p-6 shadow-xl backdrop-blur-md font-sans">
+                <h2 className="text-xs font-bold uppercase tracking-wider text-slate-650 mb-6 flex items-center gap-2">
                   <Users className="h-4 w-4 text-blue-500" />
                   Daftar Semua Pengguna Terdaftar ({users.length})
                 </h2>
@@ -569,7 +569,7 @@ export default function AdminDashboardPage() {
                 <div className="overflow-x-auto scrollbar-none">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="border-b border-gray-800 text-gray-500 font-bold">
+                      <tr className="border-b border-slate-200 text-slate-400 font-bold">
                         <th className="pb-3 pr-4">NAMA LENGKAP</th>
                         <th className="pb-3 px-4">EMAIL</th>
                         <th className="pb-3 px-4">NO HP</th>
@@ -583,7 +583,7 @@ export default function AdminDashboardPage() {
                           <td className="py-4 pr-4 font-bold text-white">
                             {u.first_name} {u.last_name}
                           </td>
-                          <td className="py-4 px-4 text-gray-400">{u.email}</td>
+                          <td className="py-4 px-4 text-slate-500">{u.email}</td>
                           <td className="py-4 px-4 text-gray-450 font-mono">{u.phone_number || '-'}</td>
                           <td className="py-4 px-4">
                             <span
@@ -598,7 +598,7 @@ export default function AdminDashboardPage() {
                               {u.role}
                             </span>
                           </td>
-                          <td className="py-4 pl-4 text-right text-gray-500 font-mono">
+                          <td className="py-4 pl-4 text-right text-slate-400 font-mono">
                             {new Date(u.created_at).toLocaleDateString('id-ID')}
                           </td>
                         </tr>
@@ -611,9 +611,9 @@ export default function AdminDashboardPage() {
 
             {/* Tab 4: Evaluation Rules */}
             {activeTab === 'rules' && (
-              <div className="bg-[#0c1220]/75 border border-gray-800/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
+              <div className="bg-white/75 border border-slate-200/80 rounded-2xl p-6 shadow-xl backdrop-blur-md">
                 <div className="flex items-center justify-between mb-2">
-                  <h2 className="text-xs font-bold uppercase tracking-wider text-gray-300 flex items-center gap-2">
+                  <h2 className="text-xs font-bold uppercase tracking-wider text-slate-650 flex items-center gap-2">
                     <Settings className="h-4 w-4 text-blue-500" />
                     Manajemen Aturan Evaluasi (Weights & Penalties)
                   </h2>
@@ -643,7 +643,7 @@ export default function AdminDashboardPage() {
                     <div className="overflow-x-auto scrollbar-none">
                       <table className="w-full text-left border-collapse text-xs">
                         <thead>
-                          <tr className="border-b border-gray-800 text-gray-500 font-bold">
+                          <tr className="border-b border-slate-200 text-slate-400 font-bold">
                             <th className="pb-3 pr-4">NAMA FASILITAS</th>
                             <th className="pb-3 px-4">TIPE BATAS</th>
                             <th className="pb-3 px-4">AMBANG BATAS</th>
@@ -657,8 +657,8 @@ export default function AdminDashboardPage() {
                               <td className="py-4 pr-4 font-bold text-white capitalize">
                                 {ruleItem.facility_name.replace(/_/g, ' ')}
                               </td>
-                              <td className="py-4 px-4 text-gray-400">
-                                <span className="px-2 py-0.5 bg-gray-900 rounded-md text-[8px] font-bold uppercase tracking-wider text-gray-400 border border-gray-800">
+                              <td className="py-4 px-4 text-slate-500">
+                                <span className="px-2 py-0.5 bg-gray-900 rounded-md text-[8px] font-bold uppercase tracking-wider text-slate-500 border border-slate-200">
                                   {ruleItem.threshold_type}
                                 </span>
                               </td>
@@ -673,7 +673,7 @@ export default function AdminDashboardPage() {
                                       updated[index].threshold_value = e.target.value;
                                       setRules(updated);
                                     }}
-                                    className="w-24 px-2 py-1.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-lg text-xs font-mono text-white text-center"
+                                    className="w-24 px-2 py-1.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-mono text-white text-center"
                                   />
                                 ) : (
                                   <span className="text-gray-600 italic font-mono text-[10px]">Boolean (Yes/No)</span>
@@ -691,7 +691,7 @@ export default function AdminDashboardPage() {
                                     updated[index].weight = Number(e.target.value);
                                     setRules(updated);
                                   }}
-                                  className="w-20 px-2 py-1.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-lg text-xs font-mono text-blue-400 text-center font-bold"
+                                  className="w-20 px-2 py-1.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-mono text-blue-400 text-center font-bold"
                                 />
                               </td>
                               <td className="py-4 px-4">
@@ -706,7 +706,7 @@ export default function AdminDashboardPage() {
                                     updated[index].penalty = Number(e.target.value);
                                     setRules(updated);
                                   }}
-                                  className="w-20 px-2 py-1.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-lg text-xs font-mono text-red-400 text-center font-bold"
+                                  className="w-20 px-2 py-1.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-mono text-red-400 text-center font-bold"
                                 />
                               </td>
                             </tr>
@@ -715,7 +715,7 @@ export default function AdminDashboardPage() {
                       </table>
                     </div>
 
-                    <div className="flex justify-end pt-4 border-t border-gray-850">
+                    <div className="flex justify-end pt-4 border-t border-slate-200">
                       <button
                         type="submit"
                         disabled={rulesSaving}
@@ -736,11 +736,11 @@ export default function AdminDashboardPage() {
       {/* Assign Inspector Modal */}
       {assigningInsp && (
         <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-40 backdrop-blur-sm">
-          <div className="bg-[#0c1220] rounded-2xl w-full max-w-md p-6 shadow-2xl relative border border-gray-800 animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white rounded-2xl w-full max-w-md p-6 shadow-2xl relative border border-slate-200 animate-in fade-in zoom-in-95 duration-200">
             <h3 className="text-sm font-bold uppercase tracking-wider text-white mb-1">
               Tugaskan Verifikator
             </h3>
-            <p className="text-[10px] text-gray-400 mb-5 leading-relaxed">
+            <p className="text-[10px] text-slate-500 mb-5 leading-relaxed">
               Pilih salah satu petugas verifikasi lapangan bersertifikat untuk mengaudit kosan &quot;{assigningInsp.property?.name}&quot;.
             </p>
 
@@ -753,25 +753,25 @@ export default function AdminDashboardPage() {
                   required
                   value={selectedInspectorId}
                   onChange={(e) => setSelectedInspectorId(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-[#080d1a] border border-gray-800 focus:border-blue-500 rounded-xl text-xs text-white"
+                  className="w-full px-3 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
                 >
-                  <option value="" className="bg-[#0c1220] text-gray-400">-- Pilih Verifikator --</option>
+                  <option value="" className="bg-white text-slate-500">-- Pilih Verifikator --</option>
                   {inspectors.map((insp) => (
-                    <option key={insp.user_id} value={insp.user_id} className="bg-[#0c1220] text-white">
+                    <option key={insp.user_id} value={insp.user_id} className="bg-white text-white">
                       {insp.first_name} {insp.last_name} ({insp.email})
                     </option>
                   ))}
                 </select>
               </div>
 
-              <div className="flex items-center justify-end gap-3 border-t border-gray-850 pt-4 mt-6">
+              <div className="flex items-center justify-end gap-3 border-t border-slate-200 pt-4 mt-6">
                 <button
                   type="button"
                   onClick={() => {
                     setAssigningInsp(null);
                     setSelectedInspectorId('');
                   }}
-                  className="px-4 py-2.5 text-xs font-bold text-gray-500 hover:text-white transition-all uppercase tracking-wider"
+                  className="px-4 py-2.5 text-xs font-bold text-slate-400 hover:text-white transition-all uppercase tracking-wider"
                 >
                   Batal
                 </button>
@@ -792,19 +792,19 @@ export default function AdminDashboardPage() {
       {/* Modal - Report Scorecard Detail (Admin view) */}
       {showReportModal && selectedInspection && selectedInspection.audit_report && (
         <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-40 backdrop-blur-sm">
-          <div className="bg-[#0c1220] rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative border border-gray-800 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-gray-800 pb-4 mb-4">
+          <div className="bg-white rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative border border-slate-200 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
               <div>
                 <h3 className="text-sm font-extrabold uppercase tracking-wider text-white">
                   Laporan Audit Scorecard
                 </h3>
-                <p className="text-[10px] text-gray-500 mt-1 font-mono">
+                <p className="text-[10px] text-slate-400 mt-1 font-mono">
                   {selectedInspection.property?.name} — {selectedInspection.property?.address}
                 </p>
               </div>
               <button
                 onClick={() => setShowReportModal(false)}
-                className="text-xs font-bold text-gray-500 hover:text-white p-1 transition-all"
+                className="text-xs font-bold text-slate-400 hover:text-white p-1 transition-all"
               >
                 Tutup
               </button>
@@ -813,8 +813,8 @@ export default function AdminDashboardPage() {
             {/* Main Score Visual */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               
-              <div className="bg-[#0a0f1b]/60 border border-gray-850 p-4 rounded-xl text-center flex flex-col justify-center items-center">
-                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
+              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Skor Validitas
                 </span>
                 <span className="text-3xl font-black text-blue-500 mt-1">
@@ -822,8 +822,8 @@ export default function AdminDashboardPage() {
                 </span>
               </div>
 
-              <div className="bg-[#0a0f1b]/60 border border-gray-850 p-4 rounded-xl text-center flex flex-col justify-center items-center">
-                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
+              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Tingkat Kepercayaan
                 </span>
                 <span
@@ -839,8 +839,8 @@ export default function AdminDashboardPage() {
                 </span>
               </div>
 
-              <div className="bg-[#0a0f1b]/60 border border-gray-850 p-4 rounded-xl flex flex-col justify-center items-center text-center">
-                <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider font-mono">
+              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl flex flex-col justify-center items-center text-center">
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Laporan Scorecard
                 </span>
                 {selectedInspection.audit_report.pdf_url ? (
@@ -862,7 +862,7 @@ export default function AdminDashboardPage() {
 
             {/* Comparison Details */}
             <div className="space-y-4">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-gray-400 border-b border-gray-850 pb-2 flex items-center gap-1.5">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-2 flex items-center gap-1.5">
                 <ClipboardList className="h-4 w-4 text-blue-500" />
                 Rincian Kecocokan Fasilitas (AI Vision)
               </h4>
@@ -873,10 +873,10 @@ export default function AdminDashboardPage() {
                   return (
                     <div
                       key={i}
-                      className="flex items-center justify-between p-3 bg-[#0a0f1b]/30 rounded-xl border border-gray-850"
+                      className="flex items-center justify-between p-3 bg-[#0a0f1b]/30 rounded-xl border border-slate-200"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold capitalize text-gray-300">
+                        <span className="text-xs font-bold capitalize text-slate-650">
                           {item.facility.replace(/_/g, ' ')}
                         </span>
                       </div>
@@ -892,7 +892,7 @@ export default function AdminDashboardPage() {
                           </span>
                         )}
                         {item.status === 'NEUTRAL' && (
-                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-gray-500 bg-gray-900/40 px-2 py-0.5 rounded-md border border-gray-800/60 tracking-wider">
+                          <span className="inline-flex items-center gap-1 text-[9px] font-bold text-slate-400 bg-gray-900/40 px-2 py-0.5 rounded-md border border-slate-200/60 tracking-wider">
                             TIDAK DIKLAIM
                           </span>
                         )}
@@ -903,7 +903,7 @@ export default function AdminDashboardPage() {
               </div>
             </div>
 
-            <div className="flex justify-end border-t border-gray-850 pt-4 mt-6">
+            <div className="flex justify-end border-t border-slate-200 pt-4 mt-6">
               <button
                 onClick={() => setShowReportModal(false)}
                 className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold text-xs rounded-xl shadow-md transition-all cursor-pointer uppercase tracking-wider"
