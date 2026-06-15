@@ -29,11 +29,8 @@ export default function Home() {
       {/* Header / Navbar */}
       <header className="w-full border-b border-slate-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/logo.webp" alt="InspeksiKos Logo" className="h-9 w-auto object-contain" />
-            <span className="text-xl font-extrabold tracking-tight text-primary font-mono hidden sm:inline">
-              InspeksiKos
-            </span>
+          <div className="flex items-center">
+            <img src="/logo.webp" alt="InspeksiKos Logo" className="h-16 w-auto object-contain" />
           </div>
           <div className="flex items-center gap-5">
             <Link href="/login" className="text-xs font-bold uppercase tracking-wider text-slate-600 hover:text-primary transition-all">
@@ -453,9 +450,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="border-t border-slate-200 bg-white py-12 text-center text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <img src="/logo.webp" alt="InspeksiKos Logo" className="h-6 w-auto" />
-            <span className="text-xs font-bold tracking-tight text-primary font-mono">InspeksiKos Platform</span>
+          <div className="flex items-center">
+            <img src="/logo.webp" alt="InspeksiKos Logo" className="h-10 w-auto object-contain" />
           </div>
           <p className="text-[11px] text-slate-400">
             © 2026 InspeksiKos. Capstone Project D4 TRPL Politeknik Negeri Padang. All rights reserved.
