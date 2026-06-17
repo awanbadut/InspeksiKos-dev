@@ -178,8 +178,8 @@ export default function Home() {
 
           {/* Desktop Nav Items */}
           <nav className="hidden md:flex items-center gap-8 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-            <a href="#fitur" className="hover:text-[#003057] transition-all">Fitur Utama</a>
-            <a href="#bento" className="hover:text-[#003057] transition-all">Teknologi</a>
+            <a href="#fitur" className="hover:text-[#003057] transition-all">Cara Kerja</a>
+            <a href="#bento" className="hover:text-[#003057] transition-all">Keunggulan</a>
             <a href="#harga" className="hover:text-[#003057] transition-all">Kategori Layanan</a>
             <a href="#faq" className="hover:text-[#003057] transition-all">FAQ</a>
           </nav>
@@ -205,8 +205,8 @@ export default function Home() {
         {/* Mobile Dropdown Nav */}
         {mobileMenuOpen && (
           <div className="md:hidden border-t border-slate-200 bg-white py-4 px-6 space-y-4 shadow-inner">
-            <a href="#fitur" onClick={() => setMobileMenuOpen(false)} className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-[#003057]">Fitur Utama</a>
-            <a href="#bento" onClick={() => setMobileMenuOpen(false)} className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-[#003057]">Teknologi</a>
+            <a href="#fitur" onClick={() => setMobileMenuOpen(false)} className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-[#003057]">Cara Kerja</a>
+            <a href="#bento" onClick={() => setMobileMenuOpen(false)} className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-[#003057]">Keunggulan</a>
             <a href="#harga" onClick={() => setMobileMenuOpen(false)} className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-[#003057]">Kategori Layanan</a>
             <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-[#003057]">FAQ</a>
             <div className="pt-2 flex flex-col gap-3">
@@ -240,7 +240,7 @@ export default function Home() {
 
             {/* Subtext capped at exactly 20 words for premium layout discipline */}
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-[50ch] text-wrap-pretty">
-              Validasi keaslian fasilitas kos secara langsung melalui verifikator berlisensi dengan uji TDS air bersih, speedtest WiFi, dan Gemini AI.
+              Validasi keaslian fasilitas kos secara langsung melalui verifikator berlisensi dengan uji kebersihan air, kecepatan internet, dan verifikasi foto bertenaga AI.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
@@ -276,23 +276,6 @@ export default function Home() {
             </div>
             {/* Background glowing aura */}
             <div className="absolute inset-0 bg-gradient-to-tr from-teal-500/10 to-blue-500/5 rounded-full filter blur-3xl -z-10 transform scale-90" />
-          </div>
-        </div>
-
-        {/* Unified Partner Integrations Logo Wall (B2B Trust) - Placed under Hero */}
-        <div className="w-full py-8 border-t border-slate-200/80 mb-20">
-          <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 md:gap-4">
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 font-mono">
-              INTEGRASI TEKNOLOGI UTAMA
-            </span>
-            {/* Logo Wall: Grayscale/monochrome opacity transition, no descriptive tags */}
-            <div className="flex flex-wrap gap-8 items-center justify-center opacity-60 hover:opacity-100 transition-opacity duration-300">
-              <img src="https://cdn.simpleicons.org/nextdotjs/003057" alt="Next.js" className="h-5 w-auto object-contain brightness-95" />
-              <img src="https://cdn.simpleicons.org/supabase/3ECF8E" alt="Supabase" className="h-5 w-auto object-contain brightness-95" />
-              <img src="https://cdn.simpleicons.org/googlecloud/4285F4" alt="Google Cloud" className="h-4.5 w-auto object-contain brightness-95" />
-              <img src="https://cdn.simpleicons.org/leaflet/199900" alt="Leaflet" className="h-5 w-auto object-contain brightness-95" />
-              <img src="https://cdn.simpleicons.org/vercel/000000" alt="Vercel" className="h-4.5 w-auto object-contain brightness-95" />
-            </div>
           </div>
         </div>
 
@@ -398,10 +381,10 @@ export default function Home() {
               Audit Mekanis & Visual
             </div>
             <h2 className="text-3xl md:text-4xl font-black text-[#003057] tracking-tight">
-              Teknologi Verifikasi Lapangan
+              Keunggulan Verifikasi Lapangan
             </h2>
             <p className="text-xs text-slate-500 max-w-lg mx-auto leading-relaxed">
-              Pemeriksaan fisik langsung menggunakan parameter baku terkalibrasi demi kenyamanan kosan Anda.
+              Pemeriksaan fisik langsung menggunakan parameter baku untuk menjamin kelayakan kamar kos pilihan Anda.
             </p>
           </div>
 
@@ -431,71 +414,73 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Box 2: Gemini AI Analysis - Muted Dark Base Background */}
+            {/* Box 2: Validasi Foto AI - Muted Dark Base Background */}
             <div className="rounded-2xl border border-[#001e38] bg-[#003057] p-6 shadow-md flex flex-col justify-between hover:shadow-xl transition-all duration-300 group text-white">
               <div className="space-y-4 text-left">
                 <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center text-teal-300">
                   <Cpu className="h-5 w-5" />
                 </div>
-                <h3 className="text-base font-black uppercase font-mono tracking-wide text-teal-300">AI Vision Extraction</h3>
+                <h3 className="text-base font-black uppercase font-mono tracking-wide text-teal-300">Verifikasi Foto AI</h3>
                 <p className="text-xs text-teal-100/80 leading-relaxed">
-                  Unggahan foto bukti lapangan dari verifikator dianalisis secara instan menggunakan Gemini 2.5 Flash untuk mengidentifikasi keberadaan fasilitas asli secara akurat.
+                  Setiap foto bukti yang diunggah oleh verifikator diproses secara otomatis oleh kecerdasan buatan untuk mencocokkan kelengkapan fasilitas kamar dengan iklan.
                 </p>
               </div>
-              <div className="bg-white/5 border border-white/10 rounded-xl p-3.5 mt-6 text-[9.5px] text-teal-200 font-mono leading-normal text-left">
-                &gt;_ gemini-vision: &quot;Bed MATCH (100%), AC MATCH (98%), Router MATCH (100%).&quot;
+              <div className="bg-white/5 border border-white/10 rounded-xl p-3.5 mt-6 text-xs text-teal-200 font-mono leading-normal text-left space-y-1.5">
+                <div className="flex items-center gap-2"><CheckSquare className="h-3.5 w-3.5 text-teal-400" /> Kasur & Ranjang Cocok</div>
+                <div className="flex items-center gap-2"><CheckSquare className="h-3.5 w-3.5 text-teal-400" /> AC & Kelistrikan Cocok</div>
+                <div className="flex items-center gap-2"><CheckSquare className="h-3.5 w-3.5 text-teal-400" /> Lemari & Meja Terverifikasi</div>
               </div>
             </div>
 
-            {/* Box 3: TDS Water Testing - Light slate with cyan badge */}
+            {/* Box 3: Kebersihan Air - Light slate with cyan badge */}
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-slate-350 transition-all duration-300">
               <div className="space-y-4 text-left">
                 <div className="h-10 w-10 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600">
                   <CheckSquare className="h-5 w-5" />
                 </div>
-                <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Uji TDS Air Higienis</h3>
+                <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Uji Kebersihan Air</h3>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Pengukuran kandungan partikel air kamar mandi menggunakan TDS meter fisik. Mencegah timbulnya alergi kulit akibat air berkarat atau terkontaminasi.
+                  Pengukuran kebersihan air kamar mandi secara langsung oleh verifikator lapangan. Menghindarkan Anda dari risiko alergi kulit akibat air keruh atau berkarat.
                 </p>
               </div>
               <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">Standar Bersih:</span>
-                <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-250 text-[9px] font-black rounded-lg font-mono">TDS &lt; 150 PPM</span>
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">Status Air:</span>
+                <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 border border-emerald-250 text-[9px] font-black rounded-lg font-mono">Higienis & Layak Pakai</span>
               </div>
             </div>
 
-            {/* Box 4: Speedtest bandwidth - Light slate with amber badge */}
+            {/* Box 4: Uji Kecepatan Internet - Light slate with amber badge */}
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-slate-350 transition-all duration-300">
               <div className="space-y-4 text-left">
                 <div className="h-10 w-10 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
                   <Zap className="h-5 w-5" />
                 </div>
-                <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Speedtest WiFi Riil</h3>
+                <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Uji Internet Kamar</h3>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Uji unduh dan unggah secara langsung di dalam kamar menggunakan speedtest sensor. Pastikan koneksi WiFi memadai untuk kuliah daring dan tugas harian.
+                  Uji kecepatan internet langsung dari dalam kamar kos. Memastikan koneksi WiFi memadai dan stabil untuk kegiatan kuliah online maupun streaming harian.
                 </p>
               </div>
               <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">Kebutuhan Min:</span>
-                <span className="px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-250 text-[9px] font-black rounded-lg font-mono">&gt; 15 MBPS</span>
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">Koneksi WiFi:</span>
+                <span className="px-2.5 py-1 bg-amber-50 text-amber-800 border border-amber-250 text-[9px] font-black rounded-lg font-mono">Stabil & Lancar</span>
               </div>
             </div>
 
-            {/* Box 5: Digital Scorecard PDF - Light slate with pdf mockup badge */}
+            {/* Box 5: Laporan Valid PDF - Light slate with pdf mockup badge */}
             <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm flex flex-col justify-between hover:shadow-md hover:border-slate-350 transition-all duration-300">
               <div className="space-y-4 text-left">
                 <div className="h-10 w-10 rounded-lg bg-rose-50 flex items-center justify-center text-rose-600">
                   <ClipboardList className="h-5 w-5" />
                 </div>
-                <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Scorecard Digital</h3>
+                <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Hasil Laporan Lengkap</h3>
                 <p className="text-xs text-slate-600 leading-relaxed">
-                  Laporan kepatuhan iklan berformat PDF resmi beserta persentase kebenaran klaim fasilitas kos untuk mempermudah perbandingan Anda.
+                  Laporan ringkasan kepatuhan fasilitas kos dalam format PDF resmi untuk mempermudah Anda membandingkan berbagai kos secara objektif.
                 </p>
               </div>
               <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">Format Laporan:</span>
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">Berkas Laporan:</span>
                 <span className="inline-flex items-center gap-1 text-[9px] font-black text-blue-600 uppercase tracking-wider font-mono">
-                  <Download className="h-3 w-3" /> PDF Export
+                  <Download className="h-3 w-3" /> Unduh PDF
                 </span>
               </div>
             </div>
