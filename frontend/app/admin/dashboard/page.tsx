@@ -455,7 +455,7 @@ export default function AdminDashboardPage() {
                           value={newFirstName}
                           onChange={(e) => setNewFirstName(e.target.value)}
                           placeholder="Annie"
-                          className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
+                          className="w-full px-3.5 py-2.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
                         />
                       </div>
                       <div className="space-y-1">
@@ -466,7 +466,7 @@ export default function AdminDashboardPage() {
                           value={newLastName}
                           onChange={(e) => setNewLastName(e.target.value)}
                           placeholder="Hartmann"
-                          className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
+                          className="w-full px-3.5 py-2.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
                         />
                       </div>
                     </div>
@@ -479,7 +479,7 @@ export default function AdminDashboardPage() {
                         value={newPhone}
                         onChange={(e) => setNewPhone(e.target.value)}
                         placeholder="08123456789"
-                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
                       />
                     </div>
 
@@ -491,7 +491,7 @@ export default function AdminDashboardPage() {
                         value={newEmail}
                         onChange={(e) => setNewEmail(e.target.value)}
                         placeholder="annie.h@inspeksikos.com"
-                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
                       />
                     </div>
 
@@ -503,7 +503,7 @@ export default function AdminDashboardPage() {
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="••••••"
-                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
                       />
                     </div>
 
@@ -670,7 +670,7 @@ export default function AdminDashboardPage() {
                                       updated[index].threshold_value = e.target.value;
                                       setRules(updated);
                                     }}
-                                    className="w-24 px-2 py-1.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-mono text-white text-center"
+                                    className="w-24 px-2 py-1.5 bg-white border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-mono text-slate-800 text-center focus:outline-none"
                                   />
                                 ) : (
                                   <span className="text-gray-600 italic font-mono text-[10px]">Boolean (Yes/No)</span>
@@ -688,7 +688,7 @@ export default function AdminDashboardPage() {
                                     updated[index].weight = Number(e.target.value);
                                     setRules(updated);
                                   }}
-                                  className="w-20 px-2 py-1.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-mono text-blue-400 text-center font-bold"
+                                  className="w-20 px-2 py-1.5 bg-white border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-mono text-teal-650 text-center font-bold focus:outline-none"
                                 />
                               </td>
                               <td className="py-4 px-4">
@@ -703,7 +703,7 @@ export default function AdminDashboardPage() {
                                     updated[index].penalty = Number(e.target.value);
                                     setRules(updated);
                                   }}
-                                  className="w-20 px-2 py-1.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-mono text-red-400 text-center font-bold"
+                                  className="w-20 px-2 py-1.5 bg-white border border-slate-200 focus:border-blue-500 rounded-lg text-xs font-mono text-rose-600 text-center font-bold focus:outline-none"
                                 />
                               </td>
                             </tr>
@@ -750,7 +750,7 @@ export default function AdminDashboardPage() {
                   required
                   value={selectedInspectorId}
                   onChange={(e) => setSelectedInspectorId(e.target.value)}
-                  className="w-full px-3 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
+                  className="w-full px-3 py-2.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
                 >
                   <option value="" className="bg-white text-slate-500">-- Pilih Verifikator --</option>
                   {inspectors.map((insp) => (
@@ -768,7 +768,7 @@ export default function AdminDashboardPage() {
                     setAssigningInsp(null);
                     setSelectedInspectorId('');
                   }}
-                  className="px-4 py-2.5 text-xs font-bold text-slate-400 hover:text-white transition-all uppercase tracking-wider"
+                  className="px-4 py-2.5 text-xs font-bold text-slate-400 hover:text-slate-700 transition-all uppercase tracking-wider"
                 >
                   Batal
                 </button>
@@ -801,7 +801,7 @@ export default function AdminDashboardPage() {
               </div>
               <button
                 onClick={() => setShowReportModal(false)}
-                className="text-xs font-bold text-slate-400 hover:text-white p-1 transition-all"
+                className="text-xs font-bold text-slate-400 hover:text-slate-700 p-1 transition-all"
               >
                 Tutup
               </button>
@@ -810,7 +810,7 @@ export default function AdminDashboardPage() {
             {/* Main Score Visual */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               
-              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+              <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Skor Validitas
                 </span>
@@ -819,7 +819,7 @@ export default function AdminDashboardPage() {
                 </span>
               </div>
 
-              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+              <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Tingkat Kepercayaan
                 </span>
@@ -836,7 +836,7 @@ export default function AdminDashboardPage() {
                 </span>
               </div>
 
-              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl flex flex-col justify-center items-center text-center">
+              <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-center items-center text-center">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Laporan Scorecard
                 </span>
@@ -870,7 +870,7 @@ export default function AdminDashboardPage() {
                   return (
                     <div
                       key={i}
-                      className="flex items-center justify-between p-3 bg-[#0a0f1b]/30 rounded-xl border border-slate-200"
+                      className="flex items-center justify-between p-3 bg-slate-50/50 rounded-xl border border-slate-200"
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold capitalize text-slate-650">

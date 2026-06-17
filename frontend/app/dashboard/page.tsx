@@ -502,7 +502,7 @@ export default function DashboardPage() {
           html: `
             <div class="relative flex h-8 w-8 items-center justify-center">
               <span class="animate-pulse absolute inline-flex h-6 w-6 rounded-full bg-red-500/30"></span>
-              <div class="relative flex items-center justify-center bg-red-500 text-white rounded-full p-1.5 shadow-lg border border-red-400">
+              <div class="relative flex items-center justify-center bg-rose-500 text-white rounded-full p-1.5 shadow-lg border border-rose-400">
                 <svg xmlns="http://www.w3.org/2005/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.54 20.193 4 14.99 4 10a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
               </div>
             </div>
@@ -1249,7 +1249,7 @@ export default function DashboardPage() {
                           className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider rounded-md transition-all ${
                             activeTabInspector === 'my_tasks'
                               ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-500 hover:text-white'
+                              : 'text-slate-500 hover:text-slate-800'
                           }`}
                         >
                           📋 Tugas Saya
@@ -1263,7 +1263,7 @@ export default function DashboardPage() {
                           className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider rounded-md transition-all ${
                             activeTabInspector === 'available_orders'
                               ? 'bg-amber-600 text-white shadow-sm'
-                              : 'text-slate-500 hover:text-white'
+                              : 'text-slate-500 hover:text-slate-800'
                           }`}
                         >
                           🔔 Orderan Baru
@@ -1272,7 +1272,7 @@ export default function DashboardPage() {
                     )}
                     <button
                       onClick={fetchInspections}
-                      className="p-2 text-slate-500 hover:text-white rounded-lg hover:bg-slate-100 border border-slate-200 hover:border-slate-200 transition-all"
+                      className="p-2 text-slate-500 hover:text-slate-800 rounded-lg hover:bg-slate-100 border border-slate-200 hover:border-slate-200 transition-all"
                     >
                       <RefreshCw className="h-3.5 w-3.5" />
                     </button>
@@ -1422,7 +1422,7 @@ export default function DashboardPage() {
                     </div>
                     <button
                       onClick={() => setActiveTask(null)}
-                      className="text-[10px] font-bold text-slate-400 hover:text-white transition-all uppercase tracking-wider"
+                      className="text-[10px] font-bold text-slate-400 hover:text-slate-700 transition-all uppercase tracking-wider"
                     >
                       Batal
                     </button>
@@ -1524,7 +1524,7 @@ export default function DashboardPage() {
                                   className={`p-2.5 rounded-xl border text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                                     evaluations[currentActiveStep.key] === true
                                       ? 'border-emerald-500/80 bg-emerald-950/20 text-emerald-400 shadow-sm'
-                                      : 'border-slate-200 bg-white text-slate-500 hover:text-white'
+                                      : 'border-slate-200 bg-white text-slate-500 hover:text-slate-800'
                                   }`}
                                 >
                                   <CheckCircle2 className="h-3.5 w-3.5" />
@@ -1536,7 +1536,7 @@ export default function DashboardPage() {
                                   className={`p-2.5 rounded-xl border text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                                     evaluations[currentActiveStep.key] === false
                                       ? 'border-red-500/80 bg-red-955/20 text-red-400 shadow-sm'
-                                      : 'border-slate-200 bg-white text-slate-500 hover:text-white'
+                                      : 'border-slate-200 bg-white text-slate-500 hover:text-slate-800'
                                   }`}
                                 >
                                   <XCircle className="h-3.5 w-3.5" />
@@ -1554,7 +1554,7 @@ export default function DashboardPage() {
                                       value={tdsInput}
                                       onChange={(e) => setTdsInput(e.target.value)}
                                       placeholder="Masukkan kadar air TDS (contoh: 120)"
-                                      className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
+                                      className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
                                     />
                                     <span className="absolute right-3 top-2.5 text-[9px] font-bold text-slate-400">ppm</span>
                                   </div>
@@ -1567,7 +1567,7 @@ export default function DashboardPage() {
                                       value={internetInput}
                                       onChange={(e) => setInternetInput(e.target.value)}
                                       placeholder="Masukkan internet speedtest (contoh: 30)"
-                                      className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white"
+                                      className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
                                     />
                                     <span className="absolute right-3 top-2.5 text-[9px] font-bold text-slate-400">Mbps</span>
                                   </div>
@@ -1730,7 +1730,7 @@ export default function DashboardPage() {
                               type="button"
                               disabled={currentStep === 0 || techSaving}
                               onClick={() => handleSaveStepProgress(currentStep - 1)}
-                              className="px-3.5 py-2 border border-slate-200 bg-slate-100 hover:bg-gray-800 text-slate-500 hover:text-white rounded-lg text-[10px] font-bold disabled:opacity-30 transition-all cursor-pointer uppercase tracking-wider"
+                              className="px-3.5 py-2 border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 rounded-lg text-[10px] font-bold disabled:opacity-30 transition-all cursor-pointer uppercase tracking-wider"
                             >
                               Sebelumnya
                             </button>
@@ -1945,7 +1945,7 @@ export default function DashboardPage() {
               <button
                 type="button"
                 onClick={handleCloseRequestModal}
-                className="text-slate-500 hover:text-white font-bold text-[10px] uppercase tracking-wider"
+                className="text-slate-500 hover:text-slate-850 font-bold text-[10px] uppercase tracking-wider"
               >
                 Tutup
               </button>
@@ -2053,7 +2053,7 @@ export default function DashboardPage() {
                         value={propertyName}
                         onChange={(e) => setPropertyName(e.target.value)}
                         placeholder="Contoh: Kos Anggrek Indah TRPL"
-                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -2064,7 +2064,7 @@ export default function DashboardPage() {
                         value={propertyAddress}
                         onChange={(e) => setPropertyAddress(e.target.value)}
                         placeholder="Jl. Limau Manis No. 40, Padang"
-                        className="w-full px-3.5 py-2.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
+                        className="w-full px-3.5 py-2.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -2088,8 +2088,8 @@ export default function DashboardPage() {
                         </div>
                       )}
                       <div className="grid grid-cols-2 gap-2">
-                        <input type="text" readOnly placeholder="Latitude" value={selectedLat ? selectedLat.toFixed(6) : ''} className="w-full px-3 py-2 bg-[#080d1a] border border-slate-200 rounded-xl text-xs text-slate-500 font-mono" />
-                        <input type="text" readOnly placeholder="Longitude" value={selectedLng ? selectedLng.toFixed(6) : ''} className="w-full px-3 py-2 bg-[#080d1a] border border-slate-200 rounded-xl text-xs text-slate-500 font-mono" />
+                        <input type="text" readOnly placeholder="Latitude" value={selectedLat ? selectedLat.toFixed(6) : ''} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 font-mono" />
+                        <input type="text" readOnly placeholder="Longitude" value={selectedLng ? selectedLng.toFixed(6) : ''} className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 font-mono" />
                       </div>
                     </div>
                     <div className="space-y-1.5">
@@ -2099,7 +2099,7 @@ export default function DashboardPage() {
                         onChange={(e) => setPropertyDesc(e.target.value)}
                         placeholder="Catatan mengenai fasilitas..."
                         rows={2}
-                        className="w-full px-3.5 py-2 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-white focus:outline-none"
+                        className="w-full px-3.5 py-2 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
                       />
                     </div>
                     <div className="space-y-2">
@@ -2132,7 +2132,7 @@ export default function DashboardPage() {
                               setCustomFacilitySingle('');
                             }
                           }}
-                          className="flex-1 px-3 py-1.5 bg-[#080d1a] border border-slate-200 focus:border-blue-500 rounded-xl text-[10px] text-white placeholder-gray-600 focus:outline-none"
+                          className="flex-1 px-3 py-1.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-[10px] text-slate-800 placeholder-slate-400 focus:outline-none"
                         />
                         <button
                           type="button"
@@ -2146,15 +2146,15 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="text-[9px] font-bold text-slate-500 block font-mono uppercase">TDS Air (ppm)</label>
-                        <input type="number" required value={tdsExpectation} onChange={(e) => setTdsExpectation(Number(e.target.value))} className="w-full px-3 py-2 bg-[#080d1a] border border-gray-805 rounded-xl text-xs text-white" />
+                        <input type="number" required value={tdsExpectation} onChange={(e) => setTdsExpectation(Number(e.target.value))} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none" />
                       </div>
                       <div>
                         <label className="text-[9px] font-bold text-slate-500 block font-mono uppercase">Wifi (Mbps)</label>
-                        <input type="number" required value={internetExpectation} onChange={(e) => setInternetExpectation(Number(e.target.value))} className="w-full px-3 py-2 bg-[#080d1a] border border-gray-805 rounded-xl text-xs text-white" />
+                        <input type="number" required value={internetExpectation} onChange={(e) => setInternetExpectation(Number(e.target.value))} className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none" />
                       </div>
                     </div>
                     <div className="flex items-center justify-between border-t border-slate-200 pt-4 mt-6">
-                      <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white uppercase">Kembali</button>
+                      <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-700 uppercase">Kembali</button>
                       <button type="submit" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider">Lanjut Bayar</button>
                     </div>
                   </form>
@@ -2210,7 +2210,7 @@ export default function DashboardPage() {
                                 copy[idx].name = e.target.value;
                                 setMultiProperties(copy);
                               }}
-                              className="w-full px-3 py-2 bg-[#080d1a] border border-slate-200 rounded-lg text-xs text-white"
+                              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none"
                             />
                             <input
                               type="text"
@@ -2222,7 +2222,7 @@ export default function DashboardPage() {
                                 copy[idx].address = e.target.value;
                                 setMultiProperties(copy);
                               }}
-                              className="w-full px-3 py-2 bg-[#080d1a] border border-slate-200 rounded-lg text-xs text-white"
+                              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs text-slate-800 focus:outline-none"
                             />
                           </div>
 
@@ -2295,7 +2295,7 @@ export default function DashboardPage() {
                                     setCustomFacilityMulti((prev) => ({ ...prev, [idx]: '' }));
                                   }
                                 }}
-                                className="flex-1 px-2 py-1 bg-[#080d1a] border border-slate-200 focus:border-indigo-500 rounded-md text-[9px] text-white focus:outline-none placeholder-gray-650"
+                                className="flex-1 px-2 py-1 bg-white border border-slate-200 focus:border-indigo-500 rounded-md text-[9px] text-slate-800 focus:outline-none placeholder-slate-400"
                               />
                               <button
                                 type="button"
@@ -2311,7 +2311,7 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="flex items-center justify-between border-t border-slate-200 pt-4 mt-6">
-                      <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white uppercase">Kembali</button>
+                      <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-700 uppercase">Kembali</button>
                       <button
                         type="button"
                         onClick={handleCreateOrderInvoice}
@@ -2429,7 +2429,7 @@ export default function DashboardPage() {
                 </p>
 
                 <div className="flex items-center justify-between border-t border-slate-200 pt-4 mt-6">
-                  <button type="button" onClick={() => setCurrentStepModal(2)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white uppercase">Kembali</button>
+                  <button type="button" onClick={() => setCurrentStepModal(2)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-700 uppercase">Kembali</button>
                   <button
                     type="button"
                     disabled={true}
@@ -2526,7 +2526,7 @@ export default function DashboardPage() {
                   setShowComparisonModal(false);
                   setSelectedComparisonGroup([]);
                 }}
-                className="text-slate-500 hover:text-white font-extrabold text-[10px] uppercase tracking-wider"
+                className="text-slate-500 hover:text-slate-850 font-extrabold text-[10px] uppercase tracking-wider"
               >
                 Tutup
               </button>
@@ -2687,7 +2687,7 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={() => setShowReportModal(false)}
-                className="text-xs font-bold text-slate-400 hover:text-white transition-all"
+                className="text-xs font-bold text-slate-400 hover:text-slate-700 transition-all"
               >
                 Tutup
               </button>
@@ -2696,7 +2696,7 @@ export default function DashboardPage() {
             {/* Main Score Visual */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               
-              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+              <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Skor Validitas
                 </span>
@@ -2705,7 +2705,7 @@ export default function DashboardPage() {
                 </span>
               </div>
 
-              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
+              <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl text-center flex flex-col justify-center items-center">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Tingkat Kepercayaan
                 </span>
@@ -2722,7 +2722,7 @@ export default function DashboardPage() {
                 </span>
               </div>
 
-              <div className="bg-[#0a0f1b]/60 border border-slate-200 p-4 rounded-xl flex flex-col justify-center items-center text-center">
+              <div className="bg-slate-50 border border-slate-200 p-4 rounded-xl flex flex-col justify-center items-center text-center">
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
                   Laporan Resmi PDF
                 </span>
@@ -2756,7 +2756,7 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={i}
-                      className="flex items-center justify-between p-3 bg-[#0a0f1b]/30 rounded-xl border border-slate-200"
+                      className="flex items-center justify-between p-3 bg-slate-50/50 rounded-xl border border-slate-200"
                     >
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold capitalize text-slate-600">
@@ -2885,7 +2885,7 @@ export default function DashboardPage() {
                       value={chatMessage}
                       onChange={(e) => setChatMessage(e.target.value)}
                       placeholder="Tanyakan mengenai hasil audit kos ke AI..."
-                      className="flex-1 px-3 py-2 bg-[#080d1a] border border-slate-200 rounded-xl text-xs text-white focus:outline-none focus:border-blue-500 placeholder-gray-650"
+                      className="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:border-blue-500 placeholder-slate-400"
                       disabled={chatLoading}
                     />
                     <button
