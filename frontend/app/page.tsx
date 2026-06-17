@@ -4,7 +4,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   Sparkles, 
   ShieldCheck, 
@@ -26,17 +26,129 @@ import {
 export default function Home() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeUni, setActiveUni] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
   };
 
-  const universityLogos = [
-    { name: "UNAND", desc: "Universitas Andalas" },
-    { name: "PNP", desc: "Politeknik Negeri Padang" },
-    { name: "UNP", desc: "Universitas Negeri Padang" },
-    { name: "UIN IB", desc: "UIN Imam Bonjol" }
+  const universities = [
+    {
+      name: "Politeknik Negeri Padang",
+      short: "PNP",
+      logoColor: "text-amber-600 bg-amber-50 border-amber-200",
+      accent: "#f59e0b",
+      verifiedCount: "480+",
+      inspectors: "8 Verifikator",
+      initials: "PNP",
+      icon: (
+        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <circle cx="12" cy="12" r="5" stroke="currentColor" strokeDasharray="3 2" />
+          <circle cx="12" cy="12" r="8" stroke="currentColor" />
+          <path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M5 19l3-3M16 8l3-3" strokeLinecap="round" />
+        </svg>
+      )
+    },
+    {
+      name: "Universitas Andalas",
+      short: "UNAND",
+      logoColor: "text-emerald-700 bg-emerald-50 border-emerald-250",
+      accent: "#047857",
+      verifiedCount: "620+",
+      inspectors: "12 Verifikator",
+      initials: "UNAND",
+      icon: (
+        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" strokeLinejoin="round" />
+          <path d="M12 6v10M9 10l3-3 3 3M9 13l3 3 3-3" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )
+    },
+    {
+      name: "Universitas Negeri Padang",
+      short: "UNP",
+      logoColor: "text-blue-700 bg-blue-50 border-blue-200",
+      accent: "#1d4ed8",
+      verifiedCount: "580+",
+      inspectors: "10 Verifikator",
+      initials: "UNP",
+      icon: (
+        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
+          <path d="M6 6h10M6 10h10M6 14h10" strokeLinecap="round" />
+          <circle cx="13" cy="13" r="5" className="opacity-20 fill-current" />
+        </svg>
+      )
+    },
+    {
+      name: "UIN Imam Bonjol",
+      short: "UIN IB",
+      logoColor: "text-teal-700 bg-teal-50 border-teal-200",
+      accent: "#0f766e",
+      verifiedCount: "350+",
+      inspectors: "6 Verifikator",
+      initials: "UIN",
+      icon: (
+        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <path d="M12 2L15 8L22 9L17 14L18 21L12 17L6 21L7 14L2 9L9 8L12 2Z" strokeLinejoin="round" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      )
+    },
+    {
+      name: "Universitas Bung Hatta",
+      short: "UBH",
+      logoColor: "text-rose-700 bg-rose-50 border-rose-200",
+      accent: "#be123c",
+      verifiedCount: "290+",
+      inspectors: "5 Verifikator",
+      initials: "UBH",
+      icon: (
+        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9" strokeLinejoin="round" />
+          <line x1="12" y1="2" x2="12" y2="22" />
+          <line x1="2" y1="12" x2="22" y2="12" />
+        </svg>
+      )
+    },
+    {
+      name: "UPI YPTK Padang",
+      short: "UPI",
+      logoColor: "text-indigo-700 bg-indigo-50 border-indigo-200",
+      accent: "#4338ca",
+      verifiedCount: "410+",
+      inspectors: "7 Verifikator",
+      initials: "UPI",
+      icon: (
+        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 3a15.3 15.3 0 0 1 4 9 15.3 15.3 0 0 1-4 9 15.3 15.3 0 0 1-4-9 15.3 15.3 0 0 1 4-9Z" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+        </svg>
+      )
+    }
   ];
+
+  const handleUniChange = (index: number) => {
+    if (index === activeUni || isTransitioning) return;
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setActiveUni(index);
+      setIsTransitioning(false);
+    }, 250);
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIsTransitioning(true);
+      setTimeout(() => {
+        setActiveUni((prev) => (prev + 1) % universities.length);
+        setIsTransitioning(false);
+      }, 250);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   const faqs = [
     {
@@ -198,25 +310,91 @@ export default function Home() {
           </div>
         </div>
 
-        {/* University Badge Grid (Social Proof) */}
-        <div className="w-full border border-slate-200 bg-white rounded-2xl py-8 px-6 mb-28 text-center shadow-sm relative overflow-hidden">
+        {/* Animated University Credibility Showcase Section */}
+        <section className="w-full border border-slate-200 bg-white rounded-2xl p-8 md:p-12 mb-28 shadow-sm relative overflow-hidden">
           <div className="absolute top-[-30%] right-[-10%] w-[300px] h-[300px] rounded-full bg-teal-500/5 blur-[80px] pointer-events-none" />
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-450 font-mono block mb-8">
-            DIANDALKAN MAHASISWA DI BERBAGAI KAMPUS TERNAMA
-          </span>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto items-stretch">
-            {universityLogos.map((logo, idx) => (
-              <div key={idx} className="flex flex-col items-center justify-center p-4 border border-slate-150 rounded-xl bg-slate-50/50 hover:bg-white hover:border-[#0f766e]/30 hover:shadow-md transition-all duration-300 group">
-                <div className="text-lg font-black text-[#003057] font-mono group-hover:scale-105 transition-transform duration-200">
-                  {logo.name}
+          
+          <div className="text-center space-y-2 mb-10">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 font-mono">
+              DIANDALKAN KAMPUS TERBAIK SUMATERA BARAT
+            </span>
+            <h2 className="text-2xl md:text-3xl font-black text-[#003057] tracking-tight">
+              Telah Diandalkan oleh Mahasiswa
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left Column: Animated Showcase Card */}
+            <div className="lg:col-span-6 flex justify-center">
+              <div 
+                className={`w-full max-w-[420px] p-6 rounded-2xl border bg-slate-50/50 flex flex-col justify-between h-[280px] shadow-inner transition-all duration-300 ${
+                  isTransitioning ? 'opacity-0 translate-y-4 scale-95' : 'opacity-100 translate-y-0 scale-100'
+                } border-slate-200`}
+              >
+                <div className="flex items-start justify-between">
+                  <div className={`p-3 rounded-xl border ${universities[activeUni].logoColor} transition-colors duration-300`}>
+                    {universities[activeUni].icon}
+                  </div>
+                  <div className="text-right">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-850 text-[8px] font-black uppercase tracking-wider font-mono">
+                      <span className="h-1.5 w-1.5 rounded-full bg-teal-600 animate-pulse" /> Terverifikasi
+                    </span>
+                  </div>
                 </div>
-                <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-1">
-                  {logo.desc}
+
+                <div className="space-y-1 text-left">
+                  <h3 className="text-2xl font-black text-[#003057] leading-tight">
+                    {universities[activeUni].short}
+                  </h3>
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-wide">
+                    {universities[activeUni].name}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200/80">
+                  <div className="text-left">
+                    <div className="text-xl font-black text-[#003057] font-mono">{universities[activeUni].verifiedCount}</div>
+                    <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Kamar Ter-Audit</div>
+                  </div>
+                  <div className="text-left">
+                    <div className="text-xl font-black text-[#003057] font-mono">{universities[activeUni].inspectors}</div>
+                    <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Mitra Lapangan</div>
+                  </div>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* Right Column: Clickable Navigation Chips */}
+            <div className="lg:col-span-6 flex flex-col justify-center space-y-4">
+              <p className="text-xs text-slate-500 font-semibold text-center lg:text-left">
+                Pilih kampus untuk melihat statistik sebaran audit InspeksiKos secara langsung:
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                {universities.map((uni, idx) => {
+                  const isActive = activeUni === idx;
+                  return (
+                    <button
+                      key={idx}
+                      onClick={() => handleUniChange(idx)}
+                      className={`flex flex-col items-center justify-center p-3.5 rounded-xl border text-center transition-all duration-300 cursor-pointer ${
+                        isActive 
+                          ? 'bg-white border-[#0f766e] shadow-md scale-102 font-black text-[#003057]' 
+                          : 'bg-slate-50/80 border-slate-200 opacity-60 hover:opacity-90 hover:bg-white text-slate-500'
+                      }`}
+                    >
+                      <div className="text-sm font-extrabold font-mono tracking-tight">
+                        {uni.short}
+                      </div>
+                      <div className="text-[8px] font-bold uppercase tracking-wider mt-0.5 opacity-80">
+                        Detail
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
 
         {/* Bento Grid (Features / Technology Section) */}
         <section id="bento" className="mb-28 max-w-5xl mx-auto space-y-12">
