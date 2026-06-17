@@ -180,14 +180,16 @@ export default function Home() {
               />
             </Link>
 
-            <nav className="flex items-center gap-8 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center gap-8 text-[11px] font-bold uppercase tracking-wider text-slate-500">
               <a href="#fitur" className="hover:text-[#003057] transition-all">Cara Kerja</a>
               <a href="#bento" className="hover:text-[#003057] transition-all">Keunggulan</a>
               <a href="#harga" className="hover:text-[#003057] transition-all">Kategori Layanan</a>
               <a href="#faq" className="hover:text-[#003057] transition-all">FAQ</a>
             </nav>
 
-            <div className="flex items-center gap-4">
+            {/* Desktop CTAs */}
+            <div className="hidden md:flex items-center gap-4">
               <Link href="/login" className="px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-600 hover:text-[#003057] transition-all active:scale-[0.98]">
                 Masuk
               </Link>
@@ -195,7 +197,65 @@ export default function Home() {
                 Mulai Audit
               </Link>
             </div>
+
+            {/* Mobile Navigation Toggle Button */}
+            <div className="flex md:hidden items-center gap-3">
+              <Link href="/login" className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-655 hover:text-[#003057]">
+                Masuk
+              </Link>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-slate-600 hover:text-[#003057] focus:outline-none focus:ring-1 focus:ring-slate-200 rounded-lg"
+              >
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+            </div>
           </div>
+
+          {/* Mobile Navigation Dropdown Drawer */}
+          {mobileMenuOpen && (
+            <div className="md:hidden border-b border-slate-200 bg-white/95 backdrop-blur-md px-6 py-4 space-y-4 shadow-lg absolute top-18 left-0 right-0 z-20 animate-in slide-in-from-top duration-200">
+              <nav className="flex flex-col gap-3.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                <a
+                  href="#fitur"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="hover:text-[#003057] transition-all py-1 border-b border-slate-100"
+                >
+                  Cara Kerja
+                </a>
+                <a
+                  href="#bento"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="hover:text-[#003057] transition-all py-1 border-b border-slate-100"
+                >
+                  Keunggulan
+                </a>
+                <a
+                  href="#harga"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="hover:text-[#003057] transition-all py-1 border-b border-slate-100"
+                >
+                  Kategori Layanan
+                </a>
+                <a
+                  href="#faq"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="hover:text-[#003057] transition-all py-1"
+                >
+                  FAQ
+                </a>
+              </nav>
+              <div className="pt-2 flex flex-col gap-2">
+                <Link
+                  href="/register"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center py-3 text-[10px] font-bold uppercase tracking-wider bg-[#003057] hover:bg-[#001e38] text-white rounded-xl shadow-md transition-all"
+                >
+                  Mulai Audit
+                </Link>
+              </div>
+            </div>
+          )}
         </header>
 
         {/* Main Content Area */}
