@@ -2040,240 +2040,638 @@ export default function DashboardPage() {
               {/* TAB 1: BERANDA (HOME) */}
               {mobileTab === 'home' && (
                 <div className="space-y-5">
-                  {/* Hero Banner Auto-swiping Carousel */}
-                  <div className="w-full h-32 rounded-2xl overflow-hidden relative shadow-md bg-gradient-to-r from-[#003057] to-[#0f766e]">
-                    <div className="absolute inset-0 bg-black/15 pointer-events-none z-10" />
-                    
-                    {/* Slide 0 */}
-                    <div className={`absolute inset-0 p-5 flex flex-col justify-between text-white transition-opacity duration-500 ${activeBannerIndex === 0 ? 'opacity-100 z-20' : 'opacity-0 z-0'}`}>
-                      <div className="space-y-1">
-                        <span className="text-[8px] bg-teal-500 text-white font-mono uppercase tracking-widest px-2 py-0.5 rounded-full font-bold">Uji TDS Air Mandi</span>
-                        <h3 className="text-xs font-black leading-tight text-white">Pastikan air kamar mandi kosan bersih & bebas bakteri!</h3>
-                      </div>
-                      <p className="text-[9px] text-teal-100 font-medium">Inspektur kami mengukur kadar air keran secara presisi.</p>
-                    </div>
-
-                    {/* Slide 1 */}
-                    <div className={`absolute inset-0 p-5 flex flex-col justify-between text-white transition-opacity duration-500 ${activeBannerIndex === 1 ? 'opacity-100 z-20' : 'opacity-0 z-0'}`}>
-                      <div className="space-y-1">
-                        <span className="text-[8px] bg-amber-500 text-white font-mono uppercase tracking-widest px-2 py-0.5 rounded-full font-bold">Speedtest Wifi Riil</span>
-                        <h3 className="text-xs font-black leading-tight text-white">WiFi lemot? Ketahui bandwidth asli di dalam kamar.</h3>
-                      </div>
-                      <p className="text-[9px] text-amber-100 font-medium">Uji kecepatan unduh & unggah sebelum membayar sewa.</p>
-                    </div>
-
-                    {/* Slide 2 */}
-                    <div className={`absolute inset-0 p-5 flex flex-col justify-between text-white transition-opacity duration-500 ${activeBannerIndex === 2 ? 'opacity-100 z-20' : 'opacity-0 z-0'}`}>
-                      <div className="space-y-1">
-                        <span className="text-[8px] bg-blue-500 text-white font-mono uppercase tracking-widest px-2 py-0.5 rounded-full font-bold">Inspeksi Grup Komparatif</span>
-                        <h3 className="text-xs font-black leading-tight text-white">Pilih hingga 5 kosan, bandingkan dalam satu tabel AI.</h3>
-                      </div>
-                      <p className="text-[9px] text-blue-100 font-medium">Sangat hemat biaya daripada survei satu per satu.</p>
-                    </div>
-
-                    {/* Dots indicator */}
-                    <div className="absolute bottom-3 right-4 flex gap-1.5 z-30">
-                      {[0, 1, 2].map((idx) => (
-                        <span key={idx} className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${activeBannerIndex === idx ? 'bg-white w-3.5' : 'bg-white/40'}`} />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Quick Action Grid (Gojek / Shopee Style) */}
-                  <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-                    <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 mb-3.5 font-mono">Layanan Cepat</h3>
-                    <div className="grid grid-cols-4 gap-2">
-                      <button
-                        onClick={() => {
-                          setOrderCategory('single');
-                          setShowRequestModal(true);
-                        }}
-                        className="flex flex-col items-center text-center focus:outline-none"
-                      >
-                        <div className="w-11 h-11 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center shadow-inner hover:scale-[1.03] transition-transform">
-                          <Building className="h-5 w-5 text-blue-650" />
+                  {role === 'inspektur' ? (
+                    // ==========================================
+                    // INSPECTOR VIEWPORT ON MOBILE
+                    // ==========================================
+                    activeTask ? (
+                      // ACTIVE INSPECTION AUDIT FORM WIZARD
+                      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-md space-y-5 text-left">
+                        <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                          <div>
+                            <span className="text-[8px] bg-blue-105 text-blue-805 border border-blue-200 px-2 py-0.5 rounded font-black font-mono">STEP {currentStep + 1} OF {activeSteps.length + 1}</span>
+                            <h3 className="text-xs font-black text-slate-800 mt-1.5 truncate max-w-[180px]">{activeTask.property?.name}</h3>
+                          </div>
+                          <button
+                            onClick={() => {
+                              if (confirm("Batal mengedit audit lapangan? Progres tersimpan akan dipertahankan.")) {
+                                setActiveTask(null);
+                              }
+                            }}
+                            className="text-[9px] font-extrabold text-slate-400 hover:text-slate-650 uppercase tracking-wider"
+                          >
+                            Keluar
+                          </button>
                         </div>
-                        <span className="text-[9px] font-bold text-slate-700 mt-2 leading-tight">Single Kos</span>
-                      </button>
 
-                      <button
-                        onClick={() => {
-                          setOrderCategory('multi');
-                          setShowRequestModal(true);
-                        }}
-                        className="flex flex-col items-center text-center focus:outline-none"
-                      >
-                        <div className="w-11 h-11 rounded-xl bg-teal-50 border border-teal-200 flex items-center justify-center shadow-inner hover:scale-[1.03] transition-transform">
-                          <Layers className="h-5 w-5 text-teal-650" />
-                        </div>
-                        <span className="text-[9px] font-bold text-slate-700 mt-2 leading-tight">Grup Kos</span>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          alert("Keunggulan Pengukuran TDS Air: Parameter air layak pakai adalah di bawah 500 ppm sesuai standar Kemenkes. Inspektur kami menggunakan alat ukur TDS TDS-3 terkalibrasi.");
-                        }}
-                        className="flex flex-col items-center text-center focus:outline-none"
-                      >
-                        <div className="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-200 flex items-center justify-center shadow-inner hover:scale-[1.03] transition-transform">
-                          <Droplets className="h-5 w-5 text-emerald-650" />
-                        </div>
-                        <span className="text-[9px] font-bold text-slate-700 mt-2 leading-tight">Uji Air TDS</span>
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          alert("Pengujian Banding Wifi: Inspektur menjalankan speedtest langsung di dalam kamar kos untuk mengukur Download, Upload, dan Latency (ping) demi jaminan kelancaran belajar & streaming.");
-                        }}
-                        className="flex flex-col items-center text-center focus:outline-none"
-                      >
-                        <div className="w-11 h-11 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center shadow-inner hover:scale-[1.03] transition-transform">
-                          <Wifi className="h-5 w-5 text-amber-650" />
-                        </div>
-                        <span className="text-[9px] font-bold text-slate-700 mt-2 leading-tight">Speedtest</span>
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Multi-Kos comparison card alert if exists */}
-                  {role === 'mahasiswa' && validComparisonGroups.length > 0 && (
-                    <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl p-4 shadow-sm relative overflow-hidden">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="space-y-1">
-                          <span className="text-[8px] bg-indigo-650 text-white font-mono uppercase tracking-wider px-2 py-0.5 rounded font-black">Group Comparison</span>
-                          <h4 className="text-xs font-black text-indigo-950">Analisis Perbandingan Kos Tersedia!</h4>
-                          <p className="text-[9px] text-indigo-700 leading-relaxed max-w-[35ch]">Sistem mendeteksi ada sesi inspeksi grup yang siap dibandingkan.</p>
-                        </div>
-                        <button
-                          onClick={() => {
-                            setSelectedComparisonGroup(validComparisonGroups[0].items);
-                            setShowComparisonModal(true);
-                          }}
-                          className="px-3 py-2 bg-indigo-650 hover:bg-indigo-700 text-white font-bold text-[9px] uppercase tracking-wider rounded-xl transition-all shadow-md"
-                        >
-                          Bandingkan
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Real-time Order list header */}
-                  <div className="flex items-center justify-between border-b border-slate-200 pb-2.5">
-                    <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-650 flex items-center gap-1.5">
-                      <ClipboardList className="h-3.5 w-3.5 text-blue-500" />
-                      Status Permintaan ({displayedInspections.length})
-                    </h3>
-                    <button
-                      onClick={() => fetchInspections(true)}
-                      className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg border border-slate-200 hover:bg-slate-50 transition-all"
-                    >
-                      <RefreshCw className="h-3 w-3" />
-                    </button>
-                  </div>
-
-                  {/* Real-time Order list items */}
-                  {displayedInspections.length === 0 ? (
-                    <div className="text-center py-10 bg-white border border-slate-200 rounded-2xl p-6">
-                      <Building className="h-8 w-8 text-slate-355 mx-auto mb-2" />
-                      <p className="text-xs font-bold text-slate-505 mb-1">Belum Ada Sesi Inspeksi</p>
-                      <p className="text-[9px] text-slate-400 max-w-xs mx-auto">
-                        Silakan pesan inspeksi kosan Anda dengan menekan tombol Single Kos atau Grup Kos di atas.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-3.5">
-                      {displayedInspections.map((insp: any) => {
-                        const statusColors: Record<string, string> = {
-                          pending_payment: 'bg-amber-50 text-amber-800 border-amber-205',
-                          pending: 'bg-blue-50 text-blue-800 border-blue-205',
-                          accepted: 'bg-indigo-50 text-indigo-805 border-indigo-205',
-                          completed: 'bg-emerald-50 text-emerald-805 border-emerald-205',
-                          cancelled: 'bg-rose-50 text-rose-805 border-rose-205',
-                        };
-
-                        const statusLabels: Record<string, string> = {
-                          pending_payment: 'Menunggu Pembayaran',
-                          pending: 'Mencari Verifikator',
-                          accepted: 'Verifikator Menuju Lokasi',
-                          completed: 'Audit Selesai',
-                          cancelled: 'Dibatalkan',
-                        };
-
-                        const hasReport = insp.status === 'completed' && insp.audit_report;
-
-                        return (
-                          <div key={insp.inspection_id} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all text-left">
-                            <div className="flex items-center justify-between gap-3 mb-2.5">
-                              <span className="text-[8px] font-mono text-slate-400 font-semibold truncate max-w-[150px]">
-                                ID: #{insp.inspection_id.substring(0, 8).toUpperCase()}
-                              </span>
-                              <span className={`px-2 py-0.5 rounded text-[8px] font-bold border uppercase tracking-wider font-mono ${statusColors[insp.status] || 'bg-slate-50 border-slate-200 text-slate-500'}`}>
-                                {statusLabels[insp.status] || insp.status}
-                              </span>
+                        {currentStep < activeSteps.length ? (
+                          // RENDER ACTIVE STEP INPUT
+                          <div className="space-y-4">
+                            <div>
+                              <h4 className="text-xs font-black text-[#003057]">{currentActiveStep.label}</h4>
+                              <p className="text-[10px] text-slate-400 leading-relaxed mt-0.5">{currentActiveStep.desc}</p>
                             </div>
 
-                            <div className="space-y-1.5 mb-3.5">
-                              <h4 className="text-xs font-bold text-slate-900 leading-snug">{insp.property?.name || 'Properti Kos'}</h4>
-                              <p className="text-[10px] text-slate-500 leading-normal flex items-center gap-1">
-                                <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
-                                <span className="truncate">{insp.property?.address || 'Padang, Sumatra Barat'}</span>
+                            {currentActiveStep.type === 'boolean' ? (
+                              <div className="space-y-4">
+                                {/* Boolean Toggle */}
+                                <div className="space-y-2">
+                                  <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono block">Status Keberadaan Fasilitas</label>
+                                  <div className="grid grid-cols-2 gap-3">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setEvaluations(prev => ({ ...prev, [currentActiveStep.key]: true }));
+                                      }}
+                                      className={`py-2 text-[10px] font-bold uppercase rounded-xl border transition-all cursor-pointer ${
+                                        evaluations[currentActiveStep.key] === true
+                                          ? 'bg-blue-600 border-blue-600 text-white shadow'
+                                          : 'bg-slate-50 border-slate-200 text-slate-550'
+                                      }`}
+                                    >
+                                      ✓ Ada
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setEvaluations(prev => ({ ...prev, [currentActiveStep.key]: false }));
+                                      }}
+                                      className={`py-2 text-[10px] font-bold uppercase rounded-xl border transition-all cursor-pointer ${
+                                        evaluations[currentActiveStep.key] === false
+                                          ? 'bg-rose-600 border-rose-600 text-white shadow'
+                                          : 'bg-slate-50 border-slate-200 text-slate-550'
+                                      }`}
+                                    >
+                                      ✗ Tidak Ada
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* Photo Upload */}
+                                <div className="space-y-2">
+                                  <label className="text-[9px] font-bold text-slate-405 uppercase tracking-wider font-mono block">Unggah Foto Bukti Lapangan</label>
+                                  <div className="flex items-center gap-3">
+                                    <label className="flex-1 flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 hover:bg-slate-105/50 cursor-pointer transition-all">
+                                      <Upload className="h-5 w-5 text-slate-400 mb-1" />
+                                      <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Pilih Foto</span>
+                                      <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) handleUploadPhotoForCategory(currentActiveStep.key, file);
+                                        }}
+                                      />
+                                    </label>
+                                    {taskPhotos.find(p => p.room_type === currentActiveStep.key) ? (
+                                      <div className="h-16 w-16 rounded-xl overflow-hidden border border-emerald-500 relative bg-slate-100 shrink-0 shadow-sm flex items-center justify-center">
+                                        <img
+                                          src={taskPhotos.find(p => p.room_type === currentActiveStep.key)?.photo_url}
+                                          alt="Preview"
+                                          className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-emerald-600/40 flex items-center justify-center text-white text-[8px] font-black">
+                                          ✓ UPLOADED
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className="h-16 w-16 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300 text-[18px] shrink-0">
+                                        📷
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ) : currentActiveStep.key === 'kualitas_air' ? (
+                              <div className="space-y-4">
+                                {/* TDS Water quality input */}
+                                <div className="space-y-1.5">
+                                  <label className="text-[9px] font-bold text-slate-405 uppercase tracking-wider font-mono block">Hasil Ukur TDS (ppm)</label>
+                                  <input
+                                    type="number"
+                                    value={tdsInput}
+                                    onChange={(e) => setTdsInput(e.target.value)}
+                                    placeholder="Masukkan nilai TDS, contoh: 120"
+                                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none"
+                                  />
+                                </div>
+
+                                {/* Photo upload */}
+                                <div className="space-y-2">
+                                  <label className="text-[9px] font-bold text-slate-405 uppercase tracking-wider font-mono block">Foto Alat Ukur TDS Lapangan</label>
+                                  <div className="flex items-center gap-3">
+                                    <label className="flex-1 flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 hover:bg-slate-105/50 cursor-pointer transition-all">
+                                      <Upload className="h-5 w-5 text-slate-400 mb-1" />
+                                      <span className="text-[9px] font-bold text-slate-505 uppercase tracking-wider">Pilih Foto TDS</span>
+                                      <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) handleUploadPhotoForCategory('kualitas_air', file);
+                                        }}
+                                      />
+                                    </label>
+                                    {taskPhotos.find(p => p.room_type === 'kualitas_air') ? (
+                                      <div className="h-16 w-16 rounded-xl overflow-hidden border border-emerald-500 relative bg-slate-100 shrink-0 shadow-sm flex items-center justify-center">
+                                        <img
+                                          src={taskPhotos.find(p => p.room_type === 'kualitas_air')?.photo_url}
+                                          alt="Preview"
+                                          className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-emerald-600/40 flex items-center justify-center text-white text-[8px] font-black font-mono">
+                                          ✓ OK
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className="h-16 w-16 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300 text-[18px] shrink-0">
+                                        📷
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="space-y-4">
+                                {/* Speedtest Internet input */}
+                                <div className="space-y-1.5">
+                                  <label className="text-[9px] font-bold text-slate-405 uppercase tracking-wider font-mono block">Hasil Ukur Internet (Mbps)</label>
+                                  <input
+                                    type="number"
+                                    value={internetInput}
+                                    onChange={(e) => setInternetInput(e.target.value)}
+                                    placeholder="Masukkan Kecepatan Internet, contoh: 24"
+                                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none"
+                                  />
+                                </div>
+
+                                {/* Video upload */}
+                                <div className="space-y-2">
+                                  <label className="text-[9px] font-bold text-slate-405 uppercase tracking-wider font-mono block">Video Bukti Speedtest Kamar</label>
+                                  <div className="flex items-center gap-3">
+                                    <label className="flex-1 flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 hover:bg-slate-105/50 cursor-pointer transition-all">
+                                      <Upload className="h-5 w-5 text-slate-400 mb-1" />
+                                      <span className="text-[9px] font-bold text-slate-505 uppercase tracking-wider">Pilih Video</span>
+                                      <input
+                                        type="file"
+                                        accept="video/*"
+                                        className="hidden"
+                                        onChange={(e) => {
+                                          const file = e.target.files?.[0];
+                                          if (file) handleUploadVideoForCategory('kecepatan_internet', file);
+                                        }}
+                                      />
+                                    </label>
+                                    {taskPhotos.find(p => p.room_type === 'kecepatan_internet_video') ? (
+                                      <div className="h-16 w-16 rounded-xl overflow-hidden border border-emerald-500 relative bg-slate-100 shrink-0 shadow-sm flex flex-col items-center justify-center text-center">
+                                        <span className="text-[12px]">📹</span>
+                                        <div className="absolute inset-0 bg-emerald-600/40 flex items-center justify-center text-white text-[8px] font-black font-mono">
+                                          ✓ OK
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className="h-16 w-16 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300 text-[18px] shrink-0">
+                                        🎥
+                                      </div>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {auditError && (
+                              <div className="p-3 text-[10px] font-bold text-rose-650 bg-rose-50 border border-rose-200 rounded-xl">
+                                ⚠️ {auditError}
+                              </div>
+                            )}
+
+                            {/* Stepper Wizard Actions */}
+                            <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                              <button
+                                type="button"
+                                disabled={currentStep === 0}
+                                onClick={() => setCurrentStep(prev => Math.max(0, prev - 1))}
+                                className="px-4 py-2.5 border border-slate-200 text-slate-605 text-[10px] font-bold uppercase rounded-xl transition-all disabled:opacity-40"
+                              >
+                                Kembali
+                              </button>
+                              <button
+                                type="button"
+                                disabled={techSaving}
+                                onClick={() => handleSaveStepProgress(currentStep + 1)}
+                                className="px-5 py-2.5 bg-blue-600 text-white text-[10px] font-bold uppercase rounded-xl shadow transition-all flex items-center gap-1.5 cursor-pointer"
+                              >
+                                {techSaving ? (
+                                  <>
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                    Menyimpan...
+                                  </>
+                                ) : (
+                                  'Simpan & Lanjut'
+                                )}
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          // STEP FINAL: TRIGGER AI AUDIT
+                          <div className="space-y-4">
+                            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+                              <h4 className="text-xs font-black text-slate-800">Semua Data Siap Di-Audit</h4>
+                              <p className="text-[10px] text-slate-500 leading-relaxed">
+                                Bukti foto fasilitas, TDS air, dan video speedtest wifi telah lengkap terkumpul di lapangan. Silakan jalankan validasi AI.
                               </p>
                             </div>
 
-                            {/* Custom Action buttons based on real order state */}
-                            <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
-                              {insp.status === 'pending_payment' ? (
-                                <>
-                                  <span className="text-[9px] font-black text-rose-600 font-mono">Rp 50.000 (Belum Bayar)</span>
-                                  <button
-                                    onClick={async () => {
-                                      if (insp.property?.claim_data?.payment_token) {
-                                        setPaymentToken(insp.property.claim_data.payment_token);
-                                        const simUrl = `/payment/simulate?token=${insp.property.claim_data.payment_token}&id=${insp.inspection_id}`;
-                                        setPaymentRedirectUrl(simUrl);
-                                        window.location.href = simUrl;
-                                      } else {
-                                        alert("Pembayaran token tidak ditemukan. Mohon cek riwayat untuk simulasi.");
-                                      }
-                                    }}
-                                    className="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold text-[9px] uppercase tracking-wider rounded-xl shadow-md cursor-pointer"
-                                  >
-                                    Bayar Sekarang
-                                  </button>
-                                </>
-                              ) : hasReport ? (
-                                <>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-[9px] bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded font-black font-mono">
-                                      Skor: {insp.audit_report?.score}%
-                                    </span>
-                                    <span className="text-[8px] font-bold text-slate-400 font-mono uppercase">
-                                      {insp.audit_report?.confidence_level}
-                                    </span>
-                                  </div>
-                                  <button
-                                    onClick={() => {
-                                      setSelectedInspection(insp);
-                                      setShowReportModal(true);
-                                    }}
-                                    className="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-[9px] uppercase tracking-wider rounded-xl shadow-md cursor-pointer"
-                                  >
-                                    Lihat Hasil Audit
-                                  </button>
-                                </>
-                              ) : (
-                                <div className="w-full bg-slate-50 rounded-xl p-2.5 border border-slate-200 flex items-center justify-between">
-                                  <div className="flex items-center gap-1.5">
-                                    <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
-                                    <span className="text-[9px] font-semibold text-slate-500">Inspeksi sedang diproses</span>
-                                  </div>
-                                  <span className="text-[8px] font-mono text-slate-400">Verifikator aktif</span>
-                                </div>
-                              )}
+                            {auditError && (
+                              <div className="p-3 text-[10px] font-bold text-rose-655 bg-rose-50 border border-rose-200 rounded-xl">
+                                ⚠️ {auditError}
+                              </div>
+                            )}
+
+                            <div className="pt-2">
+                              <button
+                                type="button"
+                                disabled={auditRunning || techSaving}
+                                onClick={handleRunAudit}
+                                className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-[10px] uppercase tracking-wider rounded-xl shadow-md cursor-pointer flex items-center justify-center gap-2"
+                              >
+                                {auditRunning ? (
+                                  <>
+                                    <Loader2 className="h-4 w-4 animate-spin text-white" />
+                                    Gemini AI Sedang Menilai...
+                                  </>
+                                ) : (
+                                  <>
+                                    ⚡ Jalankan Validasi AI & Selesaikan
+                                  </>
+                                )}
+                              </button>
                             </div>
                           </div>
-                        );
-                      })}
+                        )}
+                      </div>
+                    ) : (
+                      // INSPECTOR HOME TAB LISTS
+                      <div className="space-y-4">
+                        {/* Statistics Grid */}
+                        <div className="grid grid-cols-3 gap-2">
+                          <div className="bg-white border border-slate-200 p-3 rounded-xl shadow-sm text-center">
+                            <span className="text-[8px] font-bold text-slate-405 uppercase tracking-wider font-mono block">Verified</span>
+                            <span className="text-sm font-black text-slate-800 font-mono mt-0.5 block">{auditedInspections.length} Kos</span>
+                          </div>
+                          <div className="bg-white border border-slate-200 p-3 rounded-xl shadow-sm text-center">
+                            <span className="text-[8px] font-bold text-slate-405 uppercase tracking-wider font-mono block">Rata TDS</span>
+                            <span className="text-sm font-black text-slate-800 font-mono mt-0.5 block">{avgTds.toFixed(0)} ppm</span>
+                          </div>
+                          <div className="bg-white border border-slate-200 p-3 rounded-xl shadow-sm text-center">
+                            <span className="text-[8px] font-bold text-slate-405 uppercase tracking-wider font-mono block">Rata Speed</span>
+                            <span className="text-sm font-black text-slate-800 font-mono mt-0.5 block">{avgSpeed.toFixed(0)} Mbps</span>
+                          </div>
+                        </div>
+
+                        {/* Inspector Task Toggles */}
+                        <div className="flex bg-white border border-slate-200 p-1 rounded-xl shadow-sm">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveTabInspector('my_tasks');
+                              setActiveTask(null);
+                            }}
+                            className={`flex-1 py-2 text-[9px] font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
+                              activeTabInspector === 'my_tasks'
+                                ? 'bg-blue-600 text-white shadow'
+                                : 'text-slate-500 hover:text-slate-850'
+                            }`}
+                          >
+                            📋 Tugas Saya
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveTabInspector('available_orders');
+                              setActiveTask(null);
+                            }}
+                            className={`flex-1 py-2 text-[9px] font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
+                              activeTabInspector === 'available_orders'
+                                ? 'bg-amber-500 text-white shadow'
+                                : 'text-slate-500 hover:text-slate-855'
+                            }`}
+                          >
+                            🔔 Orderan Baru
+                          </button>
+                        </div>
+
+                        {/* Inspector Tasks Listing */}
+                        <div className="space-y-3">
+                          {displayedInspections.length === 0 ? (
+                            <div className="text-center py-12 bg-white border border-slate-200 rounded-2xl p-6">
+                              <ClipboardList className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+                              <p className="text-xs font-bold text-slate-500 mb-1">Tidak Ada Tugas</p>
+                              <p className="text-[9px] text-slate-400 max-w-xs mx-auto">
+                                {activeTabInspector === 'my_tasks'
+                                  ? 'Belum ada tugas lapangan yang ditugaskan ke Anda.'
+                                  : 'Belum ada pesanan verifikasi baru yang masuk di Padang.'}
+                              </p>
+                            </div>
+                          ) : (
+                            displayedInspections.map((insp: any) => {
+                              return (
+                                <div key={insp.inspection_id} className="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm text-left space-y-3">
+                                  <div>
+                                    <div className="flex items-center justify-between gap-3 mb-1">
+                                      <h4 className="text-xs font-black text-slate-800 truncate max-w-[170px]">{insp.property?.name}</h4>
+                                      <span className="text-[8px] font-mono text-slate-400">ID: #{insp.inspection_id.substring(0, 8).toUpperCase()}</span>
+                                    </div>
+                                    <p className="text-[9px] text-slate-500 leading-normal flex items-center gap-1.5">
+                                      <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
+                                      <span className="truncate">{insp.property?.address}</span>
+                                    </p>
+                                  </div>
+
+                                  <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-3">
+                                    {activeTabInspector === 'my_tasks' ? (
+                                      insp.status === 'assigned' ? (
+                                        <button
+                                          onClick={() => handleStartTask(insp.inspection_id)}
+                                          className="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white font-bold text-[9px] uppercase tracking-wider rounded-lg shadow cursor-pointer"
+                                        >
+                                          Mulai Kerja Lapangan
+                                        </button>
+                                      ) : (
+                                        <button
+                                          onClick={() => {
+                                            setActiveTask(insp);
+                                            setCurrentStep(0);
+                                          }}
+                                          className="w-full py-2 bg-gradient-to-r from-emerald-600 to-teal-650 text-white font-bold text-[9px] uppercase tracking-wider rounded-lg shadow cursor-pointer"
+                                        >
+                                          Jalankan Audit
+                                        </button>
+                                      )
+                                    ) : (
+                                      <button
+                                        disabled={acceptingTaskLoading[insp.inspection_id]}
+                                        onClick={() => handleAcceptOrder(insp.inspection_id)}
+                                        className="w-full py-2 bg-amber-500 text-white font-bold text-[9px] uppercase tracking-wider rounded-lg shadow cursor-pointer flex items-center justify-center gap-1.5"
+                                      >
+                                        {acceptingTaskLoading[insp.inspection_id] ? (
+                                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                        ) : (
+                                          'Ambil Tugas Lapangan'
+                                        )}
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+                    )
+                  ) : (
+                    // ==========================================
+                    // STUDENT VIEWPORT ON MOBILE
+                    // ==========================================
+                    <div className="space-y-5">
+                      {/* Hero Banner Auto-swiping Carousel */}
+                      <div className="w-full h-32 rounded-2xl overflow-hidden relative shadow-md bg-gradient-to-r from-[#003057] to-[#0f766e]">
+                        <div className="absolute inset-0 bg-black/15 pointer-events-none z-10" />
+                        
+                        {/* Slide 0 */}
+                        <div className={`absolute inset-0 p-5 flex flex-col justify-between text-white transition-opacity duration-500 ${activeBannerIndex === 0 ? 'opacity-100 z-20' : 'opacity-0 z-0'}`}>
+                          <div className="space-y-1">
+                            <span className="text-[8px] bg-teal-500 text-white font-mono uppercase tracking-widest px-2 py-0.5 rounded-full font-bold">Uji TDS Air Mandi</span>
+                            <h3 className="text-xs font-black leading-tight text-white font-sans">Pastikan air kamar mandi kosan bersih & bebas bakteri!</h3>
+                          </div>
+                          <p className="text-[9px] text-teal-100 font-medium">Inspektur kami mengukur kadar air keran secara presisi.</p>
+                        </div>
+
+                        {/* Slide 1 */}
+                        <div className={`absolute inset-0 p-5 flex flex-col justify-between text-white transition-opacity duration-500 ${activeBannerIndex === 1 ? 'opacity-100 z-20' : 'opacity-0 z-0'}`}>
+                          <div className="space-y-1">
+                            <span className="text-[8px] bg-amber-500 text-white font-mono uppercase tracking-widest px-2 py-0.5 rounded-full font-bold">Speedtest Wifi Riil</span>
+                            <h3 className="text-xs font-black leading-tight text-white font-sans">WiFi lemot? Ketahui bandwidth asli di dalam kamar.</h3>
+                          </div>
+                          <p className="text-[9px] text-amber-100 font-medium">Uji kecepatan unduh & unggah sebelum membayar sewa.</p>
+                        </div>
+
+                        {/* Slide 2 */}
+                        <div className={`absolute inset-0 p-5 flex flex-col justify-between text-white transition-opacity duration-500 ${activeBannerIndex === 2 ? 'opacity-100 z-20' : 'opacity-0 z-0'}`}>
+                          <div className="space-y-1">
+                            <span className="text-[8px] bg-blue-500 text-white font-mono uppercase tracking-widest px-2 py-0.5 rounded-full font-bold">Inspeksi Grup Komparatif</span>
+                            <h3 className="text-xs font-black leading-tight text-white font-sans">Pilih hingga 5 kosan, bandingkan dalam satu tabel AI.</h3>
+                          </div>
+                          <p className="text-[9px] text-blue-100 font-medium">Sangat hemat biaya daripada survei satu per satu.</p>
+                        </div>
+
+                        {/* Dots indicator */}
+                        <div className="absolute bottom-3 right-4 flex gap-1.5 z-30">
+                          {[0, 1, 2].map((idx) => (
+                            <span key={idx} className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${activeBannerIndex === idx ? 'bg-white w-3.5' : 'bg-white/40'}`} />
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Quick Action Grid (Gojek / Shopee Style) */}
+                      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                        <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-slate-405 mb-3.5 font-mono">Layanan Cepat</h3>
+                        <div className="grid grid-cols-4 gap-2">
+                          <button
+                            onClick={() => {
+                              setOrderCategory('single');
+                              setShowRequestModal(true);
+                            }}
+                            className="flex flex-col items-center text-center focus:outline-none"
+                          >
+                            <div className="w-11 h-11 rounded-xl bg-blue-55 border border-blue-200 flex items-center justify-center shadow-inner hover:scale-[1.03] transition-transform">
+                              <Building className="h-5 w-5 text-blue-650" />
+                            </div>
+                            <span className="text-[9px] font-bold text-slate-705 mt-2 leading-tight">Single Kos</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              setOrderCategory('multi');
+                              setShowRequestModal(true);
+                            }}
+                            className="flex flex-col items-center text-center focus:outline-none"
+                          >
+                            <div className="w-11 h-11 rounded-xl bg-teal-55 border border-teal-200 flex items-center justify-center shadow-inner hover:scale-[1.03] transition-transform">
+                              <Layers className="h-5 w-5 text-teal-650" />
+                            </div>
+                            <span className="text-[9px] font-bold text-slate-705 mt-2 leading-tight">Grup Kos</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              alert("Keunggulan Pengukuran TDS Air: Parameter air layak pakai adalah di bawah 500 ppm sesuai standar Kemenkes. Verifikator kami menggunakan alat ukur TDS terkalibrasi.");
+                            }}
+                            className="flex flex-col items-center text-center focus:outline-none"
+                          >
+                            <div className="w-11 h-11 rounded-xl bg-emerald-55 border border-emerald-200 flex items-center justify-center shadow-inner hover:scale-[1.03] transition-transform">
+                              <Droplets className="h-5 w-5 text-emerald-650" />
+                            </div>
+                            <span className="text-[9px] font-bold text-slate-705 mt-2 leading-tight">Uji Air TDS</span>
+                          </button>
+
+                          <button
+                            onClick={() => {
+                              alert("Pengujian Banding Wifi: Inspektur menjalankan speedtest langsung di dalam kamar kos untuk mengukur Download, Upload, dan Latency (ping) demi jaminan kelancaran belajar & streaming.");
+                            }}
+                            className="flex flex-col items-center text-center focus:outline-none"
+                          >
+                            <div className="w-11 h-11 rounded-xl bg-amber-55 border border-amber-205 flex items-center justify-center shadow-inner hover:scale-[1.03] transition-transform">
+                              <Wifi className="h-5 w-5 text-amber-650" />
+                            </div>
+                            <span className="text-[9px] font-bold text-slate-705 mt-2 leading-tight">Speedtest</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Multi-Kos comparison card alert if exists */}
+                      {validComparisonGroups.length > 0 && (
+                        <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-2xl p-4 shadow-sm relative overflow-hidden">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="space-y-1">
+                              <span className="text-[8px] bg-indigo-650 text-white font-mono uppercase tracking-wider px-2 py-0.5 rounded font-black">Group Comparison</span>
+                              <h4 className="text-xs font-black text-indigo-950">Analisis Perbandingan Kos Tersedia!</h4>
+                              <p className="text-[9px] text-indigo-700 leading-relaxed max-w-[35ch]">Sistem mendeteksi ada sesi inspeksi grup yang siap dibandingkan.</p>
+                            </div>
+                            <button
+                              onClick={() => {
+                                setSelectedComparisonGroup(validComparisonGroups[0].items);
+                                setShowComparisonModal(true);
+                              }}
+                              className="px-3 py-2 bg-indigo-650 hover:bg-indigo-700 text-white font-bold text-[9px] uppercase tracking-wider rounded-xl transition-all shadow-md"
+                            >
+                              Bandingkan
+                            </button>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Real-time Order list header */}
+                      <div className="flex items-center justify-between border-b border-slate-205 pb-2.5">
+                        <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-650 flex items-center gap-1.5">
+                          <ClipboardList className="h-3.5 w-3.5 text-blue-500" />
+                          Status Permintaan ({displayedInspections.length})
+                        </h3>
+                        <button
+                          onClick={() => fetchInspections(true)}
+                          className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg border border-slate-200 hover:bg-slate-50 transition-all"
+                        >
+                          <RefreshCw className="h-3 w-3" />
+                        </button>
+                      </div>
+
+                      {/* Real-time Order list items */}
+                      {displayedInspections.length === 0 ? (
+                        <div className="text-center py-10 bg-white border border-slate-200 rounded-2xl p-6">
+                          <Building className="h-8 w-8 text-slate-355 mx-auto mb-2" />
+                          <p className="text-xs font-bold text-slate-505 mb-1">Belum Ada Sesi Inspeksi</p>
+                          <p className="text-[9px] text-slate-400 max-w-xs mx-auto">
+                            Silakan pesan inspeksi kosan Anda dengan menekan tombol Single Kos atau Grup Kos di atas.
+                          </p>
+                        </div>
+                      ) : (
+                        <div className="space-y-3.5">
+                          {displayedInspections.map((insp: any) => {
+                            const statusColors: Record<string, string> = {
+                              pending_payment: 'bg-amber-50 text-amber-800 border-amber-205',
+                              pending: 'bg-blue-50 text-blue-800 border-blue-205',
+                              accepted: 'bg-indigo-50 text-indigo-805 border-indigo-205',
+                              completed: 'bg-emerald-50 text-emerald-805 border-emerald-205',
+                              cancelled: 'bg-rose-50 text-rose-805 border-rose-205',
+                            };
+
+                            const statusLabels: Record<string, string> = {
+                              pending_payment: 'Menunggu Pembayaran',
+                              pending: 'Mencari Verifikator',
+                              accepted: 'Verifikator Menuju Lokasi',
+                              completed: 'Audit Selesai',
+                              cancelled: 'Dibatalkan',
+                            };
+
+                            const hasReport = insp.status === 'completed' && insp.audit_report;
+
+                            return (
+                              <div key={insp.inspection_id} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all text-left">
+                                <div className="flex items-center justify-between gap-3 mb-2.5">
+                                  <span className="text-[8px] font-mono text-slate-400 font-semibold truncate max-w-[150px]">
+                                    ID: #{insp.inspection_id.substring(0, 8).toUpperCase()}
+                                  </span>
+                                  <span className={`px-2 py-0.5 rounded text-[8px] font-bold border uppercase tracking-wider font-mono ${statusColors[insp.status] || 'bg-slate-50 border-slate-200 text-slate-505'}`}>
+                                    {statusLabels[insp.status] || insp.status}
+                                  </span>
+                                </div>
+
+                                <div className="space-y-1.5 mb-3.5">
+                                  <h4 className="text-xs font-bold text-slate-900 leading-snug">{insp.property?.name || 'Properti Kos'}</h4>
+                                  <p className="text-[10px] text-slate-550 leading-normal flex items-center gap-1">
+                                    <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
+                                    <span className="truncate">{insp.property?.address || 'Padang, Sumatra Barat'}</span>
+                                  </p>
+                                </div>
+
+                                {/* Custom Action buttons based on real order state */}
+                                <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                                  {insp.status === 'pending_payment' ? (
+                                    <>
+                                      <span className="text-[9px] font-black text-rose-650 font-mono">Rp 50.000 (Belum Bayar)</span>
+                                      <button
+                                        onClick={async () => {
+                                          if (insp.property?.claim_data?.payment_token) {
+                                            setPaymentToken(insp.property.claim_data.payment_token);
+                                            const simUrl = `/payment/simulate?token=${insp.property.claim_data.payment_token}&id=${insp.inspection_id}`;
+                                            setPaymentRedirectUrl(simUrl);
+                                            window.location.href = simUrl;
+                                          } else {
+                                            alert("Pembayaran token tidak ditemukan. Mohon cek riwayat untuk simulasi.");
+                                          }
+                                        }}
+                                        className="px-3.5 py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white font-bold text-[9px] uppercase tracking-wider rounded-xl shadow-md cursor-pointer"
+                                      >
+                                        Bayar Sekarang
+                                      </button>
+                                    </>
+                                  ) : hasReport ? (
+                                    <>
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-[9px] bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded font-black font-mono">
+                                          Skor: {insp.audit_report?.score}%
+                                        </span>
+                                        <span className="text-[8px] font-bold text-slate-400 font-mono uppercase">
+                                          {insp.audit_report?.confidence_level}
+                                        </span>
+                                      </div>
+                                      <button
+                                        onClick={() => {
+                                          setSelectedInspection(insp);
+                                          setShowReportModal(true);
+                                        }}
+                                        className="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-[9px] uppercase tracking-wider rounded-xl shadow-md cursor-pointer"
+                                      >
+                                        Lihat Hasil Audit
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <div className="w-full bg-slate-50 rounded-xl p-2.5 border border-slate-200 flex items-center justify-between">
+                                      <div className="flex items-center gap-1.5">
+                                        <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse" />
+                                        <span className="text-[9px] font-semibold text-slate-500">Inspeksi sedang diproses</span>
+                                      </div>
+                                      <span className="text-[8px] font-mono text-slate-400">Verifikator aktif</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
