@@ -37,96 +37,82 @@ export default function Home() {
     {
       name: "Politeknik Negeri Padang",
       short: "PNP",
-      logoColor: "text-amber-600 bg-amber-50 border-amber-200",
+      logoColor: "text-amber-600 bg-white border-slate-200",
       accent: "#f59e0b",
       verifiedCount: "480+",
       inspectors: "8 Verifikator",
       initials: "PNP",
-      icon: (
-        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <circle cx="12" cy="12" r="5" stroke="currentColor" strokeDasharray="3 2" />
-          <circle cx="12" cy="12" r="8" stroke="currentColor" />
-          <path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M5 19l3-3M16 8l3-3" strokeLinecap="round" />
-        </svg>
-      )
+      logoFile: "logo-pnp.png"
     },
     {
       name: "Universitas Andalas",
       short: "UNAND",
-      logoColor: "text-emerald-700 bg-emerald-50 border-emerald-250",
+      logoColor: "text-emerald-700 bg-white border-slate-200",
       accent: "#047857",
       verifiedCount: "620+",
       inspectors: "12 Verifikator",
       initials: "UNAND",
-      icon: (
-        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" strokeLinejoin="round" />
-          <path d="M12 6v10M9 10l3-3 3 3M9 13l3 3 3-3" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      )
+      logoFile: "logo-unand.svg"
     },
     {
       name: "Universitas Negeri Padang",
       short: "UNP",
-      logoColor: "text-blue-700 bg-blue-50 border-blue-200",
+      logoColor: "text-blue-700 bg-white border-slate-200",
       accent: "#1d4ed8",
       verifiedCount: "580+",
       inspectors: "10 Verifikator",
       initials: "UNP",
-      icon: (
-        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z" />
-          <path d="M6 6h10M6 10h10M6 14h10" strokeLinecap="round" />
-          <circle cx="13" cy="13" r="5" className="opacity-20 fill-current" />
-        </svg>
-      )
+      logoFile: "logo-unp.jpg"
     },
     {
       name: "UIN Imam Bonjol",
       short: "UIN IB",
-      logoColor: "text-teal-700 bg-teal-50 border-teal-200",
+      logoColor: "text-teal-700 bg-white border-slate-200",
       accent: "#0f766e",
       verifiedCount: "350+",
       inspectors: "6 Verifikator",
       initials: "UIN",
-      icon: (
-        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M12 2L15 8L22 9L17 14L18 21L12 17L6 21L7 14L2 9L9 8L12 2Z" strokeLinejoin="round" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      )
+      logoFile: "logo-uinib.png"
     },
     {
       name: "Universitas Bung Hatta",
       short: "UBH",
-      logoColor: "text-rose-700 bg-rose-50 border-rose-200",
+      logoColor: "text-rose-700 bg-white border-slate-200",
       accent: "#be123c",
       verifiedCount: "290+",
       inspectors: "5 Verifikator",
       initials: "UBH",
-      icon: (
-        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <polygon points="12,2 15,9 22,12 15,15 12,22 9,15 2,12 9,9" strokeLinejoin="round" />
-          <line x1="12" y1="2" x2="12" y2="22" />
-          <line x1="2" y1="12" x2="22" y2="12" />
-        </svg>
-      )
+      logoFile: "logo-ubh.png"
     },
     {
       name: "UPI YPTK Padang",
-      short: "UPI",
-      logoColor: "text-indigo-700 bg-indigo-50 border-indigo-200",
+      short: "UPI YPTK",
+      logoColor: "text-indigo-700 bg-white border-slate-200",
       accent: "#4338ca",
       verifiedCount: "410+",
       inspectors: "7 Verifikator",
       initials: "UPI",
-      icon: (
-        <svg className="w-12 h-12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <circle cx="12" cy="12" r="9" />
-          <path d="M12 3a15.3 15.3 0 0 1 4 9 15.3 15.3 0 0 1-4 9 15.3 15.3 0 0 1-4-9 15.3 15.3 0 0 1 4-9Z" />
-          <line x1="3" y1="12" x2="21" y2="12" />
-        </svg>
-      )
+      logoFile: "logo-upiyptk.jpg"
+    },
+    {
+      name: "Universitas Baiturrahmah",
+      short: "UNBRAH",
+      logoColor: "text-sky-700 bg-white border-slate-200",
+      accent: "#0284c7",
+      verifiedCount: "180+",
+      inspectors: "4 Verifikator",
+      initials: "UNBRAH",
+      logoFile: "logo-unbrah.png"
+    },
+    {
+      name: "Poltekkes Kemenkes Padang",
+      short: "POLTEKKES",
+      logoColor: "text-teal-600 bg-white border-slate-200",
+      accent: "#0d9488",
+      verifiedCount: "210+",
+      inspectors: "5 Verifikator",
+      initials: "POLTEKKES",
+      logoFile: "logo-poltekkes.png"
     }
   ];
 
@@ -332,8 +318,12 @@ export default function Home() {
                 } border-slate-200`}
               >
                 <div className="flex items-start justify-between">
-                  <div className={`p-3 rounded-xl border ${universities[activeUni].logoColor} transition-colors duration-300`}>
-                    {universities[activeUni].icon}
+                  <div className={`p-2 rounded-xl border ${universities[activeUni].logoColor} transition-colors duration-300 w-22 h-22 flex items-center justify-center shadow-sm`}>
+                    <img 
+                      src={`/${universities[activeUni].logoFile}`} 
+                      alt={`${universities[activeUni].short} Logo`} 
+                      className="max-w-full max-h-full object-contain hover:scale-105 transition-transform duration-200" 
+                    />
                   </div>
                   <div className="text-right">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-850 text-[8px] font-black uppercase tracking-wider font-mono">
@@ -364,29 +354,33 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right Column: Clickable Navigation Chips */}
+            {/* Right Column: Clickable Navigation Chips with Image/Logo icons */}
             <div className="lg:col-span-6 flex flex-col justify-center space-y-4">
               <p className="text-xs text-slate-500 font-semibold text-center lg:text-left">
                 Pilih kampus untuk melihat statistik sebaran audit InspeksiKos secara langsung:
               </p>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                 {universities.map((uni, idx) => {
                   const isActive = activeUni === idx;
                   return (
                     <button
                       key={idx}
                       onClick={() => handleUniChange(idx)}
-                      className={`flex flex-col items-center justify-center p-3.5 rounded-xl border text-center transition-all duration-300 cursor-pointer ${
+                      className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all duration-300 cursor-pointer h-22 ${
                         isActive 
                           ? 'bg-white border-[#0f766e] shadow-md scale-102 font-black text-[#003057]' 
-                          : 'bg-slate-50/80 border-slate-200 opacity-60 hover:opacity-90 hover:bg-white text-slate-500'
+                          : 'bg-slate-50/80 border-slate-200 opacity-60 hover:opacity-95 hover:bg-white text-slate-500'
                       }`}
                     >
-                      <div className="text-sm font-extrabold font-mono tracking-tight">
-                        {uni.short}
+                      <div className="h-9 w-full flex items-center justify-center mb-1.5">
+                        <img 
+                          src={`/${uni.logoFile}`} 
+                          alt={`${uni.short} Logo`} 
+                          className="max-h-full max-w-full object-contain filter grayscale opacity-90 contrast-125" 
+                        />
                       </div>
-                      <div className="text-[8px] font-bold uppercase tracking-wider mt-0.5 opacity-80">
-                        Detail
+                      <div className="text-[9px] font-extrabold font-mono tracking-tight leading-none">
+                        {uni.short}
                       </div>
                     </button>
                   );
