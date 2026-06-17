@@ -4,7 +4,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { 
   Sparkles, 
   ShieldCheck, 
@@ -27,6 +27,7 @@ export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeUni, setActiveUni] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const uniContainerRef = useRef<HTMLDivElement>(null);
 
   const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
@@ -134,6 +135,18 @@ export default function Home() {
     }, 4000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    if (uniContainerRef.current) {
+      const activeChild = uniContainerRef.current.children[activeUni] as HTMLElement;
+      if (activeChild) {
+        uniContainerRef.current.scrollTo({
+          left: activeChild.offsetLeft - uniContainerRef.current.offsetWidth / 2 + activeChild.offsetWidth / 2,
+          behavior: 'smooth'
+        });
+      }
+    }
+  }, [activeUni]);
 
   const faqs = [
     {
@@ -315,6 +328,10 @@ export default function Home() {
 
           {/* Animated University Credibility Showcase Section */}
           <section className="w-full border border-slate-200 bg-white rounded-2xl p-8 md:p-12 mb-28 shadow-sm relative overflow-hidden">
+            <style dangerouslySetInnerHTML={{__html: `
+              .scrollbar-none::-webkit-scrollbar { display: none; }
+              .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+            `}} />
             <div className="absolute top-[-30%] right-[-10%] w-[300px] h-[300px] rounded-full bg-teal-500/5 blur-[80px] pointer-events-none" />
             
             <div className="text-center space-y-2 mb-10">
@@ -376,14 +393,14 @@ export default function Home() {
                 <p className="text-xs text-slate-500 font-semibold text-center lg:text-left">
                   Pilih kampus untuk melihat statistik sebaran audit InspeksiKos secara langsung:
                 </p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                <div ref={uniContainerRef} className="flex md:grid overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 gap-3 md:grid-cols-3 lg:grid-cols-4 snap-x snap-mandatory scrollbar-none w-full">
                   {universities.map((uni, idx) => {
                     const isActive = activeUni === idx;
                     return (
                       <button
                         key={idx}
                         onClick={() => handleUniChange(idx)}
-                        className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all duration-300 cursor-pointer h-22 ${
+                        className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all duration-300 cursor-pointer h-22 w-28 shrink-0 snap-center md:w-auto md:shrink ${
                           isActive 
                             ? 'bg-white border-[#0f766e] shadow-md scale-102 font-black text-[#003057]' 
                             : 'bg-slate-50/80 border-slate-200 opacity-60 hover:opacity-95 hover:bg-white text-slate-500'
