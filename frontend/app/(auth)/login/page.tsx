@@ -106,7 +106,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <div className="w-full max-w-[380px] bg-white border border-slate-200 rounded-2xl p-8 shadow-xl space-y-6">
+        <div className="w-full max-w-[380px] bg-white border border-slate-200 rounded-3xl p-8 shadow-xl space-y-6">
           <div className="space-y-2 text-center">
             {/* Show logo on top for mobile */}
             <div className="flex justify-center lg:hidden mb-4">
@@ -172,7 +172,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center items-center py-3 bg-gradient-to-r from-primary to-accent-light hover:from-primary hover:to-accent text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all disabled:opacity-50 mt-6 shadow-md shadow-primary/10 cursor-pointer active:scale-[0.98]"
+              className="w-full flex justify-center items-center py-3.5 bg-gradient-to-r from-primary to-accent-light hover:from-primary hover:to-accent text-white font-bold rounded-full text-xs uppercase tracking-wider transition-all disabled:opacity-50 mt-6 shadow-md shadow-primary/10 cursor-pointer grab-btn-transition active:scale-[0.95] hover:scale-[1.02]"
             >
               {isLoading ? (
                 <Loader className="animate-spin h-4 w-4" />
