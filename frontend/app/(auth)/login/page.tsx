@@ -28,6 +28,11 @@ export default function LoginPage() {
       localStorage.setItem('user_role', role);
       localStorage.setItem('user_email', userEmail);
 
+      // Set cookies for Next.js Middleware route protection and routing
+      document.cookie = `access_token=${access_token}; path=/; max-age=86400; SameSite=Lax`;
+      document.cookie = `user_role=${role}; path=/; max-age=86400; SameSite=Lax`;
+      document.cookie = `user_email=${userEmail}; path=/; max-age=86400; SameSite=Lax`;
+
       if (role === 'admin') {
         router.push('/admin/dashboard');
       } else {
