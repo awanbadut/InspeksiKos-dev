@@ -28,3 +28,7 @@ Thumbs.db
 
 # Documentation with Secrets
 ci_cd_deployment_guide.md
+
+# Local MCP Environment
+mcp/
+

@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   title: "InspeksiKos - Platform Verifikasi Kos",
   description: "Validasi fasilitas kos secara real-time terintegrasi AI",
   manifest: "/manifest.json",
+  icons: {
+    icon: "/icon.png",
+    shortcut: "/favicon.ico",
+    apple: "/icon.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
