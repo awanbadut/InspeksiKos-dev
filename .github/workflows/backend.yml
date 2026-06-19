@@ -4,6 +4,7 @@ on:
   push:
     branches: [main, testing]
     paths: ['backend/**']
+  workflow_dispatch:
 
 jobs:
   deploy:
