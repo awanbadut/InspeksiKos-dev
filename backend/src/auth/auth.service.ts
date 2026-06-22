@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { User, UserRole } from './entities/user.entity';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private jwtService: JwtService,
+    private notificationService: NotificationService,
   ) {}
 
   async register(registerDto: RegisterDto): Promise<{ message: string; user: Omit<User, 'password_hash'> }> {
@@ -137,5 +139,71 @@ export class AuthService {
         created_at: true,
       },
     });
+  }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new BadRequestException('Email tidak terdaftar');
+    }
+
+    // Generate random 6-digit code
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    user.reset_code = resetCode;
+    user.reset_code_expires_at = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes expiration
+
+    await this.userRepository.save(user);
+
+    // Send email with reset code
+    const subject = 'Kode Verifikasi Lupa Password - InspeksiKos';
+    const emailHtml = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h2 style="color: #003057; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 0;">Atur Ulang Kata Sandi</h2>
+        <p>Halo,</p>
+        <p>Kami menerima permintaan untuk mengatur ulang kata sandi akun InspeksiKos Anda. Gunakan kode verifikasi di bawah ini untuk melanjutkan:</p>
+        <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0; text-align: center;">
+          <h1 style="margin: 0; color: #3b82f6; font-size: 32px; letter-spacing: 5px; font-weight: 800;">${resetCode}</h1>
+          <p style="margin: 5px 0 0 0; font-size: 11px; color: #64748b;">Kode ini berlaku selama 15 menit.</p>
+        </div>
+        <p>Jika Anda tidak merasa mengajukan permintaan ini, silakan abaikan email ini atau hubungi bantuan kami.</p>
+        <p style="font-size: 12px; color: #64748b; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+          Pesan ini dikirim secara otomatis oleh sistem InspeksiKos - Politeknik Negeri Padang.
+        </p>
+      </div>
+    `;
+
+    await this.notificationService.sendEmail(user.email, subject, emailHtml);
+
+    return { message: 'Kode verifikasi berhasil dikirim ke email Anda' };
+  }
+
+  async resetPassword(resetDto: any): Promise<{ message: string }> {
+    const { email, code, new_password } = resetDto;
+
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new BadRequestException('Email tidak terdaftar');
+    }
+
+    if (!user.reset_code || user.reset_code !== code) {
+      throw new BadRequestException('Kode verifikasi salah');
+    }
+
+    if (new Date() > user.reset_code_expires_at) {
+      throw new BadRequestException('Kode verifikasi telah kedaluwarsa');
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt(10);
+    const password_hash = await bcrypt.hash(new_password, salt);
+
+    // Save user with new password and clear reset code
+    user.password_hash = password_hash;
+    user.reset_code = null as any;
+    user.reset_code_expires_at = null as any;
+
+    await this.userRepository.save(user);
+
+    return { message: 'Kata sandi berhasil diatur ulang' };
   }
 }

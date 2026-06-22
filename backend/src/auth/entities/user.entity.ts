@@ -29,6 +29,12 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   password_hash: string;
 
+  @Column({ type: 'varchar', length: 6, nullable: true })
+  reset_code: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  reset_code_expires_at: Date;
+
   @Column({
     type: 'enum',
     enum: UserRole,
