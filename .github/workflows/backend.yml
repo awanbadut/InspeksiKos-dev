@@ -42,4 +42,10 @@ jobs:
             SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
             SUPABASE_BUCKET=${{ secrets.SUPABASE_BUCKET }}
             MIDTRANS_SERVER_KEY=${{ secrets.MIDTRANS_SERVER_KEY }}
+            MAIL_HOST=${{ secrets.MAIL_HOST }}
+            MAIL_PORT=${{ secrets.MAIL_PORT }}
+            MAIL_USER=${{ secrets.MAIL_USER }}
+            MAIL_PASS=${{ secrets.MAIL_PASS }}
+            MAIL_FROM=${{ secrets.MAIL_FROM }}
+            FONNTE_TOKEN=${{ secrets.FONNTE_TOKEN }}
             NODE_ENV=production
