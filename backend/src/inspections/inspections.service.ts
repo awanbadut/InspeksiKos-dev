@@ -53,13 +53,18 @@ export class InspectionsService {
     }
 
     if (role === UserRole.INSPEKTUR) {
-      return this.inspectionRepository.find({
+      const allInspections = await this.inspectionRepository.find({
         where: [
           { inspector_id: userId },
           { inspector_id: IsNull() }
         ],
         relations: { property: true, inspector: true },
       });
+      // Inspectors should only see tasks assigned to them, or available tasks that have been PAID
+      return allInspections.filter((i) => 
+        i.inspector_id === userId || 
+        i.property?.claim_data?.payment_status === 'paid'
+      );
     }
 
     // For Mahasiswa: find inspections of their properties
@@ -95,6 +100,13 @@ export class InspectionsService {
   ): Promise<Inspection> {
     const inspection = await this.findOne(inspectionId);
     const { status, inspector_id } = updateStatusDto;
+
+    // Check if property is paid before allowing claiming (except for admin actions)
+    if (role === UserRole.INSPEKTUR) {
+      if (inspection.property?.claim_data?.payment_status !== 'paid') {
+        throw new ForbiddenException('Tidak dapat mengklaim tugas karena pembayaran belum lunas');
+      }
+    }
 
     if (status) {
       inspection.status = status;

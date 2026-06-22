@@ -172,9 +172,18 @@ export class AuthService {
       </div>
     `;
 
-    await this.notificationService.sendEmail(user.email, subject, emailHtml);
+    const waMessage = `Halo,\n\nKode verifikasi untuk menyetel ulang kata sandi akun InspeksiKos Anda adalah: *${resetCode}*\n\nKode ini berlaku selama 15 menit. Jika Anda tidak merasa mengajukan permintaan ini, silakan abaikan pesan ini.\n\nTerima kasih,\n*Tim InspeksiKos*`;
 
-    return { message: 'Kode verifikasi berhasil dikirim ke email Anda' };
+    await Promise.all([
+      this.notificationService.sendEmail(user.email, subject, emailHtml),
+      user.phone_number
+        ? this.notificationService.sendWhatsApp(user.phone_number, waMessage)
+        : Promise.resolve(),
+    ]).catch((err) => {
+      console.error('Failed to send verification notifications:', err.message);
+    });
+
+    return { message: 'Kode verifikasi berhasil dikirim ke email dan WhatsApp Anda' };
   }
 
   async resetPassword(resetDto: any): Promise<{ message: string }> {

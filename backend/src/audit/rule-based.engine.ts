@@ -22,6 +22,7 @@ export class RuleBasedEngine {
     extractedData: Record<string, any>,
     technicalData: { tds_value: number; internet_speed: number },
     ruleItems: AuditRuleItem[],
+    inspectorData?: Record<string, any>,
   ): AuditResult {
     let matchedWeight = 0;
     let totalWeight = 0;
@@ -46,7 +47,15 @@ export class RuleBasedEngine {
         } else if (facilityName === 'kecepatan_internet' || facilityName === 'internet') {
           actualVal = { nilai: technicalData.internet_speed };
         } else {
-          actualVal = extractedData?.fasilitas?.[facilityName];
+          // Merge Gemini extraction with inspector manual evaluations
+          const aiVal = extractedData?.fasilitas?.[facilityName];
+          const inspectorVal = inspectorData?.fasilitas?.[facilityName];
+          
+          actualVal = {
+            ada: aiVal?.ada === true || inspectorVal?.ada === true,
+            router_terlihat: aiVal?.router_terlihat === true || inspectorVal?.router_terlihat === true,
+            kondisi: aiVal?.kondisi || inspectorVal?.kondisi || 'baik',
+          };
         }
 
         const match = this.compareAttribute(claimed, actualVal, item);
@@ -88,8 +97,9 @@ export class RuleBasedEngine {
             const defaultPenalty = 0.5;
             totalWeight += defaultWeight;
 
-            const actualVal = extractedData?.fasilitas?.[facilityName];
-            const actualAda = actualVal?.ada === true || actualVal?.router_terlihat === true;
+            const aiVal = extractedData?.fasilitas?.[facilityName];
+            const inspectorVal = inspectorData?.fasilitas?.[facilityName];
+            const actualAda = aiVal?.ada === true || aiVal?.router_terlihat === true || inspectorVal?.ada === true || inspectorVal?.router_terlihat === true;
             const match = actualAda === true;
 
             if (match) {

@@ -156,6 +156,7 @@ export class AuditService {
       extractedData,
       technicalData,
       ruleItems,
+      inspection.inspector_data,
     );
 
     // 5. Create or update AuditReport
