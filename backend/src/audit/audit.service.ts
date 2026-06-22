@@ -10,6 +10,7 @@ import { GeminiService } from '../gemini/gemini.service';
 import { RuleBasedEngine } from './rule-based.engine';
 import { PdfService } from '../pdf/pdf.service';
 import { StorageService } from '../storage/storage.service';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class AuditService {
@@ -28,6 +29,7 @@ export class AuditService {
     private ruleBasedEngine: RuleBasedEngine,
     private pdfService: PdfService,
     private storageService: StorageService,
+    private notificationService: NotificationService,
   ) {}
 
   async getActiveRule(): Promise<AuditRule & { items: AuditRuleItem[] }> {
@@ -93,7 +95,9 @@ export class AuditService {
     const inspection = await this.inspectionRepository.findOne({
       where: { inspection_id: inspectionId },
       relations: {
-        property: true,
+        property: {
+          user: true,
+        },
         photos: true,
         audit_report: true,
       },
@@ -101,6 +105,10 @@ export class AuditService {
 
     if (!inspection) {
       throw new NotFoundException('Sesi inspeksi tidak ditemukan');
+    }
+
+    if (inspection.status === InspectionStatus.COMPLETED) {
+      throw new BadRequestException('Sesi inspeksi ini sudah selesai di-audit dan tidak dapat diubah.');
     }
 
     const photos = inspection.photos || [];
@@ -203,6 +211,30 @@ export class AuditService {
     const property = inspection.property;
     property.status = 'audited' as any; // Map to PropertyStatus.AUDITED
     await this.propertyRepository.save(property);
+
+    // 9. Send email and WhatsApp notification to the user/student
+    const user = inspection.property?.user;
+    if (user) {
+      const userEmail = user.email;
+      const userPhone = user.phone_number || '';
+      const userName = user.first_name || user.email.split('@')[0];
+      const propertyName = inspection.property.name;
+      const score = report.score;
+      const pdfUrl = report.pdf_url;
+
+      this.notificationService
+        .sendAuditCompletionNotification(
+          userEmail,
+          userPhone,
+          userName,
+          propertyName,
+          score,
+          pdfUrl,
+        )
+        .catch((err) =>
+          console.error('Failed to send audit completion notification:', err.message),
+        );
+    }
 
     return report;
   }

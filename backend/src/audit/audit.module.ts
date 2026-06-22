@@ -12,6 +12,7 @@ import { AuthModule } from '../auth/auth.module';
 import { GeminiModule } from '../gemini/gemini.module';
 import { PdfModule } from '../pdf/pdf.module';
 import { StorageModule } from '../storage/storage.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { StorageModule } from '../storage/storage.module';
     GeminiModule,
     PdfModule,
     StorageModule,
+    NotificationModule,
   ],
   controllers: [AuditController],
   providers: [AuditService, RuleBasedEngine],

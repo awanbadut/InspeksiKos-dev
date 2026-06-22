@@ -110,7 +110,8 @@ export default function InspectorDashboard({
         const L = (window as any).L;
         if (!L) return;
 
-        const mapInstance = L.map('task-map-container').setView([latitude, longitude], 15);
+        const containerId = document.getElementById('task-map-container-mobile') ? 'task-map-container-mobile' : 'task-map-container';
+        const mapInstance = L.map(containerId).setView([latitude, longitude], 15);
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -1098,6 +1099,30 @@ export default function InspectorDashboard({
                           Keluar
                         </button>
                       </div>
+
+                      {activeTask.property?.claim_data?.location && (
+                        <div className="border-b border-slate-100 pb-4 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1 font-mono">
+                              <MapPin className="h-3.5 w-3.5 text-rose-500" /> Rute Lokasi Kos
+                            </span>
+                            <a
+                              href={`https://www.google.com/maps/dir/?api=1&destination=${activeTask.property.claim_data.location.latitude},${activeTask.property.claim_data.location.longitude}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[9px] text-blue-600 hover:underline font-extrabold flex items-center gap-0.5 uppercase tracking-wider font-mono"
+                            >
+                              🚀 Google Maps
+                            </a>
+                          </div>
+                          <p className="text-[9px] text-slate-500 font-medium leading-relaxed">{activeTask.property.address}</p>
+                          <div
+                            id="task-map-container-mobile"
+                            className="w-full h-40 rounded-xl overflow-hidden bg-gray-900 border border-slate-200 z-10 shadow-inner"
+                            style={{ minHeight: '160px' }}
+                          />
+                        </div>
+                      )}
 
                       {currentStep < activeSteps.length ? (
                         <div className="space-y-4">

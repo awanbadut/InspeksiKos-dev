@@ -120,6 +120,10 @@ export class InspectionsService {
   ): Promise<Inspection> {
     const inspection = await this.findOne(inspectionId);
 
+    if (inspection.status === InspectionStatus.COMPLETED) {
+      throw new ForbiddenException('Tidak dapat mengubah data karena sesi inspeksi sudah selesai');
+    }
+
     // Verify permission: only the assigned inspector or admin can input data
     if (inspection.inspector_id !== userId && role !== UserRole.ADMIN) {
       throw new ForbiddenException('Anda tidak bertugas untuk menginspeksi properti ini');
@@ -141,6 +145,10 @@ export class InspectionsService {
     }
 
     const inspection = await this.findOne(inspectionId);
+
+    if (inspection.status === InspectionStatus.COMPLETED) {
+      throw new ForbiddenException('Tidak dapat mengunggah foto karena sesi inspeksi sudah selesai');
+    }
 
     // Verify permission
     if (inspection.inspector_id !== userId && role !== UserRole.ADMIN) {

@@ -21,6 +21,7 @@ import { AuditModule } from './audit/audit.module';
 import { GeminiModule } from './gemini/gemini.module';
 import { PdfModule } from './pdf/pdf.module';
 import { RiwayatModule } from './riwayat/riwayat.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { RiwayatModule } from './riwayat/riwayat.module';
     GeminiModule,
     PdfModule,
     RiwayatModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
