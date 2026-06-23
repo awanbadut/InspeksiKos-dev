@@ -309,15 +309,126 @@ export default function InspectorDashboard({
     }
   };
 
+  const addWatermarkToImage = (
+    file: File,
+    kosName: string,
+    latitude: number,
+    longitude: number
+  ): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new window.Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            reject(new Error('Gagal memuat canvas 2D'));
+            return;
+          }
+
+          // Keep original image size
+          canvas.width = img.width;
+          canvas.height = img.height;
+
+          // Draw original image
+          ctx.drawImage(img, 0, 0);
+
+          // Watermark Styling - Calculate font size proportional to the image height
+          const fontSize = Math.max(14, Math.round(canvas.height * 0.03)); 
+          ctx.font = `bold ${fontSize}px sans-serif`;
+          
+          // Prepare text lines
+          const lines = [
+            `Kos: ${kosName}`,
+            `Lokasi: Lat ${latitude.toFixed(6)}, Lng ${longitude.toFixed(6)}`,
+            `Waktu: ${new Date().toLocaleString('id-ID')}`,
+          ];
+
+          // Draw translucent dark background bar at the bottom for readability
+          const padding = fontSize * 0.8;
+          const barHeight = lines.length * fontSize + (lines.length + 1) * (fontSize * 0.3) + padding * 2;
+          
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+          ctx.fillRect(0, canvas.height - barHeight, canvas.width, barHeight);
+
+          // Draw text lines
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+          ctx.shadowBlur = 4;
+          
+          let y = canvas.height - barHeight + padding + fontSize;
+          lines.forEach((line) => {
+            ctx.fillText(line, padding, y);
+            y += fontSize * 1.35;
+          });
+
+          // Convert canvas back to file
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const watermarkedFile = new File([blob], file.name, {
+                  type: 'image/jpeg',
+                  lastModified: Date.now(),
+                });
+                resolve(watermarkedFile);
+              } else {
+                reject(new Error('Gagal mengonversi canvas ke Blob'));
+              }
+            },
+            'image/jpeg',
+            0.85 // quality
+          );
+        };
+        img.onerror = () => reject(new Error('Gagal memuat gambar'));
+        img.src = event.target?.result as string;
+      };
+      reader.onerror = () => reject(new Error('Gagal membaca file foto'));
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleUploadPhotoForCategory = async (category: string, file: File) => {
     if (!activeTask) return;
     setUploadLoadingState((prev) => ({ ...prev, [category]: true }));
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('room_type', category);
-
     try {
+      let finalFile = file;
+
+      // Retrieve GPS location with high accuracy
+      let location = { latitude: 0, longitude: 0 };
+      try {
+        location = await new Promise<{ latitude: number; longitude: number }>((resolve, reject) => {
+          if (!navigator.geolocation) {
+            reject(new Error('Geolocation tidak didukung oleh browser Anda'));
+            return;
+          }
+          navigator.geolocation.getCurrentPosition(
+            (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+            (err) => reject(err),
+            { enableHighAccuracy: true, timeout: 6000 }
+          );
+        });
+      } catch (gpsErr) {
+        console.warn('GPS failed, fallback to kos profile location:', gpsErr);
+        // Fallback to activeTask location properties
+        const taskLat = Number(activeTask.property?.claim_data?.location?.latitude || 0);
+        const taskLng = Number(activeTask.property?.claim_data?.location?.longitude || 0);
+        location = { latitude: taskLat, longitude: taskLng };
+      }
+
+      // Add watermark with kos name & GPS coordinates
+      const kosName = activeTask.property?.name || 'InspeksiKos';
+      try {
+        finalFile = await addWatermarkToImage(file, kosName, location.latitude, location.longitude);
+      } catch (watermarkErr) {
+        console.error('Failed to add watermark:', watermarkErr);
+      }
+
+      const formData = new FormData();
+      formData.append('file', finalFile);
+      formData.append('room_type', category);
+
       await api.post(`/inspections/${activeTask.inspection_id}/photos`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
@@ -858,6 +969,7 @@ export default function InspectorDashboard({
                                           <input
                                             type="file"
                                             accept="image/*"
+                                            capture="environment"
                                             disabled={isUploading}
                                             onChange={(e) => {
                                               const file = e.target.files?.[0];
@@ -885,6 +997,7 @@ export default function InspectorDashboard({
                                         <input
                                           type="file"
                                           accept="image/*"
+                                          capture="environment"
                                           disabled={isUploading}
                                           onChange={(e) => {
                                             const file = e.target.files?.[0];
@@ -925,6 +1038,7 @@ export default function InspectorDashboard({
                                           <input
                                             type="file"
                                             accept="video/*"
+                                            capture="environment"
                                             disabled={isUploading}
                                             onChange={(e) => {
                                               const file = e.target.files?.[0];
@@ -952,6 +1066,7 @@ export default function InspectorDashboard({
                                         <input
                                           type="file"
                                           accept="video/*"
+                                          capture="environment"
                                           disabled={isUploading}
                                           onChange={(e) => {
                                             const file = e.target.files?.[0];
@@ -1170,6 +1285,7 @@ export default function InspectorDashboard({
                                     <input
                                       type="file"
                                       accept="image/*"
+                                      capture="environment"
                                       className="hidden"
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
@@ -1218,6 +1334,7 @@ export default function InspectorDashboard({
                                     <input
                                       type="file"
                                       accept="image/*"
+                                      capture="environment"
                                       className="hidden"
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
@@ -1266,6 +1383,7 @@ export default function InspectorDashboard({
                                     <input
                                       type="file"
                                       accept="video/*"
+                                      capture="environment"
                                       className="hidden"
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
