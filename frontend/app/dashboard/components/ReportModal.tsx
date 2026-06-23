@@ -106,7 +106,11 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
                   : 'bg-rose-50 text-rose-800 border-rose-200'
               }`}
             >
-              {inspection.audit_report.confidence_level.replace(/_/g, ' ')}
+              {inspection.audit_report.confidence_level === 'VALID'
+                ? 'SANGAT SESUAI'
+                : inspection.audit_report.confidence_level === 'PARTIAL_VALID'
+                ? 'CUKUP SESUAI'
+                : 'TIDAK SESUAI'}
             </span>
           </div>
 
@@ -154,12 +158,12 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
                   <div className="flex items-center gap-2">
                     {item.status === 'MATCH' && (
                       <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-805 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 tracking-wider">
-                        ✓ MATCH
+                        ✓ SESUAI
                       </span>
                     )}
                     {item.status === 'MISMATCH' && (
                       <span className="inline-flex items-center gap-1 text-[9px] font-bold text-rose-805 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 tracking-wider">
-                        ✗ MISMATCH
+                        ✗ TIDAK SESUAI
                       </span>
                     )}
                     {item.status === 'NEUTRAL' && (

@@ -832,7 +832,11 @@ export default function AdminDashboardPage() {
                       : 'bg-red-955 text-red-400 border-red-900/50'
                   }`}
                 >
-                  {selectedInspection.audit_report.confidence_level.replace(/_/g, ' ')}
+                  {selectedInspection.audit_report.confidence_level === 'VALID'
+                    ? 'SANGAT SESUAI'
+                    : selectedInspection.audit_report.confidence_level === 'PARTIAL_VALID'
+                    ? 'CUKUP SESUAI'
+                    : 'TIDAK SESUAI'}
                 </span>
               </div>
 
@@ -880,12 +884,12 @@ export default function AdminDashboardPage() {
                       <div className="flex items-center gap-2">
                         {item.status === 'MATCH' && (
                           <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-400 bg-emerald-955/40 px-2 py-0.5 rounded-md border border-emerald-900/50 tracking-wider">
-                            ✓ MATCH
+                            ✓ SESUAI
                           </span>
                         )}
                         {item.status === 'MISMATCH' && (
                           <span className="inline-flex items-center gap-1 text-[9px] font-bold text-red-400 bg-red-955/40 px-2 py-0.5 rounded-md border border-red-900/50 tracking-wider">
-                            ✗ MISMATCH
+                            ✗ TIDAK SESUAI
                           </span>
                         )}
                         {item.status === 'NEUTRAL' && (

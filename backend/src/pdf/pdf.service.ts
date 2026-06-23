@@ -40,7 +40,11 @@ export class PdfService {
           .text(`${reportData.score}%`, doc.page.width - 190, 52)
           .fontSize(8)
           .font('Helvetica')
-          .text(`Status: ${reportData.confidence_level}`, doc.page.width - 190, 80);
+          .text(`Status: ${
+            reportData.confidence_level === 'VALID' ? 'SANGAT SESUAI' :
+            reportData.confidence_level === 'PARTIAL_VALID' ? 'CUKUP SESUAI' :
+            'TIDAK SESUAI'
+          }`, doc.page.width - 190, 80);
 
         // Spacer
         doc.moveDown(5);
@@ -153,7 +157,12 @@ export class PdfService {
             .text(item.facility.toUpperCase().replace('_', ' '), 60, yPos + 5)
             .font('Helvetica-Bold')
             .fillColor(item.status === 'MATCH' ? '#16a34a' : item.status === 'MISMATCH' ? '#dc2626' : '#64748b')
-            .text(item.status, 220, yPos + 5)
+            .text(
+              item.status === 'MATCH' ? 'SESUAI' :
+              item.status === 'MISMATCH' ? 'TIDAK SESUAI' :
+              'TIDAK DIKLAIM',
+              220, yPos + 5
+            )
             .font('Helvetica')
             .fillColor('#000000')
             .text(item.weight ? `${item.weight}` : item.penalty ? `-${item.penalty}` : '0', doc.page.width - 180, yPos + 5)

@@ -838,8 +838,14 @@ export default function StudentDashboard({
                                     <span className="text-[9px] bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded font-black font-mono">
                                       Skor: {insp.audit_report?.score}%
                                     </span>
-                                    <span className="text-[8px] font-bold text-slate-400 font-mono uppercase">
-                                      {insp.audit_report?.confidence_level}
+                                    <span className={`text-[8px] font-bold font-mono uppercase ${
+                                      insp.audit_report?.confidence_level === 'VALID' ? 'text-emerald-600' :
+                                      insp.audit_report?.confidence_level === 'PARTIAL_VALID' ? 'text-amber-600' :
+                                      'text-rose-600'
+                                    }`}>
+                                      {insp.audit_report?.confidence_level === 'VALID' ? 'SANGAT SESUAI' :
+                                       insp.audit_report?.confidence_level === 'PARTIAL_VALID' ? 'CUKUP SESUAI' :
+                                       'TIDAK SESUAI'}
                                     </span>
                                   </div>
                                   <button
@@ -983,7 +989,7 @@ export default function StudentDashboard({
                                 <span className={`px-1.5 py-0.5 rounded text-[7px] font-black uppercase font-mono border ${
                                   isCompleted ? 'bg-emerald-50 text-emerald-750 border-emerald-200' : 'bg-amber-50 text-amber-750 border-amber-200'
                                 }`}>
-                                  {isCompleted ? 'Completed' : insp.status}
+                                  {isCompleted ? 'Audit Selesai' : insp.status === 'in_progress' ? 'Proses Lapangan' : 'Ditugaskan'}
                                 </span>
                                 {isCompleted && (
                                   <span className="text-[9px] font-black text-blue-600 font-mono">

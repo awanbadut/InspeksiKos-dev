@@ -106,7 +106,11 @@ export default function ComparisonModal({
                         ? 'bg-blue-50 text-blue-805 border border-blue-200 animate-pulse'
                         : 'bg-rose-50 text-rose-805 border border-rose-200'
                     }`}>
-                      {insp.audit_report?.confidence_level?.replace(/_/g, ' ')}
+                      {insp.audit_report?.confidence_level === 'VALID'
+                        ? 'SANGAT SESUAI'
+                        : insp.audit_report?.confidence_level === 'PARTIAL_VALID'
+                        ? 'CUKUP SESUAI'
+                        : 'TIDAK SESUAI'}
                     </span>
                   </td>
                 ))}
