@@ -7,6 +7,8 @@ export interface BreakdownItem {
   status: 'MATCH' | 'MISMATCH' | 'NEUTRAL';
   weight?: number;
   penalty?: number;
+  claimed?: string;
+  actual?: string;
 }
 
 export interface AuditResult {
@@ -60,12 +62,30 @@ export class RuleBasedEngine {
 
         const match = this.compareAttribute(claimed, actualVal, item);
 
+        // Construct human-readable labels
+        let claimedText = '';
+        let actualText = '';
+        
+        if (facilityName === 'kualitas_air' || facilityName === 'tds') {
+          claimedText = claimed?.nilai ? `<= ${claimed.nilai} mg/L` : 'Ada';
+          actualText = `${technicalData.tds_value} mg/L`;
+        } else if (facilityName === 'kecepatan_internet' || facilityName === 'internet') {
+          claimedText = claimed?.nilai ? `>= ${claimed.nilai} Mbps` : 'Ada';
+          actualText = `${technicalData.internet_speed} Mbps`;
+        } else {
+          claimedText = claimed?.ada === true || claimed?.router_terlihat === true ? 'Ada' : 'Tidak Ada';
+          const actualAda = actualVal?.ada === true || actualVal?.router_terlihat === true;
+          actualText = actualAda ? 'Ada (AI/Foto)' : 'Tidak Ada';
+        }
+
         if (match) {
           matchedWeight += Number(item.weight);
           breakdown.push({
             facility: facilityName,
             status: 'MATCH',
             weight: Number(item.weight),
+            claimed: claimedText,
+            actual: actualText,
           });
         } else {
           matchedWeight -= Number(item.penalty);
@@ -73,12 +93,16 @@ export class RuleBasedEngine {
             facility: facilityName,
             status: 'MISMATCH',
             penalty: Number(item.penalty),
+            claimed: claimedText,
+            actual: actualText,
           });
         }
       } else {
         breakdown.push({
           facility: facilityName,
           status: 'NEUTRAL',
+          claimed: 'Tidak Diklaim',
+          actual: '-',
         });
       }
     }
@@ -102,12 +126,17 @@ export class RuleBasedEngine {
             const actualAda = aiVal?.ada === true || aiVal?.router_terlihat === true || inspectorVal?.ada === true || inspectorVal?.router_terlihat === true;
             const match = actualAda === true;
 
+            const claimedText = claimed?.ada === true || claimed?.router_terlihat === true ? 'Ada' : 'Tidak Ada';
+            const actualText = actualAda ? 'Ada (AI/Foto)' : 'Tidak Ada';
+
             if (match) {
               matchedWeight += defaultWeight;
               breakdown.push({
                 facility: facilityName,
                 status: 'MATCH',
                 weight: defaultWeight,
+                claimed: claimedText,
+                actual: actualText,
               });
             } else {
               matchedWeight -= defaultPenalty;
@@ -115,6 +144,8 @@ export class RuleBasedEngine {
                 facility: facilityName,
                 status: 'MISMATCH',
                 penalty: defaultPenalty,
+                claimed: claimedText,
+                actual: actualText,
               });
             }
           }

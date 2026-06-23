@@ -118,12 +118,13 @@ export class PdfService {
 
         doc
           .fillColor('#1e293b')
-          .fontSize(9)
+          .fontSize(8)
           .font('Helvetica-Bold')
           .text('Fasilitas', 60, yPos + 6)
-          .text('Status', 220, yPos + 6)
-          .text('Bobot', doc.page.width - 180, yPos + 6)
-          .text('Keterangan', doc.page.width - 120, yPos + 6);
+          .text('Klaim Iklan', 160, yPos + 6)
+          .text('Temuan Lapangan (AI & Foto)', 240, yPos + 6)
+          .text('Status', 410, yPos + 6)
+          .text('Bobot', 500, yPos + 6);
 
         yPos += 20;
 
@@ -142,31 +143,33 @@ export class PdfService {
               .fill('#f1f5f9');
             doc
               .fillColor('#1e293b')
-              .fontSize(9)
+              .fontSize(8)
               .font('Helvetica-Bold')
               .text('Fasilitas', 60, yPos + 6)
-              .text('Status', 220, yPos + 6)
-              .text('Bobot', doc.page.width - 180, yPos + 6)
-              .text('Keterangan', doc.page.width - 120, yPos + 6);
+              .text('Klaim Iklan', 160, yPos + 6)
+              .text('Temuan Lapangan (AI & Foto)', 240, yPos + 6)
+              .text('Status', 410, yPos + 6)
+              .text('Bobot', 500, yPos + 6);
             yPos += 25;
             doc.fillColor('#000000').font('Helvetica');
           }
 
           doc
-            .fontSize(9)
-            .text(item.facility.toUpperCase().replace('_', ' '), 60, yPos + 5)
+            .fontSize(8)
+            .text(item.facility.toUpperCase().replace(/_/g, ' '), 60, yPos + 5)
+            .text(item.claimed || '-', 160, yPos + 5)
+            .text(item.actual || '-', 240, yPos + 5)
             .font('Helvetica-Bold')
             .fillColor(item.status === 'MATCH' ? '#16a34a' : item.status === 'MISMATCH' ? '#dc2626' : '#64748b')
             .text(
               item.status === 'MATCH' ? 'SESUAI' :
               item.status === 'MISMATCH' ? 'TIDAK SESUAI' :
               'TIDAK DIKLAIM',
-              220, yPos + 5
+              410, yPos + 5
             )
             .font('Helvetica')
             .fillColor('#000000')
-            .text(item.weight ? `${item.weight}` : item.penalty ? `-${item.penalty}` : '0', doc.page.width - 180, yPos + 5)
-            .text(item.status === 'MATCH' ? 'Sesuai klaim' : item.status === 'MISMATCH' ? 'Fasilitas tidak ditemukan' : 'Tidak diklaim', doc.page.width - 120, yPos + 5);
+            .text(item.weight ? `+${item.weight}` : item.penalty ? `-${item.penalty}` : '0', 500, yPos + 5);
 
           // Draw bottom line
           doc
