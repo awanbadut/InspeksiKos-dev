@@ -88,7 +88,7 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
             <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono">
               Skor Validitas
             </span>
-            <span className="text-3xl font-black text-blue-600 mt-1">
+            <span className="text-3xl font-black text-[#003057] mt-1 font-mono">
               {inspection.audit_report.score}%
             </span>
           </div>
@@ -123,7 +123,7 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
                 href={inspection.audit_report.pdf_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 mt-2 text-xs font-bold text-blue-600 hover:underline"
+                className="inline-flex items-center gap-1.5 mt-2 text-xs font-bold text-[#0f766e] hover:underline"
               >
                 <Download className="h-4 w-4" /> Download PDF
               </a>
@@ -138,7 +138,7 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
         {/* Comparison Details */}
         <div className="space-y-4">
           <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-2 flex items-center gap-1.5">
-            <ClipboardList className="h-4 w-4 text-blue-500" />
+            <ClipboardList className="h-4 w-4 text-[#0f766e]" />
             Kecocokan Fasilitas Lapangan (AI Vision)
           </h4>
 
@@ -179,7 +179,7 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
 
           {/* Technical breakdown */}
           <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-2 pt-2 flex items-center gap-1.5">
-            <Gauge className="h-4 w-4 text-indigo-500" />
+            <Gauge className="h-4 w-4 text-[#0f766e]" />
             Data Teknis Pengukuran
           </h4>
 
@@ -214,10 +214,10 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
           <button
             type="button"
             onClick={initChat}
-            className="w-full flex items-center justify-between p-3 bg-blue-55 hover:bg-blue-100/75 border border-blue-200 rounded-full text-xs font-bold text-blue-700 transition-all cursor-pointer grab-btn-transition"
+            className="w-full flex items-center justify-between p-3 bg-teal-50 hover:bg-teal-100/75 border border-teal-200 rounded-full text-xs font-bold text-[#0f766e] transition-all cursor-pointer grab-btn-transition"
           >
             <span className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-blue-600 animate-pulse" />
+              <Sparkles className="h-4 w-4 text-[#0f766e] animate-pulse" />
               Konsultasi Hasil Audit dengan AI Assistant
             </span>
             <span>{showChat ? 'Sembunyikan Chat' : 'Tanya AI'}</span>
@@ -238,7 +238,7 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
                     <div
                       className={`max-w-[80%] rounded-2xl p-2.5 ${
                         chat.role === 'user'
-                          ? 'bg-blue-650 text-white rounded-tr-none shadow-md'
+                          ? 'bg-[#003057] text-white rounded-tr-none shadow-md'
                           : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-tl-none'
                       }`}
                     >
@@ -249,7 +249,7 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
                 {chatLoading && (
                   <div className="flex justify-start">
                     <div className="bg-slate-100 text-slate-400 border border-slate-200 rounded-2xl rounded-tl-none p-2.5 flex items-center gap-1.5 font-mono">
-                      <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
+                      <Loader2 className="h-3 w-3 animate-spin text-[#0f766e]" />
                       <span>AI sedang merespon...</span>
                     </div>
                   </div>
@@ -263,13 +263,13 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
                   value={chatMessage}
                   onChange={(e) => setChatMessage(e.target.value)}
                   placeholder="Tanyakan mengenai hasil audit kos ke AI..."
-                  className="flex-1 px-3.5 py-2 bg-white border border-slate-200 rounded-full text-xs text-slate-800 focus:outline-none focus:border-blue-500 placeholder-slate-400"
+                  className="flex-1 px-3.5 py-2 bg-white border border-slate-200 rounded-full text-xs text-slate-800 focus:outline-none focus:border-[#0f766e] placeholder-slate-400"
                   disabled={chatLoading}
                 />
                 <button
                   type="submit"
                   disabled={chatLoading || !chatMessage.trim()}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-40 text-white font-bold text-xs rounded-full transition-all cursor-pointer flex items-center justify-center"
+                  className="px-4 py-2 bg-[#003057] hover:bg-[#001e38] disabled:opacity-40 text-white font-bold text-xs rounded-full transition-all cursor-pointer flex items-center justify-center"
                 >
                   <Send className="h-3 w-3" />
                 </button>
@@ -281,7 +281,7 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
         <div className="flex justify-end border-t border-slate-200 pt-4 mt-6">
           <button
             onClick={onClose}
-            className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-650 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-full text-xs transition-all cursor-pointer uppercase tracking-wider grab-btn-transition active:scale-[0.95] hover:scale-[1.02]"
+            className="px-6 py-3 bg-gradient-to-r from-[#003057] to-[#0f766e] hover:from-[#001e38] hover:to-[#115e59] text-white font-bold rounded-full text-xs transition-all cursor-pointer uppercase tracking-wider grab-btn-transition active:scale-[0.95] hover:scale-[1.02]"
           >
             Selesai
           </button>

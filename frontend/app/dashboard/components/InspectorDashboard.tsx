@@ -585,14 +585,14 @@ export default function InspectorDashboard({
         </header>
 
         {/* Welcome banner */}
-        <div className="relative bg-slate-100 border-b border-slate-200/60 py-10 px-8">
+        <div className="relative bg-[#003057]/5 border-b border-[#003057]/10 py-10 px-8">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10 text-left">
             <div>
-              <span className="text-[9px] uppercase tracking-wider text-blue-400 font-bold bg-blue-950/50 px-2 py-1 rounded border border-blue-900/55 block w-fit mb-2">Panel Dasbor Utama</span>
+              <span className="text-[9px] uppercase tracking-wider text-[#003057] font-extrabold bg-[#003057]/5 px-2.5 py-1 rounded-md border border-[#003057]/10 block w-fit mb-2 font-mono">Panel Dasbor Utama</span>
               <h1 className="text-2xl md:text-3xl font-black mb-1 text-slate-800">
                 Selamat Datang, {email?.split('@')[0]}!
               </h1>
-              <p className="text-xs text-slate-500 max-w-xl leading-relaxed">
+              <p className="text-xs text-slate-600 max-w-xl leading-relaxed font-medium">
                 Daftar kerja verifikator lapangan. Isi data TDS air, kecepatan internet, unggah bukti visual, dan jalankan audit AI.
               </p>
             </div>
@@ -603,7 +603,7 @@ export default function InspectorDashboard({
         <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 py-8 z-10">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-3">
-              <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
+              <Loader2 className="h-8 w-8 text-[#0f766e] animate-spin" />
               <span className="text-xs font-semibold text-slate-400 font-mono">Memuat database...</span>
             </div>
           ) : (
@@ -613,8 +613,8 @@ export default function InspectorDashboard({
               <div className="lg:col-span-2 space-y-6">
                 <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl backdrop-blur-md">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-slate-200 pb-4">
-                    <h2 className="text-xs font-bold uppercase tracking-wider text-slate-600 flex items-center gap-2">
-                      <ClipboardList className="h-4 w-4 text-blue-500" />
+                    <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                      <ClipboardList className="h-4 w-4 text-[#0f766e]" />
                       Daftar Permintaan Inspeksi ({displayedInspections.length})
                     </h2>
                     
@@ -628,7 +628,7 @@ export default function InspectorDashboard({
                           }}
                           className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer ${
                             activeTabInspector === 'my_tasks'
-                              ? 'bg-blue-650 text-white shadow-sm'
+                              ? 'bg-[#003057] text-white shadow-sm'
                               : 'text-slate-500 hover:text-slate-800'
                           }`}
                         >
@@ -642,7 +642,7 @@ export default function InspectorDashboard({
                           }}
                           className={`px-3 py-1.5 text-[9px] font-bold uppercase tracking-wider rounded-md transition-all cursor-pointer ${
                             activeTabInspector === 'available_orders'
-                              ? 'bg-amber-600 text-white shadow-sm'
+                              ? 'bg-[#0f766e] text-white shadow-sm'
                               : 'text-slate-500 hover:text-slate-800'
                           }`}
                         >
@@ -678,7 +678,7 @@ export default function InspectorDashboard({
                             key={insp.inspection_id}
                             className={`p-4 rounded-xl border transition-all text-left ${
                               isActive
-                                ? 'border-blue-500 bg-blue-50/20 shadow-[0_0_15px_-3px_rgba(59,130,246,0.1)]'
+                                ? 'border-[#0f766e] bg-[#0f766e]/5 shadow-[0_0_15px_-3px_rgba(15,118,110,0.1)]'
                                 : isUnassigned
                                 ? 'border-amber-200 bg-amber-50/20 hover:border-amber-300'
                                 : 'border-slate-200 bg-slate-50/60 hover:border-slate-200/80'
@@ -691,16 +691,16 @@ export default function InspectorDashboard({
                                     {insp.property?.name || 'Properti Tanpa Nama'}
                                   </span>
                                   {isUnassigned ? (
-                                    <span className="text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider bg-amber-50 text-amber-800 border border-amber-200 animate-pulse">
+                                    <span className="text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider bg-teal-50 text-teal-800 border border-teal-200 animate-pulse">
                                       Tersedia (Gojek Match)
                                     </span>
                                   ) : (
                                     <span
-                                      className={`text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider ${
+                                      className={`text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider border ${
                                         insp.status === 'completed'
                                           ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                                           : insp.status === 'in_progress'
-                                          ? 'bg-blue-50 text-blue-800 border border-blue-200 animate-pulse'
+                                          ? 'bg-teal-50 text-teal-800 border border-teal-200 animate-pulse'
                                           : 'bg-amber-50 text-amber-800 border border-amber-200'
                                       }`}
                                     >
@@ -728,10 +728,10 @@ export default function InspectorDashboard({
                                   <button
                                     onClick={() => handleAcceptOrder(insp.inspection_id)}
                                     disabled={acceptingTaskLoading[insp.inspection_id]}
-                                    className="px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-wider bg-amber-500 hover:bg-amber-400 disabled:bg-amber-100 text-slate-800 rounded-lg transition-all cursor-pointer shadow-md flex items-center gap-1 hover:scale-[1.02]"
+                                    className="px-3 py-1.5 text-[9px] font-extrabold uppercase tracking-wider bg-[#0f766e] hover:bg-[#115e59] disabled:bg-teal-100 text-white rounded-lg transition-all cursor-pointer shadow-md flex items-center gap-1 hover:scale-[1.02]"
                                   >
                                     {acceptingTaskLoading[insp.inspection_id] ? (
-                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                      <Loader2 className="h-3 w-3 animate-spin text-white" />
                                     ) : '⚡ Terima Orderan'}
                                   </button>
                                 ) : (
@@ -739,14 +739,14 @@ export default function InspectorDashboard({
                                     {insp.status !== 'completed' && !isActive && (
                                       <button
                                         onClick={() => handleSelectTask(insp)}
-                                        className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition-all cursor-pointer text-slate-700"
+                                        className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg transition-all cursor-pointer text-slate-700 font-semibold"
                                       >
                                         Buka Kerja
                                       </button>
                                     )}
                                     {isActive && (
-                                      <span className="text-[10px] font-bold text-blue-600 flex items-center gap-1 bg-blue-50 border border-blue-200 px-2 py-1 rounded-md">
-                                        <span className="h-1.5 w-1.5 rounded-full bg-blue-500 animate-ping" /> SEDANG AKTIF
+                                      <span className="text-[10px] font-bold text-[#0f766e] flex items-center gap-1 bg-teal-50 border border-teal-200 px-2 py-1 rounded-md">
+                                        <span className="h-1.5 w-1.5 rounded-full bg-[#0f766e] animate-ping" /> SEDANG AKTIF
                                       </span>
                                     )}
                                   </>
@@ -775,20 +775,20 @@ export default function InspectorDashboard({
               <div className="space-y-6">
                 {activeTask ? (
                   <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl backdrop-blur-md relative overflow-hidden text-left text-slate-800">
-                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-blue-500 to-indigo-500" />
+                    <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-[#003057] to-[#0f766e]" />
                     
                     <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-5">
                       <div>
                         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400">
                           Inspeksi Lapangan Aktif
                         </h3>
-                        <p className="text-[11px] text-blue-600 font-bold mt-1">
+                        <p className="text-[11px] text-[#003057] font-bold mt-1 font-sans">
                           {activeTask.property?.name}
                         </p>
                       </div>
                       <button
                         onClick={() => setActiveTask(null)}
-                        className="text-[10px] font-bold text-slate-400 hover:text-slate-700 transition-all uppercase tracking-wider cursor-pointer"
+                        className="text-[10px] font-bold text-slate-400 hover:text-[#003057] transition-all uppercase tracking-wider cursor-pointer"
                       >
                         Batal
                       </button>
@@ -801,7 +801,7 @@ export default function InspectorDashboard({
                         </p>
                         <button
                           onClick={() => handleStartTask(activeTask.inspection_id)}
-                          className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
+                          className="w-full py-2.5 bg-gradient-to-r from-[#003057] to-[#0f766e] hover:from-[#001e38] hover:to-[#115e59] text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all shadow-md cursor-pointer"
                         >
                           Mulai Kerja Lapangan
                         </button>
@@ -813,14 +813,14 @@ export default function InspectorDashboard({
                           <div className="border-b border-slate-200/80 pb-4">
                             <h4 className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-2 flex items-center justify-between">
                               <span className="flex items-center gap-1">
-                                <MapPin className="h-3.5 w-3.5 text-red-550" />
+                                <MapPin className="h-3.5 w-3.5 text-red-500" />
                                 Lokasi Kos Rute Lapangan
                               </span>
                               <a
                                 href={`https://www.google.com/maps/dir/?api=1&destination=${activeTask.property.claim_data.location.latitude},${activeTask.property.claim_data.location.longitude}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-[9px] text-blue-500 hover:underline font-bold"
+                                className="text-[9px] text-[#0f766e] hover:underline font-bold"
                               >
                                 🚀 Google Maps
                               </a>
@@ -842,10 +842,10 @@ export default function InspectorDashboard({
                               onClick={() => setCurrentStep(idx)}
                               className={`text-[9px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap transition-all uppercase tracking-wider border shrink-0 cursor-pointer ${
                                 idx === currentStep
-                                  ? 'bg-blue-600 border-blue-500 text-white shadow-sm'
+                                  ? 'bg-[#003057] border-[#003057] text-white shadow-sm'
                                   : idx < currentStep
                                   ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-                                  : 'bg-slate-100 border-slate-200 text-slate-400 hover:text-slate-655'
+                                  : 'bg-slate-100 border-slate-200 text-slate-400 hover:text-[#003057]'
                               }`}
                             >
                               {idx + 1}. {step.label}
@@ -858,18 +858,18 @@ export default function InspectorDashboard({
                           <div className="p-4 bg-slate-50/50 rounded-xl border border-slate-200 space-y-4">
                             <div className="flex items-center justify-between border-b border-slate-200 pb-2">
                               <div>
-                                <h4 className="text-[10px] font-bold text-slate-605 uppercase tracking-wider">
+                                <h4 className="text-[10px] font-bold text-slate-700 uppercase tracking-wider">
                                   Lgkh {currentStep + 1} / {activeSteps.length}: {currentActiveStep.label}
                                 </h4>
                                 <p className="text-[9px] text-slate-400 mt-0.5">{currentActiveStep.desc}</p>
                               </div>
                               <div>
                                 {currentActiveStep.type === 'boolean' ? (
-                                  <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-blue-50 text-blue-800 border border-blue-200 uppercase tracking-wide">
+                                  <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-teal-50 text-teal-800 border border-teal-200 uppercase tracking-wide">
                                     Klaim: ADA
                                   </span>
                                 ) : (
-                                  <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-indigo-50 text-indigo-805 border border-indigo-200 uppercase tracking-wide">
+                                  <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 uppercase tracking-wide">
                                     Klaim: {activeTask.property?.claim_data?.fasilitas?.[currentActiveStep.key]?.nilai} {currentActiveStep.key === 'kualitas_air' ? 'ppm' : 'Mbps'}
                                   </span>
                                 )}
@@ -912,27 +912,27 @@ export default function InspectorDashboard({
                                 <div>
                                   {currentActiveStep.key === 'kualitas_air' ? (
                                     <div className="relative">
-                                      <Droplets className="absolute left-3 top-2.5 h-3.5 w-3.5 text-blue-400" />
+                                      <Droplets className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[#003057]" />
                                       <input
                                         type="number"
                                         required
                                         value={tdsInput}
                                         onChange={(e) => setTdsInput(e.target.value)}
                                         placeholder="Masukkan kadar air TDS (contoh: 120)"
-                                        className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
+                                        className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-[#0f766e] focus:ring-1 focus:ring-[#0f766e] rounded-xl text-xs text-slate-800 focus:outline-none"
                                       />
                                       <span className="absolute right-3 top-2.5 text-[9px] font-bold text-slate-400">ppm</span>
                                     </div>
                                   ) : (
                                     <div className="relative">
-                                      <Wifi className="absolute left-3 top-2.5 h-3.5 w-3.5 text-amber-500" />
+                                      <Wifi className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[#0f766e]" />
                                       <input
                                         type="number"
                                         required
                                         value={internetInput}
                                         onChange={(e) => setInternetInput(e.target.value)}
                                         placeholder="Masukkan internet speedtest (contoh: 30)"
-                                        className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
+                                        className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-[#0f766e] focus:ring-1 focus:ring-[#0f766e] rounded-xl text-xs text-slate-800 focus:outline-none"
                                       />
                                       <span className="absolute right-3 top-2.5 text-[9px] font-bold text-slate-400">Mbps</span>
                                     </div>
@@ -982,10 +982,10 @@ export default function InspectorDashboard({
                                     );
                                   } else {
                                     return (
-                                      <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-slate-200 hover:border-blue-500 bg-slate-50/30 hover:bg-blue-50/5 rounded-xl transition-all h-20 text-center">
+                                      <label className="cursor-pointer flex flex-col items-center justify-center p-3 border border-dashed border-slate-200 hover:border-[#0f766e] bg-slate-50/30 hover:bg-teal-50/5 rounded-xl transition-all h-20 text-center">
                                         {isUploading ? (
                                           <>
-                                            <Loader2 className="h-4 w-4 animate-spin text-blue-500 mb-1" />
+                                            <Loader2 className="h-4 w-4 animate-spin text-[#0f766e] mb-1" />
                                             <span className="text-[8px] font-bold text-slate-400 font-mono">Mengunggah...</span>
                                           </>
                                         ) : (
@@ -1093,50 +1093,50 @@ export default function InspectorDashboard({
                               </button>
 
                               {currentStep < activeSteps.length - 1 ? (
-                                <button
-                                  type="button"
-                                  disabled={techSaving}
-                                  onClick={() => handleSaveStepProgress(currentStep + 1)}
-                                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-[10px] font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer uppercase tracking-wider"
-                                >
-                                  {techSaving && <Loader2 className="h-3 w-3 animate-spin" />}
-                                  Lanjut
-                                </button>
-                              ) : (
-                                <button
-                                  type="button"
-                                  disabled={techSaving}
-                                  onClick={() => handleSaveStepProgress()}
-                                  className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[10px] font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer uppercase tracking-wider"
-                                >
-                                  {techSaving && <Loader2 className="h-3 w-3 animate-spin" />}
-                                  Simpan Final
-                                </button>
-                              )}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* FINAL RUN AUDIT SECTION */}
-                        {currentStep === activeSteps.length - 1 && (
-                          <div className="border-t border-slate-200 pt-4 space-y-3">
-                            <h4 className="text-[10px] font-bold text-slate-505 uppercase tracking-wider flex items-center gap-1">
-                              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-                              Langkah Akhir: Evaluasi
-                            </h4>
-                            <p className="text-[10px] text-slate-400 leading-relaxed font-mono">
-                              Menjalankan deteksi AI Vision pada berkas bukti visual dan menghitung skor akhir berdasarkan bobot kepatuhan.
-                            </p>
-                            {auditError && (
-                              <div className="p-2.5 text-[10px] text-red-500 bg-rose-50 border border-rose-200 rounded-lg">
-                                {auditError}
+                                  <button
+                                    type="button"
+                                    disabled={techSaving}
+                                    onClick={() => handleSaveStepProgress(currentStep + 1)}
+                                    className="px-4 py-2 bg-[#003057] hover:bg-[#001e38] text-white rounded-lg text-[10px] font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer uppercase tracking-wider"
+                                  >
+                                    {techSaving && <Loader2 className="h-3 w-3 animate-spin" />}
+                                    Lanjut
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    disabled={techSaving}
+                                    onClick={() => handleSaveStepProgress()}
+                                    className="px-4 py-2 bg-[#0f766e] hover:bg-[#115e59] text-white rounded-lg text-[10px] font-bold transition-all shadow-md flex items-center gap-1.5 cursor-pointer uppercase tracking-wider"
+                                  >
+                                    {techSaving && <Loader2 className="h-3 w-3 animate-spin" />}
+                                    Simpan Final
+                                  </button>
+                                )}
                               </div>
-                            )}
-                            <button
-                              onClick={handleRunAudit}
-                              disabled={auditRunning || techSaving}
-                              className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
-                            >
+                            </div>
+                          )}
+  
+                          {/* FINAL RUN AUDIT SECTION */}
+                          {currentStep === activeSteps.length - 1 && (
+                            <div className="border-t border-slate-200 pt-4 space-y-3">
+                              <h4 className="text-[10px] font-bold text-slate-600 uppercase tracking-wider flex items-center gap-1">
+                                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                                Langkah Akhir: Evaluasi
+                              </h4>
+                              <p className="text-[10px] text-slate-400 leading-relaxed font-mono">
+                                Menjalankan deteksi AI Vision pada berkas bukti visual dan menghitung skor akhir berdasarkan bobot kepatuhan.
+                              </p>
+                              {auditError && (
+                                <div className="p-2.5 text-[10px] text-red-500 bg-rose-50 border border-rose-200 rounded-lg">
+                                  {auditError}
+                                </div>
+                              )}
+                              <button
+                                onClick={handleRunAudit}
+                                disabled={auditRunning || techSaving}
+                                className="w-full py-3 bg-gradient-to-r from-[#003057] to-[#0f766e] hover:from-[#001e38] hover:to-[#115e59] text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 shadow-md cursor-pointer"
+                              >
                               {auditRunning ? (
                                 <>
                                   <Loader2 className="h-4 w-4 animate-spin" />
@@ -1188,7 +1188,7 @@ export default function InspectorDashboard({
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
+              <Loader2 className="h-8 w-8 text-[#0f766e] animate-spin" />
               <span className="text-xs font-semibold text-slate-400 font-mono">Memuat Dasbor...</span>
             </div>
           ) : (
@@ -1200,7 +1200,7 @@ export default function InspectorDashboard({
                     <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-md space-y-5 text-left">
                       <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                         <div>
-                          <span className="text-[8px] bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded font-black font-mono">STEP {currentStep + 1} OF {activeSteps.length + 1}</span>
+                          <span className="text-[8px] bg-teal-50 text-teal-850 border border-teal-200 px-2 py-0.5 rounded font-black font-mono">STEP {currentStep + 1} OF {activeSteps.length + 1}</span>
                           <h3 className="text-xs font-black text-slate-800 mt-1.5 truncate max-w-[180px]">{activeTask.property?.name}</h3>
                         </div>
                         <button
@@ -1256,7 +1256,7 @@ export default function InspectorDashboard({
                                     onClick={() => setEvaluations(prev => ({ ...prev, [currentActiveStep.key]: true }))}
                                     className={`py-2 text-[10px] font-bold uppercase rounded-xl border transition-all cursor-pointer ${
                                       evaluations[currentActiveStep.key] === true
-                                        ? 'bg-blue-600 border-blue-600 text-white shadow'
+                                        ? 'bg-[#003057] border-[#003057] text-white shadow'
                                         : 'bg-slate-50 border-slate-200 text-slate-500'
                                     }`}
                                   >
@@ -1267,7 +1267,7 @@ export default function InspectorDashboard({
                                     onClick={() => setEvaluations(prev => ({ ...prev, [currentActiveStep.key]: false }))}
                                     className={`py-2 text-[10px] font-bold uppercase rounded-xl border transition-all cursor-pointer ${
                                       evaluations[currentActiveStep.key] === false
-                                        ? 'bg-rose-600 border-rose-600 text-white shadow'
+                                        ? 'bg-rose-700 border-rose-700 text-white shadow'
                                         : 'bg-slate-50 border-slate-200 text-slate-500'
                                     }`}
                                   >
@@ -1427,7 +1427,7 @@ export default function InspectorDashboard({
                               type="button"
                               disabled={techSaving}
                               onClick={() => handleSaveStepProgress(currentStep + 1)}
-                              className="px-5 py-2.5 bg-blue-600 text-white text-[10px] font-bold uppercase rounded-xl shadow transition-all flex items-center gap-1.5 cursor-pointer"
+                              className="px-5 py-2.5 bg-[#003057] text-white text-[10px] font-bold uppercase rounded-xl shadow transition-all flex items-center gap-1.5 cursor-pointer"
                             >
                               {techSaving ? (
                                 <>
@@ -1461,7 +1461,7 @@ export default function InspectorDashboard({
                               type="button"
                               disabled={auditRunning || techSaving}
                               onClick={handleRunAudit}
-                              className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-650 text-white font-bold text-[10px] uppercase tracking-wider rounded-xl shadow-md cursor-pointer flex items-center justify-center gap-2"
+                              className="w-full py-3 bg-gradient-to-r from-[#003057] to-[#0f766e] text-white font-bold text-[10px] uppercase tracking-wider rounded-xl shadow-md cursor-pointer flex items-center justify-center gap-2"
                             >
                               {auditRunning ? (
                                 <>
@@ -1505,7 +1505,7 @@ export default function InspectorDashboard({
                           }}
                           className={`flex-1 py-2 text-[9px] font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
                             activeTabInspector === 'my_tasks'
-                              ? 'bg-blue-600 text-white shadow'
+                              ? 'bg-[#003057] text-white shadow'
                               : 'text-slate-500 hover:text-slate-800'
                           }`}
                         >
@@ -1519,7 +1519,7 @@ export default function InspectorDashboard({
                           }}
                           className={`flex-1 py-2 text-[9px] font-bold uppercase tracking-wider rounded-lg transition-all cursor-pointer ${
                             activeTabInspector === 'available_orders'
-                              ? 'bg-amber-500 text-white shadow'
+                              ? 'bg-[#0f766e] text-white shadow'
                               : 'text-slate-500 hover:text-slate-800'
                           }`}
                         >
@@ -1558,14 +1558,14 @@ export default function InspectorDashboard({
                                   insp.status === 'assigned' ? (
                                     <button
                                       onClick={() => handleStartTask(insp.inspection_id)}
-                                      className="w-full py-2 bg-gradient-to-r from-blue-600 to-indigo-650 text-white font-bold text-[9px] uppercase tracking-wider rounded-lg shadow cursor-pointer"
+                                      className="w-full py-2 bg-gradient-to-r from-[#003057] to-[#0f766e] text-white font-bold text-[9px] uppercase tracking-wider rounded-lg shadow cursor-pointer"
                                     >
                                       Mulai Kerja Lapangan
                                     </button>
                                   ) : (
                                     <button
                                       onClick={() => handleSelectTask(insp)}
-                                      className="w-full py-2 bg-gradient-to-r from-emerald-600 to-teal-650 text-white font-bold text-[9px] uppercase tracking-wider rounded-lg shadow cursor-pointer"
+                                      className="w-full py-2 bg-gradient-to-r from-[#003057] to-[#0f766e] text-white font-bold text-[9px] uppercase tracking-wider rounded-lg shadow cursor-pointer"
                                     >
                                       Jalankan Audit
                                     </button>
@@ -1574,7 +1574,7 @@ export default function InspectorDashboard({
                                   <button
                                     disabled={acceptingTaskLoading[insp.inspection_id]}
                                     onClick={() => handleAcceptOrder(insp.inspection_id)}
-                                    className="w-full py-2 bg-amber-500 text-white font-bold text-[9px] uppercase tracking-wider rounded-lg shadow cursor-pointer flex items-center justify-center gap-1.5"
+                                    className="w-full py-2 bg-[#0f766e] text-white font-bold text-[9px] uppercase tracking-wider rounded-lg shadow cursor-pointer flex items-center justify-center gap-1.5"
                                   >
                                     {acceptingTaskLoading[insp.inspection_id] ? (
                                       <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -1653,7 +1653,7 @@ export default function InspectorDashboard({
           <button
             onClick={() => setMobileTab('home')}
             className={`flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
-              mobileTab === 'home' ? 'text-blue-600 scale-102 font-bold' : 'text-slate-400 hover:text-slate-700'
+              mobileTab === 'home' ? 'text-[#0f766e] scale-102 font-bold' : 'text-slate-400 hover:text-slate-700'
             }`}
           >
             <Building className="h-4.5 w-4.5" />
@@ -1663,7 +1663,7 @@ export default function InspectorDashboard({
           <button
             onClick={() => setMobileTab('bantuan')}
             className={`flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
-              mobileTab === 'bantuan' ? 'text-blue-600 scale-102 font-bold' : 'text-slate-400 hover:text-slate-700'
+              mobileTab === 'bantuan' ? 'text-[#0f766e] scale-102 font-bold' : 'text-slate-400 hover:text-slate-700'
             }`}
           >
             <Compass className="h-4.5 w-4.5" />
@@ -1673,7 +1673,7 @@ export default function InspectorDashboard({
           <button
             onClick={() => setMobileTab('akun')}
             className={`flex flex-col items-center justify-center gap-1 cursor-pointer transition-all ${
-              mobileTab === 'akun' ? 'text-blue-600 scale-102 font-bold' : 'text-slate-400 hover:text-slate-700'
+              mobileTab === 'akun' ? 'text-[#0f766e] scale-102 font-bold' : 'text-slate-400 hover:text-slate-700'
             }`}
           >
             <User className="h-4.5 w-4.5" />

@@ -98,14 +98,14 @@ export default function InspekturDashboardPage() {
   if (loading && !email) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-3 text-slate-500">
-        <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
+        <Loader2 className="h-8 w-8 text-[#0f766e] animate-spin" />
         <span className="text-xs font-semibold font-mono">Mengotentikasi Dasbor Inspektur...</span>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col selection:bg-blue-600/30 selection:text-blue-200">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col selection:bg-[#003057]/20 selection:text-[#003057]">
       <InspectorDashboard
         email={email}
         inspections={inspections}
