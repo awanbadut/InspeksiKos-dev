@@ -1,6 +1,6 @@
 # 📑 Dokumentasi API InspeksiKos
 
-Dokumentasi ini mencakup seluruh endpoint REST API backend InspeksiKos, skema autentikasi, otorisasi berbasis role (`mahasiswa`, `inspektur`, `admin`), parameter request, serta struktur respon JSON sukses dan error secara detail.
+Dokumentasi ini mencakup seluruh **30 endpoint** REST API backend InspeksiKos, skema autentikasi, otorisasi berbasis role (`mahasiswa`, `inspektur`, `admin`), parameter request, serta struktur respon JSON sukses dan error secara detail.
 
 ---
 
@@ -21,6 +21,62 @@ Authorization: Bearer <your_access_token>
 ---
 
 ## 🚀 Daftar Endpoint API
+
+Sistem ini memiliki **30 endpoint** aktif yang terbagi dalam 6 modul utama:
+
+| No | Method | Endpoint | Akses | Deskripsi |
+| :--- | :--- | :--- | :--- | :--- |
+| **Root (1)** | | | | |
+| 1 | `GET` | `/` | Publik | Health Check / Cek Status Backend |
+| **Autentikasi (8)** | | | | |
+| 2 | `POST` | `/auth/register` | Publik | Registrasi pengguna baru |
+| 3 | `POST` | `/auth/login` | Publik | Login pengguna |
+| 4 | `POST` | `/auth/refresh` | Publik | Refresh access token |
+| 5 | `POST` | `/auth/logout` | Publik | Logout pengguna |
+| 6 | `GET` | `/auth/inspectors` | `admin` | Ambil daftar semua inspektur |
+| 7 | `GET` | `/auth/users` | `admin` | Ambil daftar semua pengguna |
+| 8 | `POST` | `/auth/forgot-password` | Publik | Permintaan kode verifikasi lupa password |
+| 9 | `POST` | `/auth/reset-password` | Publik | Setel ulang password menggunakan kode verifikasi |
+| **Properti (5)** | | | | |
+| 10 | `POST` | `/properties` | `mahasiswa`, `admin` | Tambah properti/kos baru |
+| 11 | `GET` | `/properties` | `mahasiswa` (milik sendiri), `admin` (semua) | Ambil daftar properti |
+| 12 | `GET` | `/properties/:id` | Terautentikasi | Ambil detail properti |
+| 13 | `PATCH` | `/properties/:id` | Pemilik, `admin` | Update detail properti |
+| 14 | `DELETE` | `/properties/:id` | Pemilik, `admin` | Hapus properti secara permanen |
+| **Inspeksi (9)** | | | | |
+| 15 | `POST` | `/inspections` | `mahasiswa`, `admin` | Ajukan permohonan inspeksi kos |
+| 16 | `GET` | `/inspections` | Terautentikasi (terfilter) | Ambil daftar sesi inspeksi |
+| 17 | `GET` | `/inspections/:id` | Terautentikasi | Ambil detail sesi inspeksi |
+| 18 | `POST` | `/inspections/:id/payment-token` | `mahasiswa`, `admin` | Dapatkan Midtrans Snap token / Simulator URL |
+| 19 | `GET` | `/inspections/:id/check-payment` | `mahasiswa`, `admin` | Cek status pembayaran inspeksi |
+| 20 | `PATCH` | `/inspections/:id/status` | `admin`, `inspektur` | Update status inspeksi / penugasan inspektur |
+| 21 | `PATCH` | `/inspections/:id/teknis` | `admin`, `inspektur` | Input hasil pengujian teknis (TDS & Internet speed) |
+| 22 | `POST` | `/inspections/:id/photos` | `admin`, `inspektur` | Unggah foto bukti fisik fasilitas kos |
+| 23 | `GET` | `/inspections/:id/photos` | Terautentikasi | Ambil seluruh foto bukti fisik |
+| **Audit AI & Laporan (6)** | | | | |
+| 24 | `GET` | `/audit/rules` | Terautentikasi | Dapatkan kriteria evaluasi (rules) aktif |
+| 25 | `POST` | `/audit/rules` | `admin` | Tambah/ubah aturan evaluasi aktif |
+| 26 | `POST` | `/audit/:inspection_id/run` | Terautentikasi | Picu analisis Vision AI Gemini & generate laporan |
+| 27 | `GET` | `/audit/:inspection_id/report` | Terautentikasi | Dapatkan hasil audit & detail breakdown |
+| 28 | `GET` | `/audit/:inspection_id/pdf` | Terautentikasi | Dapatkan URL PDF scorecard kepatuhan |
+| 29 | `POST` | `/audit/:inspection_id/chat` | Terautentikasi | Chatbot tanya-jawab seputar laporan audit |
+| **Riwayat (1)** | | | | |
+| 30 | `GET` | `/riwayat` | Terautentikasi | Ambil riwayat audit selesai (mendukung filter harian/bulanan) |
+
+---
+
+## 🌐 0. Health Check / Root Endpoint (`/`)
+
+#### 📌 A. Health Check Status Backend (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/`)
+Mengecek status kesehatan (health check) backend server.
+
+*   **Role Akses:** Publik (Semua Pengguna)
+*   **Respon Sukses (`200 OK`):**
+    ```http
+    Hello World!
+    ```
+
+---
 
 ### 🔑 1. Autentikasi (`/auth`)
 
@@ -166,6 +222,58 @@ Mengambil seluruh akun yang terdaftar dalam platform.
         "created_at": "2026-06-01T08:00:00.000Z"
       }
     ]
+    ```
+
+#### 📌 G. Lupa Password (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/auth/forgot-password`)
+Mengirimkan kode OTP verifikasi 6 digit ke email dan WhatsApp terdaftar.
+
+*   **Role Akses:** Publik (Semua Pengguna)
+*   **Body Request (JSON):**
+    ```json
+    {
+      "email": "mahasiswa.padang@gmail.com"
+    }
+    ```
+*   **Respon Sukses (`200 OK`):**
+    ```json
+    {
+      "message": "Kode verifikasi berhasil dikirim ke email dan WhatsApp Anda"
+    }
+    ```
+*   **Respon Error (`400 Bad Request` - Email tidak terdaftar):**
+    ```json
+    {
+      "message": "Email tidak terdaftar",
+      "error": "Bad Request",
+      "statusCode": 400
+    }
+    ```
+
+#### 📌 H. Reset Password (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/auth/reset-password`)
+Mengatur ulang password baru dengan menggunakan kode verifikasi OTP yang dikirimkan ke email/WhatsApp.
+
+*   **Role Akses:** Publik (Semua Pengguna)
+*   **Body Request (JSON):**
+    ```json
+    {
+      "email": "mahasiswa.padang@gmail.com",
+      "code": "834192",
+      "new_password": "newsecurepassword123"
+    }
+    ```
+*   **Respon Sukses (`200 OK`):**
+    ```json
+    {
+      "message": "Kata sandi berhasil diatur ulang"
+    }
+    ```
+*   **Respon Error (`400 Bad Request` - Kode salah/kedaluwarsa):**
+    ```json
+    {
+      "message": "Kode verifikasi salah",
+      "error": "Bad Request",
+      "statusCode": 400
+    }
     ```
 
 ---
@@ -409,7 +517,84 @@ Melihat daftar antrian inspeksi.
     ]
     ```
 
-#### 📌 C. Update Status Inspeksi / Penunjukan Inspektur (`PATCH https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/status`)
+#### 📌 C. Ambil Detail Sesi Inspeksi (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id`)
+Mengambil rincian data sesi inspeksi tertentu berdasarkan ID sesi.
+
+*   **Role Akses:** Semua role terautentikasi
+*   **Respon Sukses (`200 OK`):**
+    ```json
+    {
+      "inspection_id": "e2ba9f6c-8a11-4259-b95d-1c5c0c9cbcae",
+      "property_id": "df2a9c3e-b811-4258-aa82-938ba0cb924e",
+      "inspector_id": "fd9031c2-cbb8-4f81-9b62-11a5b8a0cbcf",
+      "status": "in_progress",
+      "assigned_at": "2026-06-10T01:25:00.000Z",
+      "completed_at": null,
+      "tds_value": "115.50",
+      "internet_speed": "28.40",
+      "inspector_data": {
+        "checklist": {
+          "kasur_springbed": true,
+          "kamar_mandi_dalam": true,
+          "keamanan_24_jam": false
+        },
+        "catatan_tambahan": "Kondisi fisik kos sangat bersih, WiFi stabil, air jernih dan tidak berbau."
+      },
+      "property": {
+        "property_id": "df2a9c3e-b811-4258-aa82-938ba0cb924e",
+        "name": "Kos Putri Syariah Sejahtera",
+        "address": "Jalan Gunung Pangilun No. 45, Padang Utara, Padang",
+        "description": "Kos khusus mahasiswi dekat kampus UNP, fasilitas lengkap dan bersih.",
+        "claim_data": {
+          "location": {
+            "latitude": -0.923485,
+            "longitude": 100.362947
+          },
+          "fasilitas": {
+            "wifi": { "ada": true, "router_terlihat": true },
+            "kualitas_air": { "nilai": 120 },
+            "kecepatan_internet": { "nilai": 30 }
+          }
+        },
+        "status": "pending",
+        "created_at": "2026-06-10T01:20:00.000Z"
+      }
+    }
+    ```
+
+#### 📌 D. Dapatkan Token Pembayaran Inspeksi (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/payment-token`)
+Mendapatkan Midtrans Snap token / URL pembayaran Snap Sandbox atau link simulator lokal (jika API key Midtrans tidak dikonfigurasi).
+
+*   **Role Akses:** `mahasiswa` (pemilik kos) atau `admin`
+*   **Respon Sukses (`201 Created` - Mode Sandbox Midtrans):**
+    ```json
+    {
+      "token": "d718b577-0c7f-44e2-8951-fc6a97825d19",
+      "redirect_url": "https://app.sandbox.midtrans.com/snap/v1/transactions/d718b577-0c7f-44e2-8951-fc6a97825d19",
+      "mode": "sandbox"
+    }
+    ```
+*   **Respon Sukses (`201 Created` - Mode Simulator):**
+    ```json
+    {
+      "token": "mock_token_1781190000",
+      "redirect_url": "/payment/simulate?id=e2ba9f6c-8a11-4259-b95d-1c5c0c9cbcae",
+      "mode": "simulator"
+    }
+    ```
+
+#### 📌 E. Periksa Status Pembayaran Inspeksi (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/check-payment`)
+Memeriksa status pembayaran dari Midtrans/Simulator dan memperbarui data pembayaran properti ke database secara otomatis jika lunas.
+
+*   **Role Akses:** `mahasiswa` (pemilik kos) atau `admin`
+*   **Respon Sukses (`200 OK`):**
+    ```json
+    {
+      "paid": true
+    }
+    ```
+
+#### 📌 F. Update Status Inspeksi / Penunjukan Inspektur (`PATCH https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/status`)
 Mengubah status inspeksi (`assigned`, `in_progress`, `completed`). Admin juga menggunakan ini untuk menugaskan seorang `inspektur` ke inspeksi tersebut.
 
 *   **Role Akses:** `admin`, `inspektur` (hanya jika ditugaskan kepadanya)
@@ -431,7 +616,7 @@ Mengubah status inspeksi (`assigned`, `in_progress`, `completed`). Admin juga me
     }
     ```
 
-#### 📌 D. Input Data Teknis Kos (`PATCH https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/teknis`)
+#### 📌 G. Input Data Teknis Kos (`PATCH https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/teknis`)
 Menginputkan nilai TDS (kualitas air), kecepatan internet nyata (speedtest), dan evaluasi checklist manual oleh inspektur.
 
 *   **Role Akses:** `inspektur`, `admin`
@@ -468,8 +653,9 @@ Menginputkan nilai TDS (kualitas air), kecepatan internet nyata (speedtest), dan
     }
     ```
 
-#### 📌 E. Upload Foto Inspeksi Kamar/Fasilitas (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/photos`)
+#### 📌 H. Upload Foto Inspeksi Kamar/Fasilitas (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/photos`)
 Mengunggah foto fisik objek kos untuk dianalisis oleh Vision AI (Gemini). API ini menggunakan format `multipart/form-data`.
+*Catatan Keamanan:* Untuk mencegah kecurangan, pengambilan foto harus menggunakan kamera realtime dengan menyertakan tanda air (watermark) data lokasi GPS (latitude/longitude) dan nama kos.
 
 *   **Role Akses:** `inspektur`, `admin`
 *   **Headers:**
@@ -488,7 +674,7 @@ Mengunggah foto fisik objek kos untuk dianalisis oleh Vision AI (Gemini). API in
     }
     ```
 
-#### 📌 F. Ambil Foto-Foto Inspeksi (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/photos`)
+#### 📌 I. Ambil Foto-Foto Inspeksi (`GET https://inspeksikos-backend-391757769207.asia-southeast2.run.app/inspections/:id/photos`)
 Mengambil seluruh daftar bukti foto yang diunggah untuk satu sesi inspeksi.
 
 *   **Role Akses:** Semua role terautentikasi
@@ -710,6 +896,24 @@ Mengambil link unduhan file PDF Scorecard Kepatuhan yang disimpan di cloud stora
     ```json
     {
       "pdf_url": "https://tqeryt84mmpwjon44527pq.supabase.co/storage/v1/object/public/inspeksikos-photos/reports/e2ba9f6c-8a11-4259-b95d-1c5c0c9cbcae.pdf"
+    }
+    ```
+
+#### 📌 F. Tanya Jawab Chatbot Laporan Kepatuhan (`POST https://inspeksikos-backend-391757769207.asia-southeast2.run.app/audit/:inspection_id/chat`)
+Melakukan diskusi tanya jawab interaktif dengan AI Assistant (Gemini) seputar hasil evaluasi kepatuhan. AI dapat menjelaskan kenapa suatu fasilitas dinilai tidak sesuai (mismatch) atau memberi saran optimasi.
+
+*   **Role Akses:** Semua role terautentikasi
+*   **Body Request (JSON):**
+    ```json
+    {
+      "message": "Kenapa air di kos saya diberi penalti?",
+      "history": []
+    }
+    ```
+*   **Respon Sukses (`200 OK`):**
+    ```json
+    {
+      "reply": "Berdasarkan hasil pengukuran TDS oleh inspektur, air di kos Anda bernilai 160 mg/L, yang mana melebihi ambang batas (threshold) aturan aktif platform yaitu 150 mg/L. Oleh karena itu, terdapat ketidaksesuaian (MISMATCH) sehingga dikenai penalti bobot sebesar 15%."
     }
     ```
 
