@@ -20,21 +20,6 @@
 
 **InspeksiKos** adalah platform *automated fact-checking* (SaaS) berbasis Cloud untuk memvalidasi spesifikasi fasilitas kamar kos secara real-time. Platform ini dirancang untuk memecahkan masalah **catfishing iklan kos** di Kota Padang dengan membandingkan klaim iklan terhadap data lapangan aktual menggunakan kecerdasan buatan **Gemini AI Vision** dan **Rule-Based Engine**.
 
----
-
-## 🎬 Tampilan Aplikasi
-
-Berikut adalah beberapa tampilan utama dari antarmuka web InspeksiKos:
-
-| Halaman Masuk (Login) | Halaman Pendaftaran (Register) |
-|:---:|:---:|
-| ![Login Screenshot](./Login.jpg) | ![Register Screenshot](./Register.jpg) |
-
-| Dashboard Utama (Mahasiswa) | Verifikasi Fasilitas Kamar (Inspektur) |
-|:---:|:---:|
-| ![Dashboard Utama](./frontend/public/hero-dashboard-preview.jpg) | ![Verifikasi Kamar](./frontend/public/inspector-verifying-room.jpg) |
-
----
 
 ## ⚙️ Alur Kerja Sistem (Pipeline)
 
