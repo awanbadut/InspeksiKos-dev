@@ -1,12 +1,22 @@
 # 🏠 InspeksiKos
 
-[![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![NestJS](https://img.shields.io/badge/NestJS-10-E0234E?style=for-the-badge&logo=nestjs)](https://nestjs.com/)
-[![Gemini](https://img.shields.io/badge/Gemini%201.5%20Flash-AI-blue?style=for-the-badge&logo=google-gemini)](https://ai.google.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
-[![Vercel](https://img.shields.io/badge/Vercel-Deploy-black?style=for-the-badge&logo=vercel)](https://vercel.com/)
-[![Google Cloud Run](https://img.shields.io/badge/GCP%20Cloud%20Run-Deploy-4285F4?style=for-the-badge&logo=google-cloud)](https://cloud.google.com/run)
+<p align="center">
+  <img src="./frontend/public/logo.webp" alt="Logo InspeksiKos" width="160"/>
+</p>
+
+<p align="center">
+  <strong>Platform Automated Fact-Checking Fasilitas Kos Berbasis Cloud & AI</strong>
+</p>
+
+<p align="center">
+  <a href="https://nextjs.org/"><img src="https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js" alt="Next.js"/></a>
+  <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/NestJS-10-E0234E?style=for-the-badge&logo=nestjs" alt="NestJS"/></a>
+  <a href="https://ai.google.dev/"><img src="https://img.shields.io/badge/Gemini%201.5%20Flash-AI-blue?style=for-the-badge&logo=google-gemini" alt="Gemini"/></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript" alt="TypeScript"/></a>
+  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-16-4169E1?style=for-the-badge&logo=postgresql" alt="PostgreSQL"/></a>
+  <a href="https://vercel.com/"><img src="https://img.shields.io/badge/Vercel-Deploy-black?style=for-the-badge&logo=vercel" alt="Vercel"/></a>
+  <a href="https://cloud.google.com/run"><img src="https://img.shields.io/badge/GCP%20Cloud%20Run-Deploy-4285F4?style=for-the-badge&logo=google-cloud" alt="Google Cloud Run"/></a>
+</p>
 
 **InspeksiKos** adalah platform *automated fact-checking* (SaaS) berbasis Cloud untuk memvalidasi spesifikasi fasilitas kamar kos secara real-time. Platform ini dirancang untuk memecahkan masalah **catfishing iklan kos** di Kota Padang dengan membandingkan klaim iklan terhadap data lapangan aktual menggunakan kecerdasan buatan **Gemini AI Vision** dan **Rule-Based Engine**.
 
@@ -19,6 +29,10 @@ Berikut adalah beberapa tampilan utama dari antarmuka web InspeksiKos:
 | Halaman Masuk (Login) | Halaman Pendaftaran (Register) |
 |:---:|:---:|
 | ![Login Screenshot](./Login.jpg) | ![Register Screenshot](./Register.jpg) |
+
+| Dashboard Utama (Mahasiswa) | Verifikasi Fasilitas Kamar (Inspektur) |
+|:---:|:---:|
+| ![Dashboard Utama](./frontend/public/hero-dashboard-preview.jpg) | ![Verifikasi Kamar](./frontend/public/inspector-verifying-room.jpg) |
 
 ---
 
