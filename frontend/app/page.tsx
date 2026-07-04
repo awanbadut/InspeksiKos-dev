@@ -48,7 +48,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto bg-[#D6E8F7] rounded-full flex items-center justify-between px-3 py-2 border border-[#C5DBEF]">
           {/* Logo */}
           <Link href="/" className="pl-3 flex items-center shrink-0">
-            <img src="/logo.webp" alt="InspeksiKos" className="h-12 w-auto object-contain" />
+            <img src="/logo.webp" alt="InspeksiKos" className="h-16 w-auto object-contain mix-blend-multiply" />
           </Link>
 
           {/* Center Nav */}
