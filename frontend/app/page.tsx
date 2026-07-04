@@ -79,7 +79,7 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
           {/* Left: Text */}
           <div className="space-y-6">
-            <h1 className="text-4xl sm:text-[44px] font-extrabold leading-[1.1] text-black tracking-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-[44px] font-extrabold leading-[1.1] text-black tracking-tight">
               Bebas Manipulasi Iklan{' '}
               Validasi Fasilitas Kos{' '}
               Anda
@@ -95,30 +95,29 @@ export default function Home() {
           </div>
 
           {/* Right: Illustration collage matching Figma */}
-          <div className="relative w-full h-[420px] max-w-[500px] mx-auto">
+          <div className="relative w-full h-[300px] sm:h-[360px] md:h-[420px] max-w-[500px] mx-auto">
             {/* Orange Card (top-left) */}
-            <div className="absolute top-0 left-0 w-[240px] h-[240px] rounded-3xl overflow-hidden shadow-md z-10">
+            <div className="absolute top-0 left-0 w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] rounded-2xl md:rounded-3xl overflow-hidden shadow-md z-10">
               <img src="/assets/cowok_lagi_megang_hp_latar_oren.png" alt="Person waving" className="w-full h-full object-cover" />
             </div>
             {/* House Card (middle-right) */}
-            <div className="absolute top-8 right-0 w-[240px] h-[240px] rounded-3xl overflow-hidden shadow-md z-20">
+            <div className="absolute top-6 sm:top-8 right-0 w-[160px] h-[160px] sm:w-[200px] sm:h-[200px] md:w-[240px] md:h-[240px] rounded-2xl md:rounded-3xl overflow-hidden shadow-md z-20">
               <img src="/assets/orang_di_depan_rumah.png" alt="House scene" className="w-full h-full object-cover" />
             </div>
             {/* Laptop Card (bottom-left) */}
-            <div className="absolute bottom-0 left-[60px] w-[270px] h-[200px] rounded-3xl overflow-hidden shadow-md z-30">
+            <div className="absolute bottom-0 left-[30px] sm:left-[50px] md:left-[60px] w-[180px] h-[135px] sm:w-[220px] sm:h-[165px] md:w-[270px] md:h-[200px] rounded-2xl md:rounded-3xl overflow-hidden shadow-md z-30">
               <img src="/assets/latar_biru_lagi_jempol_sampai_main_laptop.png" alt="Verification" className="w-full h-full object-cover" />
             </div>
             {/* Empty blue container in the middle/center */}
-            <div className="absolute top-[170px] left-[160px] w-[180px] h-[65px] bg-[#6ED4F8] rounded-3xl z-40 shadow-lg border-2 border-white/50 opacity-95"></div>
+            <div className="absolute top-[120px] left-[100px] w-[120px] h-[45px] sm:top-[140px] sm:left-[130px] sm:w-[150px] sm:h-[55px] md:top-[170px] md:left-[160px] md:w-[180px] md:h-[65px] bg-[#6ED4F8] rounded-2xl md:rounded-3xl z-40 shadow-lg border border-white/50 opacity-95"></div>
           </div>
         </div>
       </section>
 
-      {/* ===== TELAH DIANDALKAN OLEH MAHASISWA ===== */}
-      <section className="max-w-5xl mx-auto px-6 mb-20">
-        <div className="border border-slate-300 rounded-[32px] p-8 md:p-10">
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 mb-20">
+        <div className="border border-slate-300 rounded-3xl p-4 sm:p-6 md:p-10">
           <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-[34px] font-extrabold text-black mb-1">Telah Diandalkan oleh Mahasiswa</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-extrabold text-black mb-1">Telah Diandalkan oleh Mahasiswa</h2>
             <p className="text-sm text-slate-600">Diandalkan oleh Mahasiswa Kampuk Terbaik Sumatra Barat</p>
           </div>
 
@@ -257,9 +256,9 @@ export default function Home() {
       </section>
 
       {/* ===== KEUNGGULAN VERIFIKASI LAPANGAN ===== */}
-      <section id="about" className="max-w-5xl mx-auto px-6 mb-20">
+      <section id="about" className="max-w-5xl mx-auto px-4 sm:px-6 mb-20">
         <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-[34px] font-extrabold text-black mb-1">Keunggulan Verifikasi Lapangan</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-[34px] font-extrabold text-black mb-1">Keunggulan Verifikasi Lapangan</h2>
           <p className="text-sm text-slate-600 max-w-lg mx-auto">Pemeriksaan fisik langsung menggunakan parameter baku untuk menjamin kelayakan kamar kos pilihan Anda.</p>
         </div>
 
@@ -365,13 +364,27 @@ export default function Home() {
       </section>
 
       {/* ===== BAGAIMANA CARA KERJANYA ===== */}
-      <section id="how-it-works" className="max-w-5xl mx-auto px-6 mb-20">
+      <section id="how-it-works" className="max-w-5xl mx-auto px-4 sm:px-6 mb-20">
         <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-[34px] font-extrabold text-black mb-1">Bagaimana Cara Kerjanya?</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-[34px] font-extrabold text-black mb-1">Bagaimana Cara Kerjanya?</h2>
           <p className="text-sm text-slate-600">Proses validasi on-demand terverifikasi hanya dalam 3 tahapan sistematis.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 relative">
+          {/* Arrow 1 */}
+          <div className="hidden md:block absolute top-[25%] left-[28%] w-[12%] h-[60px] z-20 pointer-events-none">
+            <svg className="w-full h-full text-slate-400" viewBox="0 0 100 40" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M 0,20 Q 50,0 100,20" strokeDasharray="4 4" />
+              <path d="M 90,12 L 100,20 L 91,27" />
+            </svg>
+          </div>
+          {/* Arrow 2 */}
+          <div className="hidden md:block absolute top-[25%] left-[61%] w-[12%] h-[60px] z-20 pointer-events-none">
+            <svg className="w-full h-full text-slate-400" viewBox="0 0 100 40" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <path d="M 0,20 Q 50,0 100,20" strokeDasharray="4 4" />
+              <path d="M 90,12 L 100,20 L 91,27" />
+            </svg>
+          </div>
           {/* Step 1 */}
           <div className="bg-[#5A8FAD] rounded-2xl p-7 text-white flex flex-col">
             <div className="text-3xl font-light mb-1 opacity-60">01</div>
@@ -411,10 +424,10 @@ export default function Home() {
       </section>
 
       {/* ===== PILIHAN KATEGORI LAYANAN ===== */}
-      <section id="pricing" className="max-w-5xl mx-auto px-6 mb-20">
-        <div className="border border-slate-300 rounded-[32px] p-8 md:p-10">
+      <section id="pricing" className="max-w-5xl mx-auto px-4 sm:px-6 mb-20">
+        <div className="border border-slate-300 rounded-3xl p-4 sm:p-6 md:p-10">
           <div className="text-center mb-8">
-            <h2 className="text-3xl md:text-[34px] font-extrabold text-black mb-1">Pilihan Kategori Layanan</h2>
+            <h2 className="text-2xl sm:text-3xl md:text-[34px] font-extrabold text-black mb-1">Pilihan Kategori Layanan</h2>
             <p className="text-sm text-slate-600">Sistem pembayaran transparan tanpa biaya tambahan, terintegrasi secure gateway Midtrans.</p>
           </div>
 
@@ -476,9 +489,9 @@ export default function Home() {
       </section>
 
       {/* ===== PERTANYAAN UMUM ===== */}
-      <section className="max-w-3xl mx-auto px-6 mb-20">
+      <section className="max-w-3xl mx-auto px-4 sm:px-6 mb-20">
         <div className="text-center mb-8">
-          <h2 className="text-3xl md:text-[34px] font-extrabold text-black mb-1">Pertanyaan Umum</h2>
+          <h2 className="text-2xl sm:text-3xl md:text-[34px] font-extrabold text-black mb-1">Pertanyaan Umum</h2>
           <p className="text-sm text-slate-600">Menjawab keraguan teknis mengenai validitas dan survei lapangan.</p>
         </div>
 
@@ -506,9 +519,9 @@ export default function Home() {
       </section>
 
       {/* ===== CTA BANNER ===== */}
-      <section className="max-w-5xl mx-auto px-6 mb-16">
-        <div className="bg-[#3B82F6] rounded-[32px] py-14 px-8 text-center text-white">
-          <h2 className="text-3xl md:text-4xl font-extrabold mb-3">Amankan Kamar Kos Idaman Anda</h2>
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 mb-16">
+        <div className="bg-[#3B82F6] rounded-3xl py-10 px-4 sm:px-6 md:py-14 md:px-8 text-center text-white">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold mb-3">Amankan Kamar Kos Idaman Anda</h2>
           <p className="text-sm opacity-90 max-w-xl mx-auto mb-8">
             Hindari kekecewaan akibat iklan yang tidak sesuai. Dapatkan pembuktian nyata bersama verifikator ahli sekarang.
           </p>
