@@ -10,6 +10,8 @@ import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class AuthService {
+  private otpMap = new Map<string, { otp: string; expires: number }>();
+
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -17,8 +19,53 @@ export class AuthService {
     private notificationService: NotificationService,
   ) {}
 
+  async sendOtp(email: string): Promise<{ message: string }> {
+    // Check if email already exists
+    const existingUser = await this.userRepository.findOne({ where: { email } });
+    if (existingUser) {
+      throw new ConflictException('Email sudah terdaftar');
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    this.otpMap.set(email, {
+      otp,
+      expires: Date.now() + 5 * 60 * 1000, // 5 minutes
+    });
+
+    const subject = 'Kode OTP Pendaftaran InspeksiKos';
+    const htmlContent = `
+      <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);">
+        <h2 style="color: #1F3E5A; text-align: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 10px; margin-top: 0;">Verifikasi Akun InspeksiKos</h2>
+        <p>Halo,</p>
+        <p>Terima kasih telah mendaftar di <strong>InspeksiKos</strong>. Gunakan kode verifikasi (OTP) berikut untuk menyelesaikan pendaftaran akun Anda:</p>
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; text-align: center; margin: 20px 0;">
+          <h1 style="margin: 0; color: #3B82F6; font-size: 32px; letter-spacing: 5px; font-weight: 800; font-family: monospace;">${otp}</h1>
+        </div>
+        <p style="font-size: 11px; color: #64748b; line-height: 1.5;">Kode verifikasi ini berlaku selama 5 menit. Jangan bagikan kode ini kepada siapa pun demi keamanan akun Anda.</p>
+        <p style="font-size: 11px; color: #64748b; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px; text-align: center;">
+          Tim InspeksiKos - Politeknik Negeri Padang
+        </p>
+      </div>
+    `;
+
+    await this.notificationService.sendEmail(email, subject, htmlContent);
+
+    return { message: 'Kode OTP berhasil dikirim ke email Anda' };
+  }
+
   async register(registerDto: RegisterDto): Promise<{ message: string; user: Omit<User, 'password_hash'> }> {
-    const { email, password, first_name, last_name, phone_number, role } = registerDto;
+    const { email, password, first_name, last_name, phone_number, role, otp } = registerDto;
+
+    // Verify OTP
+    const storedOtpData = this.otpMap.get(email);
+    if (!storedOtpData || storedOtpData.otp !== otp) {
+      throw new BadRequestException('Kode OTP salah atau tidak ditemukan');
+    }
+    if (Date.now() > storedOtpData.expires) {
+      this.otpMap.delete(email);
+      throw new BadRequestException('Kode OTP telah kedaluwarsa');
+    }
+    this.otpMap.delete(email);
 
     // Check if email already exists
     const existingUser = await this.userRepository.findOne({ where: { email } });

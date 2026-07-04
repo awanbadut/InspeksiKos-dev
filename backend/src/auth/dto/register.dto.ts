@@ -24,4 +24,8 @@ export class RegisterDto {
   @IsEnum(UserRole, { message: 'Role harus berupa mahasiswa, inspektur, atau admin' })
   @IsOptional()
   role?: UserRole;
+
+  @IsString()
+  @IsOptional()
+  otp?: string;
 }

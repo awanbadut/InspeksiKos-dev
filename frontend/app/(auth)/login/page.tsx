@@ -14,10 +14,46 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Field validation errors
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
+  const validateForm = () => {
+    let isValid = true;
+    
+    // Email validate
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim()) {
+      setEmailError('Email harus diisi');
+      isValid = false;
+    } else if (!emailRegex.test(email)) {
+      setEmailError('Format email tidak valid (contoh: nama@domain.com)');
+      isValid = false;
+    } else {
+      setEmailError('');
+    }
+
+    // Password validate
+    if (!password) {
+      setPasswordError('Password harus diisi');
+      isValid = false;
+    } else if (password.length < 6) {
+      setPasswordError('Password minimal 6 karakter');
+      isValid = false;
+    } else {
+      setPasswordError('');
+    }
+
+    return isValid;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError('');
+
+    if (!validateForm()) return;
+
+    setIsLoading(true);
 
     try {
       const response = await api.post('/auth/login', { email, password });
@@ -40,7 +76,7 @@ export default function LoginPage() {
       }
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.message || 'Email atau password salah');
+      setError(err.response?.data?.message || 'Email atau password salah. Silakan coba lagi.');
     } finally {
       setIsLoading(false);
     }
@@ -55,7 +91,7 @@ export default function LoginPage() {
         {/* Logo */}
         <Link href="/" className="relative z-10">
           <div className="bg-white rounded-xl px-3.5 py-2.5 w-fit shadow-md">
-            <img src="/logo.webp" alt="InspeksiKos" className="h-14 w-auto object-contain" />
+            <img src="/logo.webp" alt="InspeksiKos" className="h-14 w-auto object-contain mix-blend-multiply" />
           </div>
         </Link>
 
@@ -114,7 +150,7 @@ export default function LoginPage() {
           <div className="space-y-2 text-center">
             {/* Show logo on top for mobile */}
             <div className="flex justify-center lg:hidden mb-4">
-              <img src="/logo.webp" alt="InspeksiKos Logo" className="h-16 w-auto object-contain" />
+              <img src="/logo.webp" alt="InspeksiKos Logo" className="h-16 w-auto object-contain mix-blend-multiply" />
             </div>
             <h1 className="text-xl font-extrabold tracking-tight text-[#1F3E5A]">
               Selamat Datang Kembali
@@ -137,12 +173,17 @@ export default function LoginPage() {
               </label>
               <input
                 type="email"
-                required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (emailError) setEmailError('');
+                }}
                 placeholder="email@domain.com"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#1F3E5A] rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
+                className={`w-full px-3.5 py-2.5 bg-slate-50 border ${emailError ? 'border-rose-500 focus:border-rose-500' : 'border-slate-200 focus:border-[#1F3E5A]'} rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs`}
               />
+              {emailError && (
+                <p className="text-[10px] text-rose-500 font-semibold">{emailError}</p>
+              )}
             </div>
 
             <div className="space-y-1.5">
@@ -157,11 +198,13 @@ export default function LoginPage() {
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (passwordError) setPasswordError('');
+                  }}
                   placeholder="••••••••"
-                  className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#1F3E5A] rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
+                  className={`w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border ${passwordError ? 'border-rose-500 focus:border-rose-500' : 'border-slate-200 focus:border-[#1F3E5A]'} rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs`}
                 />
                 <button
                   type="button"
@@ -171,6 +214,9 @@ export default function LoginPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+              {passwordError && (
+                <p className="text-[10px] text-rose-500 font-semibold">{passwordError}</p>
+              )}
             </div>
 
             <button
