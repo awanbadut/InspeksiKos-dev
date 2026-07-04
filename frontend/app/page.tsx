@@ -3,10 +3,17 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { 
-  CheckSquare, 
   ArrowRight, 
   ChevronDown,
-  ArrowUpRight
+  ArrowUpRight,
+  Users,
+  Home as HomeIcon,
+  FileText,
+  User,
+  Building,
+  MapPin,
+  ClipboardList,
+  CheckSquare
 } from 'lucide-react';
 
 export default function Home() {
@@ -41,9 +48,9 @@ export default function Home() {
       <header className="w-full px-6 pt-6 pb-8 sticky top-0 z-50 flex justify-center">
         <div className="w-full max-w-5xl bg-[#E6F0FA] rounded-full flex items-center justify-between px-2 py-2 shadow-sm border border-[#D9E8F5]">
           <div className="pl-4">
-            <div className="px-3 py-1 bg-blue-100 rounded text-blue-900 font-bold text-sm tracking-wide">
-              logo
-            </div>
+            <Link href="/" className="flex items-center">
+              <img src="/logo.webp" alt="InspeksiKos Logo" className="h-8 w-auto object-contain" />
+            </Link>
           </div>
           
           <nav className="hidden md:flex items-center space-x-1">
@@ -117,8 +124,8 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {/* Card 1 Orange */}
               <div className="bg-[#FF9B3E] rounded-3xl overflow-hidden p-6 text-black flex flex-col shadow-sm">
-                <div className="h-32 mb-4 relative bg-orange-300/30 rounded-xl flex items-center justify-center">
-                  <div className="text-5xl">🧑‍🎓</div>
+                <div className="h-32 mb-4 relative bg-orange-300/30 rounded-xl flex items-center justify-center overflow-hidden">
+                  <img src="/assets/Gemini_Generated_Image_35wl5g35wl5g35wl.png" alt="Mahasiswa" className="w-full h-full object-cover mix-blend-multiply opacity-90" />
                 </div>
                 <div className="flex gap-4 mb-3">
                   <div>
@@ -135,8 +142,8 @@ export default function Home() {
 
               {/* Card 2 Yellow */}
               <div className="bg-[#FFD147] rounded-3xl overflow-hidden p-6 text-black flex flex-col shadow-sm">
-                <div className="h-32 mb-4 relative bg-yellow-300/30 rounded-xl flex items-center justify-center">
-                  <div className="text-5xl">🏠</div>
+                <div className="h-32 mb-4 relative bg-yellow-300/30 rounded-xl flex items-center justify-center overflow-hidden">
+                  <img src="/assets/Gemini_Generated_Image_lbgxwwlbgxwwlbgx.png" alt="Kost" className="w-full h-full object-cover mix-blend-multiply opacity-90" />
                 </div>
                 <div className="mb-3">
                   <div className="text-xl font-bold">1752+</div>
@@ -147,8 +154,8 @@ export default function Home() {
 
               {/* Card 3 Blue */}
               <div className="bg-[#3E86FF] rounded-3xl overflow-hidden p-6 text-white flex flex-col shadow-sm">
-                <div className="h-32 mb-4 relative bg-blue-400/30 rounded-xl flex items-center justify-center">
-                  <div className="text-5xl">📄</div>
+                <div className="h-32 mb-4 relative bg-blue-400/30 rounded-xl flex items-center justify-center overflow-hidden">
+                  <img src="/assets/Gemini_Generated_Image_p4vfwdp4vfwdp4vf.png" alt="Mitra Lapangan" className="w-full h-full object-cover mix-blend-multiply opacity-90" />
                 </div>
                 <div className="mb-3">
                   <div className="text-xl font-bold">50+</div>
@@ -255,10 +262,10 @@ export default function Home() {
                  <svg className="absolute top-10 left-10 w-full h-full text-slate-300" viewBox="0 0 200 200" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4">
                     <path d="M 0,0 Q 100,50 50,150 T 200,200" />
                  </svg>
-                 <div className="absolute top-5 left-5 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 border border-yellow-200 z-20 shadow-sm text-xs">👤</div>
-                 <div className="absolute top-20 left-32 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 border border-blue-200 z-20 shadow-sm text-sm">🏢</div>
-                 <div className="absolute bottom-20 left-20 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 border border-red-200 z-20 shadow-sm text-xs">📍</div>
-                 <div className="absolute bottom-5 left-40 w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 border border-orange-200 z-20 shadow-sm text-sm">📋</div>
+                 <div className="absolute top-5 left-5 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 border border-yellow-200 z-20 shadow-sm"><User className="w-4 h-4" /></div>
+                 <div className="absolute top-20 left-32 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 border border-blue-200 z-20 shadow-sm"><Building className="w-5 h-5" /></div>
+                 <div className="absolute bottom-20 left-20 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 border border-red-200 z-20 shadow-sm"><MapPin className="w-4 h-4" /></div>
+                 <div className="absolute bottom-5 left-40 w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 border border-orange-200 z-20 shadow-sm"><ClipboardList className="w-5 h-5" /></div>
                </div>
                <div className="w-1/2 flex flex-col justify-center relative z-10">
                  <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600 mb-4 border border-green-100">
