@@ -141,7 +141,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              <p className="text-[10px] leading-snug text-black/70 mt-2">Adipiscing nulla neque aliquam gravida adipiscing lorem eget. Congue pharetra volutpat euismod in.</p>
+              <p className="text-[10px] leading-snug text-black/70 mt-2">Telah membantu ribuan mahasiswa menemukan tempat tinggal yang aman, nyaman, dan bebas penipuan iklan.</p>
             </div>
 
             {/* Card Yellow-Green */}
@@ -155,7 +155,7 @@ export default function Home() {
                   <div className="text-[11px]">Kost Ter-audit</div>
                 </div>
               </div>
-              <p className="text-[10px] leading-snug text-black/70 mt-2">Diam leo cursus sem viverra in id. Nulla nulla neque amet eros molestie lobortis nunc. Amet sed tristique non fames etiam fringilla ante aliquet gravida.</p>
+              <p className="text-[10px] leading-snug text-black/70 mt-2">Ribuan kamar kos di sekitar wilayah kampus telah terverifikasi kelayakan fasilitas dan kondisi fisiknya.</p>
             </div>
 
             {/* Card Blue */}
@@ -169,7 +169,7 @@ export default function Home() {
                   <div className="text-[11px]">Mitra Lapangan</div>
                 </div>
               </div>
-              <p className="text-[10px] leading-snug text-white/70 mt-2">Diam leo cursus sem viverra in id. Nulla nulla neque amet eros molestie lobortis nunc. Amet sed tristique non fames etiam fringilla ante aliquet gravida.</p>
+              <p className="text-[10px] leading-snug text-white/70 mt-2">Mitra verifikator profesional kami tersebar luas untuk melakukan survei lokasi secara langsung dan objektif.</p>
             </div>
           </div>
 
@@ -191,11 +191,11 @@ export default function Home() {
               </div>
               <div className="flex justify-between pt-1">
                 <div>
-                  <div className="font-bold text-[13px] text-black">410+</div>
+                  <div className="font-bold text-[13px] text-black">380+</div>
                   <div className="text-[9px] text-slate-500">Kost Ter-audit</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-[13px] text-black">7 Verifikator</div>
+                  <div className="font-bold text-[13px] text-black">8 Verifikator</div>
                   <div className="text-[9px] text-slate-500">Mitra Lapangan</div>
                 </div>
               </div>
@@ -217,11 +217,11 @@ export default function Home() {
               </div>
               <div className="flex justify-between pt-1">
                 <div>
-                  <div className="font-bold text-[13px] text-black">410+</div>
+                  <div className="font-bold text-[13px] text-black">740+</div>
                   <div className="text-[9px] text-slate-500">Kost Ter-audit</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-[13px] text-black">7 Verifikator</div>
+                  <div className="font-bold text-[13px] text-black">15 Verifikator</div>
                   <div className="text-[9px] text-slate-500">Mitra Lapangan</div>
                 </div>
               </div>
@@ -243,11 +243,11 @@ export default function Home() {
               </div>
               <div className="flex justify-between pt-1">
                 <div>
-                  <div className="font-bold text-[13px] text-black">410+</div>
+                  <div className="font-bold text-[13px] text-black">630+</div>
                   <div className="text-[9px] text-slate-500">Kost Ter-audit</div>
                 </div>
                 <div className="text-right">
-                  <div className="font-bold text-[13px] text-black">7 Verifikator</div>
+                  <div className="font-bold text-[13px] text-black">12 Verifikator</div>
                   <div className="text-[9px] text-slate-500">Mitra Lapangan</div>
                 </div>
               </div>
