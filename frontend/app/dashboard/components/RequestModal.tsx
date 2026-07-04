@@ -500,7 +500,7 @@ export default function RequestModal({
                 onClick={() => setOrderCategory('single')}
                 className={`p-4 rounded-xl border flex items-center gap-4 cursor-pointer transition-all ${
                   orderCategory === 'single'
-                    ? 'border-[#0f766e] bg-teal-50/50'
+                    ? 'border-[#052746] bg-[#D2E9FE]/30 ring-1 ring-[#052746]'
                     : 'border-slate-200 bg-slate-50/40 hover:border-slate-200'
                 }`}
               >
@@ -511,13 +511,13 @@ export default function RequestModal({
                   onChange={() => setOrderCategory('single')}
                   className="hidden"
                 />
-                <div className="h-9 w-9 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center shrink-0 text-lg">
+                <div className="h-9 w-9 rounded-lg bg-[#D2E9FE] border border-[#B8CDE3] flex items-center justify-center shrink-0 text-lg">
                   🏠
                 </div>
                 <div className="text-left flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-800 block">Inspeksi Tunggal</span>
-                    <span className="text-[10px] font-black text-[#0f766e]">Rp 50.000</span>
+                    <span className="text-[10px] font-black text-[#052746] bg-[#D2E9FE] px-2 py-0.5 rounded-md border border-[#B8CDE3] font-mono">Rp 50.000</span>
                   </div>
                   <span className="text-[9px] text-slate-400 block leading-relaxed mt-0.5">
                     Verifikasi 1 properti kos. Dapatkan scorecard Gemini AI untuk fasilitas iklan.
@@ -530,7 +530,7 @@ export default function RequestModal({
                 onClick={() => setOrderCategory('multi')}
                 className={`p-4 rounded-xl border flex items-center gap-4 cursor-pointer transition-all ${
                   orderCategory === 'multi'
-                    ? 'border-[#0f766e] bg-teal-50/50'
+                    ? 'border-[#0f766e] bg-teal-50/30 ring-1 ring-[#0f766e]'
                     : 'border-slate-200 bg-slate-50/40 hover:border-slate-200'
                 }`}
               >
@@ -541,13 +541,13 @@ export default function RequestModal({
                   onChange={() => setOrderCategory('multi')}
                   className="hidden"
                 />
-                <div className="h-9 w-9 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center shrink-0 text-lg">
+                <div className="h-9 w-9 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center shrink-0 text-lg">
                   🏢
                 </div>
                 <div className="text-left flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-800 block">Multi-Kos (Grup Banding)</span>
-                    <span className="text-[10px] font-black text-purple-600">Rp 45.000 <span className="text-[8px] font-normal text-slate-450">/ kos</span></span>
+                    <span className="text-[10px] font-black text-[#0f766e] bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200 font-mono">Rp 45.000 <span className="text-[8px] font-normal text-slate-450">/ kos</span></span>
                   </div>
                   <span className="text-[9px] text-slate-400 block leading-relaxed mt-0.5">
                     Verifikasi 2 sampai 5 kos secara bersamaan. Dapatkan lembar perbandingan dasbor interaktif.

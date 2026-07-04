@@ -195,9 +195,9 @@ export default function Home() {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              <a href="#fitur" className="grab-nav-link hover:text-[#003057]">Cara Kerja</a>
-              <a href="#bento" className="grab-nav-link hover:text-[#003057]">Keunggulan</a>
-              <a href="#harga" className="grab-nav-link hover:text-[#003057]">Kategori Layanan</a>
+              <a href="#fitur" className="grab-nav-link hover:text-[#003057]">How it Works</a>
+              <a href="#bento" className="grab-nav-link hover:text-[#003057]">About Us</a>
+              <a href="#harga" className="grab-nav-link hover:text-[#003057]">Pricing</a>
               <a href="#faq" className="grab-nav-link hover:text-[#003057]">FAQ</a>
             </nav>
 
@@ -234,21 +234,21 @@ export default function Home() {
                   onClick={() => setMobileMenuOpen(false)}
                   className="hover:text-[#003057] transition-all py-1 border-b border-slate-100 font-semibold"
                 >
-                  Cara Kerja
+                  How it Works
                 </a>
                 <a
                   href="#bento"
                   onClick={() => setMobileMenuOpen(false)}
                   className="hover:text-[#003057] transition-all py-1 border-b border-slate-100 font-semibold"
                 >
-                  Keunggulan
+                  About Us
                 </a>
                 <a
                   href="#harga"
                   onClick={() => setMobileMenuOpen(false)}
                   className="hover:text-[#003057] transition-all py-1 border-b border-slate-100 font-semibold"
                 >
-                  Kategori Layanan
+                  Pricing
                 </a>
                 <a
                   href="#faq"
@@ -294,7 +294,7 @@ export default function Home() {
 
               <div className="flex gap-3.5 pt-2">
                 <Link href="/login" className="flex items-center justify-center gap-2 h-14 bg-gradient-to-r from-[#003057] to-[#0f766e] hover:from-[#001e38] hover:to-[#115e59] text-white font-bold rounded-full px-8 shadow-md hover:shadow-lg hover:scale-[1.03] active:scale-[0.95] hover:-translate-y-[1px] transition-all grab-btn-transition text-[11px] uppercase tracking-wider">
-                  Mulai Audit Kos
+                  Mulai Audit Sekarang
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link href="/register" className="flex items-center justify-center h-14 border border-slate-300 bg-white hover:bg-slate-50 text-slate-705 font-bold rounded-full px-8 hover:scale-[1.03] active:scale-[0.95] hover:-translate-y-[1px] transition-all grab-btn-transition text-[11px] uppercase tracking-wider shadow-sm">
@@ -316,7 +316,7 @@ export default function Home() {
                 </div>
                 <div className="rounded-b-xl overflow-hidden border border-slate-200/50 aspect-[4/3] relative bg-slate-50">
                   <img 
-                    src="/hero-dashboard-preview.jpg" 
+                    src="/assets/Gemini_Generated_Image_xpspmtxpspmtxpsp.png" 
                     alt="InspeksiKos Dashboard" 
                     className="w-full h-full object-cover" 
                   />
@@ -467,7 +467,7 @@ export default function Home() {
               <div className="md:col-span-2 rounded-3xl border border-slate-150 bg-white p-8 shadow-sm flex flex-col md:flex-row gap-6 items-center overflow-hidden hover:shadow-md hover:scale-[1.015] hover:border-slate-250 transition-all duration-300 grab-btn-transition group">
                 <div className="w-full md:w-1/2 aspect-square rounded-2xl overflow-hidden border border-slate-200 relative bg-slate-100 shrink-0">
                   <img 
-                    src="/inspector-verifying-room.jpg" 
+                    src="/assets/Gemini_Generated_Image_jmdup3jmdup3jmdu.png" 
                     alt="Inspector verifying facilities" 
                     className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" 
                   />
@@ -498,9 +498,9 @@ export default function Home() {
                   </p>
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mt-6 text-xs text-teal-205 font-mono leading-normal text-left space-y-1.5">
-                  <div className="flex items-center gap-2"><CheckSquare className="h-3.5 w-3.5 text-teal-400" /> Kasur & Ranjang Cocok</div>
+                  <div className="flex items-center gap-2"><CheckSquare className="h-3.5 w-3.5 text-teal-400" /> Furniture lengkap dan bagus</div>
                   <div className="flex items-center gap-2"><CheckSquare className="h-3.5 w-3.5 text-teal-400" /> AC & Kelistrikan Cocok</div>
-                  <div className="flex items-center gap-2"><CheckSquare className="h-3.5 w-3.5 text-teal-400" /> Lemari & Meja Terverifikasi</div>
+                  <div className="flex items-center gap-2"><CheckSquare className="h-3.5 w-3.5 text-teal-400" /> Kamar mandi & Air baik</div>
                 </div>
               </div>
 
@@ -512,7 +512,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Uji Kebersihan Air</h3>
                   <p className="text-xs text-slate-655 leading-relaxed">
-                    Pengukuran kebersihan air kamar mandi secara langsung oleh verifikator lapangan. Menghindarkan Anda dari risiko alergi kulit akibat air keruh atau berkarat.
+                    Pengukuran kebersihan air kamar mandi secara langsung oleh verifikator lapangan menggunakan alat TDS Meter. Menghindarkan Anda dari risiko alergi kulit.
                   </p>
                 </div>
                 <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
@@ -529,7 +529,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Uji Internet Kamar</h3>
                   <p className="text-xs text-slate-655 leading-relaxed">
-                    Uji kecepatan internet langsung dari dalam kamar kos. Memastikan koneksi WiFi memadai dan stabil untuk kegiatan kuliah online maupun streaming harian.
+                    Uji kecepatan internet langsung dari dalam kamar kos menggunakan alat Speed Test. Memastikan koneksi WiFi memadai untuk kegiatan kuliah online.
                   </p>
                 </div>
                 <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
@@ -546,7 +546,7 @@ export default function Home() {
                   </div>
                   <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Hasil Laporan Lengkap</h3>
                   <p className="text-xs text-slate-655 leading-relaxed">
-                    Laporan ringkasan kepatuhan fasilitas kos dalam format PDF resmi untuk mempermudah Anda membandingkan berbagai kos secara objektif.
+                    Laporan berformat PDF resmi ringkasan kepatuhan fasilitas kos secara terperinci untuk mempermudah Anda membandingkan berbagai kos secara objektif.
                   </p>
                 </div>
                 <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">

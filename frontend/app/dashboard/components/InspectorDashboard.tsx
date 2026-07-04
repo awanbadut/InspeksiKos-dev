@@ -556,26 +556,26 @@ export default function InspectorDashboard({
       {/* DESKTOP VIEW */}
       <div className="hidden md:flex flex-col flex-1">
         {/* Navbar */}
-        <header className="w-full border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-0 z-30">
-          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <header className="w-full px-6 pt-4 sticky top-0 z-30 bg-slate-50/50 backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between bg-[#D2E9FE] rounded-2xl shadow-sm border border-[#B8CDE3]">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center">
-                <img src="/logo.webp" alt="InspeksiKos Logo" className="h-14 w-auto object-contain" />
+                <img src="/logo.webp" alt="InspeksiKos Logo" className="h-14 w-auto object-contain hover:scale-[1.02] active:scale-[0.98] transition-all" />
               </Link>
               <span className="text-[9px] px-2 py-0.5 bg-teal-50 text-teal-800 border border-teal-200 font-extrabold rounded-md uppercase tracking-wider font-mono">
                 inspektur
               </span>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl">
-                <User className="h-3.5 w-3.5 text-slate-500" />
-                <span className="text-[10px] font-bold text-slate-705 font-mono">
+              <div className="flex items-center gap-2 px-3.5 py-1.5 bg-white border border-[#052746]/30 rounded-xl">
+                <User className="h-3.5 w-3.5 text-[#223B55]" />
+                <span className="text-[10px] font-bold text-[#223B55] font-mono">
                   {email}
                 </span>
               </div>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 border border-rose-200 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-sm font-mono"
+                className="flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-[#B41E1D] hover:bg-rose-50 border border-[#B41E1D]/30 rounded-xl transition-all cursor-pointer active:scale-[0.98] shadow-sm font-mono bg-white"
               >
                 <LogOut className="h-3.5 w-3.5" />
                 <span>Keluar</span>
@@ -585,16 +585,59 @@ export default function InspectorDashboard({
         </header>
 
         {/* Welcome banner */}
-        <div className="relative bg-[#003057]/5 border-b border-[#003057]/10 py-10 px-8">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10 text-left">
-            <div>
-              <span className="text-[9px] uppercase tracking-wider text-[#003057] font-extrabold bg-[#003057]/5 px-2.5 py-1 rounded-md border border-[#003057]/10 block w-fit mb-2 font-mono">Panel Dasbor Utama</span>
-              <h1 className="text-2xl md:text-3xl font-black mb-1 text-slate-800">
-                Selamat Datang, {email?.split('@')[0]}!
+        <div className="max-w-7xl w-full mx-auto px-6 pt-6">
+          <div className="bg-[#298EEE] border border-[#B8CDE3] rounded-3xl p-8 text-white text-left relative overflow-hidden shadow-lg">
+            <div className="absolute top-[-30%] right-[-10%] w-64 h-64 rounded-full bg-white/10 blur-2xl pointer-events-none" />
+            <div className="relative z-10 space-y-2">
+              <span className="text-[9px] uppercase tracking-wider text-white font-extrabold bg-white/20 px-2.5 py-1 rounded-md w-fit block font-mono">Panel Dasbor Utama</span>
+              <h1 className="text-3xl font-black">
+                Selamat Datang, Inspektur!
               </h1>
-              <p className="text-xs text-slate-600 max-w-xl leading-relaxed font-medium">
+              <p className="text-xs text-white/95 max-w-xl leading-relaxed font-medium">
                 Daftar kerja verifikator lapangan. Isi data TDS air, kecepatan internet, unggah bukti visual, dan jalankan audit AI.
               </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Cards Section */}
+        <div className="max-w-7xl w-full mx-auto px-6 pt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Card 1: Available orders */}
+          <div className="bg-[#FFDD4A] border border-[#FFDB43] rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="h-14 w-14 rounded-full bg-[#FFEEA4] flex items-center justify-center text-[#FFD20D] shrink-0">
+              <ClipboardList className="h-7 w-7 text-[#FFD20D] fill-[#FFD20D]/20" />
+            </div>
+            <div className="text-left">
+              <p className="text-xs font-bold text-slate-600 uppercase tracking-wider">Pesanan Baru</p>
+              <h3 className="text-2xl font-black text-slate-800 font-mono">
+                {inspections.filter(i => i.inspector_id === null).length} Order
+              </h3>
+            </div>
+          </div>
+
+          {/* Card 2: In progress / Assigned */}
+          <div className="bg-[#70B4F4] border border-[#B8CDE3] rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="h-14 w-14 rounded-full bg-[#B8CDE3]/50 flex items-center justify-center text-[#094074] shrink-0">
+              <Compass className="h-7 w-7 text-[#094074]" />
+            </div>
+            <div className="text-left text-white">
+              <p className="text-xs font-bold text-white/90 uppercase tracking-wider">Tugas Berjalan</p>
+              <h3 className="text-2xl font-black text-white font-mono">
+                {inspections.filter(i => i.inspector_id !== null && i.status !== 'completed').length} Order
+              </h3>
+            </div>
+          </div>
+
+          {/* Card 3: Completed */}
+          <div className="bg-[#FFB554] border border-[#FFDAAA] rounded-2xl p-6 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
+            <div className="h-14 w-14 rounded-full bg-[#FFDAAA] flex items-center justify-center text-[#8C4F00] shrink-0">
+              <CheckCircle2 className="h-7 w-7 text-[#8C4F00] fill-[#8C4F00]/20" />
+            </div>
+            <div className="text-left text-white">
+              <p className="text-xs font-bold text-white/90 uppercase tracking-wider">Tugas Selesai</p>
+              <h3 className="text-2xl font-black text-white font-mono">
+                {inspections.filter(i => i.status === 'completed').length} Order
+              </h3>
             </div>
           </div>
         </div>
