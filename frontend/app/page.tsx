@@ -168,7 +168,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="relative min-h-screen bg-slate-50 text-[#0f172a] overflow-hidden font-sans selection:bg-teal-500/20 selection:text-[#003057]">
+    <div className="relative min-h-screen bg-[#F0F8FF]/45 text-[#0f172a] overflow-hidden font-sans selection:bg-teal-500/20 selection:text-[#003057]">
       
       {/* ========================================================================= */}
       {/* 1. RESPONSIVE LANDING PAGE */}
@@ -182,9 +182,9 @@ export default function Home() {
         {/* Grid Overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#00305703_1px,transparent_1px),linear-gradient(to_bottom,#00305703_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
 
-        {/* Navigation Bar - Cap 72px */}
-        <header className="w-full h-18 border-b border-slate-200/60 bg-white/75 backdrop-blur-md sticky top-0 z-30 transition-all">
-          <div className="max-w-7xl mx-auto h-full px-6 flex items-center justify-between">
+        {/* Navigation Bar - Figma Style */}
+        <header className="w-full px-6 pt-4 sticky top-0 z-30 bg-transparent">
+          <div className="max-w-7xl mx-auto px-6 py-3 bg-[#D2E9FE] border border-[#B8CDE3] rounded-2xl flex items-center justify-between shadow-sm">
             <Link href="/" className="flex items-center group">
               <img 
                 src="/logo.webp" 
@@ -327,123 +327,103 @@ export default function Home() {
           </div>
 
           {/* Animated University Credibility Showcase Section */}
-          <section className="w-full border border-slate-150 bg-white rounded-3xl p-8 md:p-12 mb-28 shadow-sm relative overflow-hidden">
-            <style dangerouslySetInnerHTML={{__html: `
-              .scrollbar-none::-webkit-scrollbar { display: none; }
-              .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
-              
-              /* Grab-style smooth transition variables and classes */
-              .grab-btn-transition {
-                transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-              }
-              
-              .grab-nav-link {
-                position: relative;
-                transition: color 0.25s ease;
-              }
-              .grab-nav-link::after {
-                content: '';
-                position: absolute;
-                bottom: -4px;
-                left: 0;
-                width: 0;
-                height: 2px;
-                background-color: #0f766e;
-                transition: width 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-              }
-              .grab-nav-link:hover::after {
-                width: 100%;
-              }
-            `}} />
-            <div className="absolute top-[-30%] right-[-10%] w-[300px] h-[300px] rounded-full bg-teal-500/5 blur-[80px] pointer-events-none" />
-            
-            <div className="text-center space-y-2 mb-10">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400 font-mono">
-                DIANDALKAN KAMPUS TERBAIK SUMATERA BARAT
+          {/* Telah Diandalkan oleh Mahasiswa Section */}
+          <section className="mb-28 max-w-5xl mx-auto space-y-10">
+            <div className="text-center space-y-2">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#003057] font-mono">
+                DIANDALKAN OLEH MAHASISWA KAMPUS TERBAIK SUMATERA BARAT
               </span>
-              <h2 className="text-2xl md:text-3xl font-black text-[#003057] tracking-tight">
+              <h2 className="text-3xl md:text-4xl font-black text-[#003057] tracking-tight">
                 Telah Diandalkan oleh Mahasiswa
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              {/* Left Column: Animated Showcase Card */}
-              <div className="lg:col-span-6 flex justify-center">
-                <div 
-                  className={`w-full max-w-[420px] p-8 rounded-3xl border bg-slate-50/40 flex flex-col justify-between h-[300px] shadow-sm transition-all duration-300 ${
-                    isTransitioning ? 'opacity-0 translate-y-4 scale-95' : 'opacity-100 translate-y-0 scale-100'
-                  } border-slate-150 grab-btn-transition`}
-                >
-                  <div className="flex items-start justify-between">
-                    <div className={`p-2 rounded-xl border ${universities[activeUni].logoColor} transition-colors duration-300 w-22 h-22 flex items-center justify-center shadow-sm`}>
-                      <img 
-                        src={`/${universities[activeUni].logoFile}`} 
-                        alt={`${universities[activeUni].short} Logo`} 
-                        className="max-w-full max-h-full object-contain hover:scale-105 transition-transform duration-200" 
-                      />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              {/* Card 1: PNP */}
+              <div className="bg-[#FE9000] border border-[#70B4F4] rounded-3xl p-6 shadow-sm flex flex-col justify-between h-[240px] text-left hover:scale-[1.015] hover:shadow-md transition-all duration-300 grab-btn-transition">
+                <div className="flex justify-between items-center border-b border-[#B8CDE3]/40 pb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-[#052746] flex items-center justify-center p-2.5">
+                      <img src="/logo-pnp.png" alt="PNP" className="max-w-full max-h-full object-contain" />
                     </div>
-                    <div className="text-right">
-                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-850 text-[8px] font-black uppercase tracking-wider font-mono">
-                        <span className="h-1.5 w-1.5 rounded-full bg-teal-600 animate-pulse" /> Terverifikasi
-                      </span>
+                    <div>
+                      <h4 className="text-base font-black text-slate-900 leading-none">PNP</h4>
+                      <p className="text-[10px] text-slate-800 font-medium mt-0.5">Politeknik Negeri Padang</p>
                     </div>
                   </div>
-
-                  <div className="space-y-1 text-left">
-                    <h3 className="text-2xl font-black text-[#003057] leading-tight">
-                      {universities[activeUni].short}
-                    </h3>
-                    <p className="text-xs text-slate-500 font-bold uppercase tracking-wide">
-                      {universities[activeUni].name}
-                    </p>
+                  <span className="px-2 py-0.5 bg-emerald-50/20 text-[#052746] border border-[#1D9E75]/40 text-[9px] font-black uppercase rounded-full font-mono">
+                    Terverifikasi
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-4">
+                  <div>
+                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">410+</h5>
+                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Kost Ter-audit</p>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-200/80">
-                    <div className="text-left">
-                      <div className="text-xl font-black text-[#003057] font-mono">{universities[activeUni].verifiedCount}</div>
-                      <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Kamar Ter-Audit</div>
-                    </div>
-                    <div className="text-left">
-                      <div className="text-xl font-black text-[#003057] font-mono">{universities[activeUni].inspectors}</div>
-                      <div className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Mitra Lapangan</div>
-                    </div>
+                  <div>
+                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">7</h5>
+                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Mitra Lapangan</p>
                   </div>
                 </div>
               </div>
 
-              {/* Right Column: Clickable Navigation Chips with Image/Logo icons */}
-              <div className="lg:col-span-6 flex flex-col justify-center space-y-4">
-                <p className="text-xs text-slate-500 font-semibold text-center lg:text-left">
-                  Pilih kampus untuk melihat statistik sebaran audit InspeksiKos secara langsung:
-                </p>
-                <div ref={uniContainerRef} className="flex md:grid overflow-x-auto md:overflow-x-visible pb-4 md:pb-0 gap-3 md:grid-cols-3 lg:grid-cols-4 snap-x snap-mandatory scrollbar-none w-full">
-                  {universities.map((uni, idx) => {
-                    const isActive = activeUni === idx;
-                    return (
-                      <button
-                        key={idx}
-                        onClick={() => handleUniChange(idx)}
-                        className={`flex flex-col items-center justify-center p-3 rounded-2xl border text-center transition-all duration-350 cursor-pointer h-22 w-28 shrink-0 snap-center md:w-auto md:shrink hover:scale-[1.03] active:scale-[0.96] grab-btn-transition ${
-                          isActive 
-                            ? 'bg-white border-2 border-[#0f766e] shadow-md font-black text-[#003057]' 
-                            : 'bg-slate-50/80 border-slate-200/80 opacity-60 hover:opacity-100 hover:bg-white text-slate-500'
-                        }`}
-                      >
-                        <div className="h-9 w-full flex items-center justify-center mb-1.5">
-                          <img 
-                            src={`/${uni.logoFile}`} 
-                            alt={`${uni.short} Logo`} 
-                            className="max-h-full max-w-full object-contain filter grayscale opacity-90 contrast-125" 
-                          />
-                        </div>
-                        <div className="text-[9px] font-extrabold font-mono tracking-tight leading-none">
-                          {uni.short}
-                        </div>
-                      </button>
-                    );
-                  })}
+              {/* Card 2: UNP */}
+              <div className="bg-[#FFF9E3] border border-[#FFDB43] rounded-3xl p-6 shadow-sm flex flex-col justify-between h-[240px] text-left hover:scale-[1.015] hover:shadow-md transition-all duration-300 grab-btn-transition">
+                <div className="flex justify-between items-center border-b border-[#B8CDE3]/40 pb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-[#052746] flex items-center justify-center p-2.5">
+                      <img src="/logo-unp.jpg" alt="UNP" className="max-w-full max-h-full object-contain rounded-full" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-black text-slate-900 leading-none">UNP</h4>
+                      <p className="text-[10px] text-slate-800 font-medium mt-0.5">Universitas Negeri Padang</p>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 bg-emerald-50/20 text-[#052746] border border-[#1D9E75]/40 text-[9px] font-black uppercase rounded-full font-mono">
+                    Terverifikasi
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-4">
+                  <div>
+                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">410+</h5>
+                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Kost Ter-audit</p>
+                  </div>
+                  <div>
+                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">7</h5>
+                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Mitra Lapangan</p>
+                  </div>
                 </div>
               </div>
+
+              {/* Card 3: UNAND */}
+              <div className="bg-[#E1FFF5] border border-[#49DEAE] rounded-3xl p-6 shadow-sm flex flex-col justify-between h-[240px] text-left hover:scale-[1.015] hover:shadow-md transition-all duration-300 grab-btn-transition">
+                <div className="flex justify-between items-center border-b border-[#B8CDE3]/40 pb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-12 h-12 rounded-full bg-[#052746] flex items-center justify-center p-2.5">
+                      <img src="/logo-unand.svg" alt="UNAND" className="max-w-full max-h-full object-contain" />
+                    </div>
+                    <div>
+                      <h4 className="text-base font-black text-slate-900 leading-none">UNAND</h4>
+                      <p className="text-[10px] text-slate-800 font-medium mt-0.5">Universitas Andalas</p>
+                    </div>
+                  </div>
+                  <span className="px-2 py-0.5 bg-emerald-50/20 text-[#052746] border border-[#1D9E75]/40 text-[9px] font-black uppercase rounded-full font-mono">
+                    Terverifikasi
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-4 pt-4">
+                  <div>
+                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">410+</h5>
+                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Kost Ter-audit</p>
+                  </div>
+                  <div>
+                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">7</h5>
+                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Mitra Lapangan</p>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </section>
 
