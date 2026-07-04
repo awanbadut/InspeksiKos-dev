@@ -104,12 +104,12 @@ export default function Home() {
             <div className="absolute top-8 right-0 w-[240px] h-[240px] rounded-3xl overflow-hidden shadow-md z-20">
               <img src="/assets/orang_di_depan_rumah.png" alt="House scene" className="w-full h-full object-cover" />
             </div>
-            {/* Laptop Card (bottom-center) */}
-            <div className="absolute bottom-0 left-[115px] w-[270px] h-[200px] rounded-3xl overflow-hidden shadow-md z-30">
+            {/* Laptop Card (bottom-left) */}
+            <div className="absolute bottom-0 left-[60px] w-[270px] h-[200px] rounded-3xl overflow-hidden shadow-md z-30">
               <img src="/assets/latar_biru_lagi_jempol_sampai_main_laptop.png" alt="Verification" className="w-full h-full object-cover" />
             </div>
-            {/* Light blue pill accent */}
-            <div className="absolute bottom-[40px] right-[40px] w-[120px] h-[36px] bg-[#6ED4F8] rounded-full z-40 shadow-md opacity-95"></div>
+            {/* Empty blue container in the middle/center */}
+            <div className="absolute top-[170px] left-[160px] w-[180px] h-[65px] bg-[#6ED4F8] rounded-3xl z-40 shadow-lg border-2 border-white/50 opacity-95"></div>
           </div>
         </div>
       </section>
