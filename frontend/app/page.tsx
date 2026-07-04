@@ -95,17 +95,17 @@ export default function Home() {
           </div>
 
           {/* Right: Illustration collage matching Figma */}
-          <div className="relative w-full h-[400px] max-w-[500px] mx-auto">
+          <div className="relative w-full h-[420px] max-w-[500px] mx-auto">
             {/* Orange Card (top-left) */}
-            <div className="absolute top-0 left-0 w-[300px] aspect-[16/9] rounded-2xl overflow-hidden shadow-lg z-10 bg-[#FF9B3E]">
+            <div className="absolute top-0 left-0 w-[240px] h-[240px] rounded-3xl overflow-hidden shadow-md z-10">
               <img src="/assets/cowok_lagi_megang_hp_latar_oren.png" alt="Person waving" className="w-full h-full object-cover" />
             </div>
             {/* House Card (middle-right) */}
-            <div className="absolute top-16 right-0 w-[280px] aspect-[16/9] rounded-2xl overflow-hidden shadow-lg z-20 bg-[#C0D8EF]">
+            <div className="absolute top-8 right-0 w-[240px] h-[240px] rounded-3xl overflow-hidden shadow-md z-20">
               <img src="/assets/orang_di_depan_rumah.png" alt="House scene" className="w-full h-full object-cover" />
             </div>
-            {/* Laptop Card (bottom-left) */}
-            <div className="absolute bottom-0 left-6 w-[300px] aspect-[16/9] rounded-2xl overflow-hidden shadow-lg z-30 bg-[#3B82F6]">
+            {/* Laptop Card (bottom-center) */}
+            <div className="absolute bottom-0 left-[115px] w-[270px] h-[200px] rounded-3xl overflow-hidden shadow-md z-30">
               <img src="/assets/latar_biru_lagi_jempol_sampai_main_laptop.png" alt="Verification" className="w-full h-full object-cover" />
             </div>
             {/* Light blue pill accent */}
