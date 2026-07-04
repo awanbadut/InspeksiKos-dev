@@ -1,30 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   Building,
-  Plus,
   LogOut,
-  Download,
-  Gauge,
-  Droplets,
-  Eye,
   Loader2,
   ShieldCheck,
-  Layers,
-  Wifi,
-  MapPin,
   ClipboardList,
-  RefreshCw,
   Sparkles,
   ChevronRight,
-  Send,
-  User,
-  Compass,
-  PhoneCall,
-  ChevronDown,
+  MapPin,
+  Gauge,
   ExternalLink,
+  PhoneCall,
+  Layers,
+  Compass,
+  ArrowRight,
+  ChevronLeft,
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -36,10 +30,28 @@ interface StudentDashboardProps {
   mapReady: boolean;
   handleLogout: () => void;
   onViewReport: (inspection: any) => void;
+  onViewDetail: (inspection: any) => void;
   onCompare: (groupItems: any[]) => void;
   setShowRequestModal: (show: boolean) => void;
   setOrderCategory: (category: 'single' | 'multi') => void;
 }
+
+// Status config: dot color + label
+const STATUS_CONFIG: Record<string, { dot: string; label: string }> = {
+  'inspector_on_location': { dot: 'bg-red-500', label: 'Inspektor Dilokasi' },
+  'order_created': { dot: 'bg-[#FF9B3E]', label: 'Pesan Dibuat' },
+  'confirmed': { dot: 'bg-[#3B82F6]', label: 'Dikonfirmasi' },
+  'completed': { dot: 'bg-green-500', label: 'Selesai' },
+};
+
+function getStatusConfig(status: string, inspectorId: string | null) {
+  if (status === 'completed') return STATUS_CONFIG['completed'];
+  if (inspectorId === null) return STATUS_CONFIG['order_created'];
+  if (status === 'confirmed' || status === 'assigned') return STATUS_CONFIG['confirmed'];
+  return STATUS_CONFIG['inspector_on_location'];
+}
+
+const ITEMS_PER_PAGE = 4;
 
 export default function StudentDashboard({
   email,
@@ -49,22 +61,12 @@ export default function StudentDashboard({
   mapReady,
   handleLogout,
   onViewReport,
+  onViewDetail,
   onCompare,
   setShowRequestModal,
   setOrderCategory,
 }: StudentDashboardProps) {
-  // Mobile Tab State
-  const [mobileTab, setMobileTab] = useState<'home' | 'riwayat' | 'bantuan'>('home');
-  const [selectedRegion, setSelectedRegion] = useState<string>('Semua Wilayah');
-  const [activeBannerIndex, setActiveBannerIndex] = useState<number>(0);
-
-  // Auto-swipe banner timer for mobile view (every 4s)
-  useEffect(() => {
-    const bannerTimer = setInterval(() => {
-      setActiveBannerIndex((prev) => (prev + 1) % 3);
-    }, 4000);
-    return () => clearInterval(bannerTimer);
-  }, []);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Leaflet Map instance inside dashboard
   useEffect(() => {
@@ -100,10 +102,9 @@ export default function StudentDashboard({
         completedWithLocation.forEach((insp) => {
           const { latitude, longitude } = insp.property.claim_data.location;
           const score = insp.audit_report?.score || 0;
-          const conf = insp.audit_report?.confidence_level || 'UNKNOWN';
 
           const marker = L.marker([latitude, longitude], { icon: customIcon }).addTo(mapInstance);
-          
+
           const popupContent = `
             <div style="font-family: sans-serif; padding: 4px; min-width: 140px; color: #1e293b;">
               <h5 style="margin: 0 0 3px 0; font-size: 11px; font-weight: 800; color: #0f172a;">${insp.property.name}</h5>
@@ -135,7 +136,7 @@ export default function StudentDashboard({
     }
   }, [mapReady, inspections]);
 
-  // Compute dynamic stats matching figma mockup
+  // Compute dynamic stats
   const completedInspections = inspections.filter(i => i.status === 'completed');
   const runningInspections = inspections.filter(i => i.status !== 'completed');
 
@@ -167,7 +168,7 @@ export default function StudentDashboard({
       fasilitasAvg += Number(score);
 
       // Lokasi based on geofencing
-      lokasiAvg += 90; // Default mockup locations are verified
+      lokasiAvg += 90;
 
       // Legalitas score
       legalitasAvg += 85;
@@ -187,14 +188,7 @@ export default function StudentDashboard({
     legalitasAvg = 88;
   }
 
-  // Filter inspections for region selector
-  const displayedInspections = inspections.filter((insp: any) => {
-    if (selectedRegion === 'Semua Wilayah') return true;
-    const address = (insp.property?.address || '').toLowerCase();
-    const regionWord = selectedRegion.split(' ')[0].toLowerCase();
-    return address.includes(regionWord);
-  });
-
+  // Comparison groups
   const comparisonGroups: Record<string, any[]> = {};
   completedInspections.forEach(insp => {
     const compId = insp.property?.claim_data?.comparison_id;
@@ -217,401 +211,409 @@ export default function StudentDashboard({
     (insp) => insp.status === 'completed' && insp.property?.claim_data?.location?.latitude
   );
 
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(inspections.length / ITEMS_PER_PAGE));
+  const paginatedInspections = inspections.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // Bar chart data
+  const barChartData = [
+    { label: 'KEBERSIHAN', value: kebersihanAvg, color: 'bg-[#1F3E5A]' },
+    { label: 'KEAMANAN', value: keamananAvg, color: 'bg-[#2D6A9F]' },
+    { label: 'FASILITAS', value: fasilitasAvg, color: 'bg-[#3B82F6]' },
+    { label: 'LOKASI', value: lokasiAvg, color: 'bg-[#1F3E5A]' },
+    { label: 'LEGALITAS', value: legalitasAvg, color: 'bg-[#2D6A9F]' },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#F0F9FF] font-sans text-slate-800 pb-12">
-      {/* DESKTOP & LAPTOP CONTAINER */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 pt-6 space-y-6">
-        
-        {/* Navbar */}
-        <header className="w-full bg-[#D2E9FE] rounded-[18px] px-6 py-4 flex items-center justify-between border border-blue-200/50 shadow-sm">
-          <div className="flex items-center gap-3">
-            <Link href="/" className="flex items-center">
-              <span className="text-xl font-extrabold tracking-tight text-[#052746]">inspeksikos</span>
+    <div className="min-h-screen bg-[#E8F4FD] font-sans text-slate-800">
+      {/* ========== NAVBAR ========== */}
+      <header className="sticky top-0 z-50 bg-[#E8F4FD]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+          <nav className="bg-[#D6E8F7] rounded-full px-4 sm:px-6 py-2.5 flex items-center justify-between border border-blue-200/40">
+            {/* Left: Logo */}
+            <Link href="/" className="flex items-center shrink-0">
+              <Image
+                src="/logo.webp"
+                alt="InspeksiKos"
+                width={120}
+                height={40}
+                className="h-10 sm:h-12 w-auto mix-blend-multiply"
+              />
             </Link>
-            <span className="text-[9px] px-2 py-0.5 bg-white text-[#052746] border border-blue-300 font-extrabold rounded-md uppercase tracking-wider font-mono">
-              mahasiswa
-            </span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-2 bg-white border border-[#052746] rounded-xl">
-              <User className="h-4 w-4 text-[#223B55]" />
-              <span className="text-xs font-bold text-[#223B55] font-mono">
+
+            {/* Right: Email + Logout */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <span className="hidden sm:inline text-xs font-semibold text-[#1F3E5A] truncate max-w-[200px]">
                 {email}
               </span>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-1.5 px-3 sm:px-4 py-2 text-xs font-bold bg-white text-red-600 border border-red-200 rounded-full hover:bg-red-50 transition-all cursor-pointer"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                <span>Keluar</span>
+              </button>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      {/* ========== MAIN CONTENT ========== */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 pb-12 space-y-6">
+
+        {/* ========== HERO BANNER ========== */}
+        <section className="w-full bg-gradient-to-br from-[#3B82F6] to-[#2563EB] rounded-2xl sm:rounded-3xl overflow-hidden relative p-6 sm:p-10 md:p-12 shadow-lg">
+          {/* Decorative circles */}
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/5 rounded-full" />
+          <div className="absolute -bottom-16 -left-8 w-56 h-56 bg-white/5 rounded-full" />
+
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-3 max-w-2xl">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-white leading-tight">
+                Selamat Datang, {email?.split('@')[0]}!
+              </h1>
+              <p className="text-sm sm:text-base text-white/85 leading-relaxed">
+                Kelola pengajuan verifikasi properti kos Anda di Kota Padang untuk memvalidasi fasilitas iklan secara transparan.
+              </p>
             </div>
             <button
-              onClick={handleLogout}
-              className="flex items-center gap-1.5 px-4 py-2 text-xs font-bold bg-red-50 text-[#B41E1D] border border-[#B41E1D] rounded-xl hover:bg-red-100/50 transition-all cursor-pointer"
+              onClick={() => {
+                setOrderCategory('single');
+                setShowRequestModal(true);
+              }}
+              className="flex items-center gap-2 bg-white hover:bg-slate-50 text-[#1F3E5A] font-bold text-sm sm:text-base px-6 py-3.5 rounded-full transition-all cursor-pointer shadow-md shrink-0 group"
             >
-              <LogOut className="h-4 w-4" />
-              <span>Keluar</span>
+              <span>Ajukan Inspeksi</span>
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
-        </header>
-
-        {/* Welcome Banner Card */}
-        <section className="w-full bg-[#298EEE] rounded-[18px] border border-blue-200/30 overflow-hidden relative p-8 md:p-12 shadow-md flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="text-left space-y-3">
-            <h1 className="text-3xl md:text-5xl font-black text-white">
-              Selamat Datang, {email?.split('@')[0]}!
-            </h1>
-            <p className="text-sm md:text-base text-white/90 max-w-2xl leading-relaxed">
-              Kelola pengajuan verifikasi properti kos Anda di Kota Padang untuk memvalidasi fasilitas iklan secara transparan.
-            </p>
-          </div>
-          <button
-            onClick={() => {
-              setOrderCategory('single');
-              setShowRequestModal(true);
-            }}
-            className="flex items-center gap-2 bg-white hover:bg-slate-50 text-[#333333] font-extrabold text-sm md:text-base px-6 py-4 rounded-[30px] transition-all cursor-pointer shadow-md transform hover:scale-[1.02]"
-          >
-            <span>Ajukan Inspeksi</span>
-            <ChevronRight className="h-5 w-5" />
-          </button>
         </section>
 
-        {/* Dashboard Metrics Row */}
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Card 1: Berjalan */}
-          <div className="bg-[#70B4F4] rounded-2xl p-5 border border-blue-300 flex items-center gap-4 shadow-sm">
-            <div className="h-16 w-16 bg-[#B8CDE3] rounded-full flex items-center justify-center">
-              <ClipboardList className="h-8 w-8 text-[#094074]" />
+        {/* ========== 3 STAT CARDS ========== */}
+        <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
+          {/* Berjalan - Blue */}
+          <div className="bg-[#3B82F6] rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+            <div className="h-14 w-14 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+              <ClipboardList className="h-7 w-7 text-white" />
             </div>
-            <div className="text-left">
-              <span className="text-xs font-bold text-white uppercase tracking-wider block">Berjalan</span>
-              <span className="text-3xl font-black text-slate-800 block">{berjalanCount} Order</span>
-            </div>
-          </div>
-          {/* Card 2: Selesai */}
-          <div className="bg-[#FFB554] rounded-2xl p-5 border border-orange-200 flex items-center gap-4 shadow-sm">
-            <div className="h-16 w-16 bg-[#FFDAAA] rounded-full flex items-center justify-center">
-              <ShieldCheck className="h-8 w-8 text-[#8C4F00]" />
-            </div>
-            <div className="text-left">
-              <span className="text-xs font-bold text-white uppercase tracking-wider block">Selesai</span>
-              <span className="text-3xl font-black text-slate-800 block">{selesaiCount} Order</span>
+            <div>
+              <span className="text-xs font-semibold text-white/80 uppercase tracking-wider block">Berjalan</span>
+              <span className="text-2xl sm:text-3xl font-extrabold text-white block">{berjalanCount} <span className="text-lg font-bold">Order</span></span>
             </div>
           </div>
-          {/* Card 3: Loyalitas */}
-          <div className="bg-[#FFDD4A] rounded-2xl p-5 border border-yellow-300 flex items-center gap-4 shadow-sm">
-            <div className="h-16 w-16 bg-[#FFEEA4] rounded-full flex items-center justify-center">
-              <Sparkles className="h-8 w-8 text-[#FFD20D]" />
+
+          {/* Selesai - Orange */}
+          <div className="bg-[#FF9B3E] rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+            <div className="h-14 w-14 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+              <ShieldCheck className="h-7 w-7 text-white" />
             </div>
-            <div className="text-left">
-              <span className="text-xs font-bold text-white uppercase tracking-wider block">Loyalitas</span>
-              <span className="text-3xl font-black text-slate-800 block">{loyalitasLevel}</span>
+            <div>
+              <span className="text-xs font-semibold text-white/80 uppercase tracking-wider block">Selesai</span>
+              <span className="text-2xl sm:text-3xl font-extrabold text-white block">{selesaiCount} <span className="text-lg font-bold">Order</span></span>
+            </div>
+          </div>
+
+          {/* Loyalitas - Yellow */}
+          <div className="bg-[#FFD147] rounded-2xl p-5 flex items-center gap-4 shadow-sm">
+            <div className="h-14 w-14 bg-white/20 rounded-full flex items-center justify-center shrink-0">
+              <Sparkles className="h-7 w-7 text-white" />
+            </div>
+            <div>
+              <span className="text-xs font-semibold text-white/80 uppercase tracking-wider block">Loyalitas</span>
+              <span className="text-2xl sm:text-3xl font-extrabold text-[#1F3E5A] block">{loyalitasLevel}</span>
             </div>
           </div>
         </section>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Left Column (Inspections list and Map) */}
-          <div className="lg:col-span-2 space-y-6">
-            
-            {/* Map (Optional display if completed items have location) */}
-            {hasCompletedLocations && (
-              <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-left">
-                <h3 className="text-sm font-extrabold text-[#052746] mb-4 uppercase tracking-wider flex items-center gap-2">
-                  <Compass className="h-4 w-4 text-[#298EEE]" />
-                  Peta Sebaran Kos Terverifikasi
-                </h3>
-                <div
-                  id="all-properties-map-container"
-                  className="w-full h-64 rounded-2xl border border-slate-200 overflow-hidden bg-slate-50"
-                  style={{ minHeight: '260px' }}
-                />
-              </div>
-            )}
+        {/* ========== MAP (conditional) ========== */}
+        {hasCompletedLocations && (
+          <section className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm">
+            <h3 className="text-sm font-bold text-[#1F3E5A] mb-4 flex items-center gap-2">
+              <Compass className="h-4 w-4 text-[#3B82F6]" />
+              Peta Sebaran Kos Terverifikasi
+            </h3>
+            <div
+              id="all-properties-map-container"
+              className="w-full h-64 rounded-xl border border-slate-200 overflow-hidden bg-slate-50"
+              style={{ minHeight: '260px' }}
+            />
+          </section>
+        )}
 
-            {/* Comparison Groups banner */}
-            {validComparisonGroups.length > 0 && (
-              <div className="bg-[#D2E9FE]/30 border border-blue-200 rounded-3xl p-6 text-left shadow-sm">
-                <h3 className="text-xs font-bold text-[#052746] mb-3 uppercase tracking-wider flex items-center gap-1.5">
-                  <Layers className="h-4 w-4 text-[#298EEE]" />
-                  Hasil Perbandingan Paket Komparasi
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {validComparisonGroups.map(group => {
-                    const names = group.items.map(i => i.property.name).join(' vs ');
-                    return (
-                      <div key={group.id} className="p-4 bg-white border border-slate-200 rounded-2xl flex items-center justify-between gap-4">
-                        <div className="min-w-0">
-                          <p className="text-xs font-extrabold text-slate-800 truncate">{names}</p>
-                          <p className="text-[10px] text-slate-400 font-bold">{group.items.length} Kos dibandingkan</p>
-                        </div>
-                        <button
-                          onClick={() => onCompare(group.items)}
-                          className="px-3.5 py-1.5 bg-[#052746] hover:bg-[#003057] text-white font-bold text-[9px] uppercase tracking-wider rounded-xl cursor-pointer"
-                        >
-                          Bandingkan
-                        </button>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+        {/* ========== COMPARISON GROUPS ========== */}
+        {validComparisonGroups.length > 0 && (
+          <section className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-200 shadow-sm">
+            <h3 className="text-sm font-bold text-[#1F3E5A] mb-4 flex items-center gap-2">
+              <Layers className="h-4 w-4 text-[#3B82F6]" />
+              Hasil Perbandingan Paket Komparasi
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {validComparisonGroups.map(group => {
+                const names = group.items.map(i => i.property.name).join(' vs ');
+                return (
+                  <div key={group.id} className="p-4 bg-[#E8F4FD] border border-blue-100 rounded-xl flex items-center justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="text-sm font-bold text-[#1F3E5A] truncate">{names}</p>
+                      <p className="text-xs text-slate-500">{group.items.length} Kos dibandingkan</p>
+                    </div>
+                    <button
+                      onClick={() => onCompare(group.items)}
+                      className="px-4 py-2 bg-[#1F3E5A] hover:bg-[#162D42] text-white font-bold text-xs rounded-lg cursor-pointer transition-colors"
+                    >
+                      Bandingkan
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+        )}
 
-            {/* Inspections List */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-left">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 border-b border-slate-100 pb-4">
-                <h3 className="text-sm font-extrabold text-[#052746] uppercase tracking-wider flex items-center gap-2">
-                  <ClipboardList className="h-5 w-5 text-[#298EEE]" />
+        {/* ========== TWO COLUMN: INSPECTIONS + STATS ========== */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+          {/* LEFT: Inspection List (3/5 width on lg) */}
+          <div className="lg:col-span-3">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-100">
+                <h3 className="text-sm sm:text-base font-bold text-[#1F3E5A]">
                   Daftar Permintaan Inspeksi
                 </h3>
-                
-                {/* Region filter */}
-                <div className="flex items-center gap-2">
-                  <select
-                    value={selectedRegion}
-                    onChange={(e) => setSelectedRegion(e.target.value)}
-                    className="text-xs bg-slate-50 border border-slate-255 rounded-xl px-3 py-1.5 text-slate-600 focus:outline-none focus:ring-1 focus:ring-[#298EEE] cursor-pointer"
-                  >
-                    <option value="Semua Wilayah">📍 Semua Wilayah</option>
-                    <option value="Limau Manis (Unand)">📍 Limau Manis</option>
-                    <option value="Air Tawar (UNP)">📍 Air Tawar</option>
-                    <option value="Lolong Belanti">📍 Lolong Belanti</option>
-                    <option value="Ulu Gadut">📍 Ulu Gadut</option>
-                    <option value="By Pass Padang">📍 By Pass</option>
-                  </select>
-
-                  <button
-                    onClick={() => fetchInspections(false)}
-                    className="p-1.5 text-slate-400 hover:text-slate-700 rounded-xl border border-slate-255 hover:bg-slate-50 transition-all cursor-pointer"
-                  >
-                    <RefreshCw className="h-4 w-4" />
-                  </button>
-                </div>
+                <Link
+                  href="/riwayat"
+                  className="text-xs sm:text-sm font-semibold text-[#3B82F6] hover:text-[#2563EB] flex items-center gap-1 transition-colors"
+                >
+                  Riwayat Inspeksi
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
 
-              {loading ? (
-                <div className="flex flex-col items-center justify-center py-20 gap-3">
-                  <Loader2 className="h-6 w-6 text-[#298EEE] animate-spin" />
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Sinkronisasi data...</span>
-                </div>
-              ) : displayedInspections.length === 0 ? (
-                <div className="text-center py-16 bg-slate-50 border border-dashed border-slate-200 rounded-2xl">
-                  <Building className="h-10 w-10 text-slate-300 mx-auto mb-3" />
-                  <p className="text-xs font-bold text-slate-500 mb-1">Belum Ada Pengajuan Kos</p>
-                  <p className="text-[10px] text-slate-400 max-w-xs mx-auto">
-                    Kos yang Anda daftarkan untuk diinspeksi akan muncul di sini. Klik "Ajukan Inspeksi" untuk memulai.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {displayedInspections.map((insp: any) => {
-                    const isUnassigned = insp.inspector_id === null;
-                    const packageLabel = insp.property?.claim_data?.comparison_id ? 'Komparasi' : 'Single';
-                    const photoUrl = insp.photos?.[0]?.photo_url || '/logo.webp';
-                    
-                    return (
-                      <div
-                        key={insp.inspection_id}
-                        className="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-4 hover:border-slate-300 transition-all shadow-sm"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="h-16 w-16 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
+              {/* Content */}
+              <div className="px-5 sm:px-6 py-4">
+                {loading ? (
+                  <div className="flex flex-col items-center justify-center py-16 gap-3">
+                    <Loader2 className="h-6 w-6 text-[#3B82F6] animate-spin" />
+                    <span className="text-xs text-slate-400 font-semibold">Sinkronisasi data...</span>
+                  </div>
+                ) : inspections.length === 0 ? (
+                  <div className="text-center py-16 bg-[#E8F4FD]/50 border border-dashed border-blue-200 rounded-xl">
+                    <Building className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+                    <p className="text-sm font-bold text-slate-500 mb-1">Belum Ada Pengajuan Kos</p>
+                    <p className="text-xs text-slate-400 max-w-xs mx-auto">
+                      Kos yang Anda daftarkan untuk diinspeksi akan muncul di sini. Klik &quot;Ajukan Inspeksi&quot; untuk memulai.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {paginatedInspections.map((insp: any) => {
+                      const packageLabel = insp.property?.claim_data?.comparison_id ? 'Komparasi' : 'Single';
+                      const photoUrl = insp.photos?.[0]?.photo_url || '/logo.webp';
+                      const statusCfg = getStatusConfig(insp.status, insp.inspector_id);
+
+                      return (
+                        <div
+                          key={insp.inspection_id}
+                          className="p-4 bg-white border border-slate-200 rounded-xl flex flex-col sm:flex-row items-start sm:items-center gap-4 hover:border-slate-300 hover:shadow-sm transition-all"
+                        >
+                          {/* Thumbnail */}
+                          <div className="h-16 w-16 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shrink-0">
                             <img src={photoUrl} alt="Kos" className="h-full w-full object-cover" />
                           </div>
-                          <div>
-                            <h4 className="text-base font-extrabold text-[#052746]">
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0 space-y-1">
+                            <h4 className="text-sm font-bold text-[#1F3E5A] truncate">
                               {insp.property?.name || 'Kos Baru'}
                             </h4>
-                            <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-1">
-                              <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
-                              <span className="truncate max-w-[200px] md:max-w-[250px]">{insp.property?.address}</span>
+                            <p className="text-xs text-slate-500 flex items-center gap-1">
+                              <MapPin className="h-3 w-3 text-slate-400 shrink-0" />
+                              <span className="truncate">{insp.property?.address}</span>
                             </p>
                           </div>
-                        </div>
 
-                        {/* Package & Date info */}
-                        <div className="flex gap-8 text-left">
-                          <div>
-                            <span className="text-[9px] font-bold text-slate-450 tracking-wider uppercase block">Paket</span>
-                            <span className="text-xs font-extrabold text-slate-700 block">{packageLabel}</span>
+                          {/* Meta: Paket + Tanggal */}
+                          <div className="flex gap-6 text-left shrink-0">
+                            <div>
+                              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">PAKET</span>
+                              <span className="text-xs font-bold text-[#1F3E5A] block">{packageLabel}</span>
+                            </div>
+                            <div>
+                              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block">TANGGAL</span>
+                              <span className="text-xs font-bold text-[#1F3E5A] block">
+                                {new Date(insp.assigned_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              </span>
+                            </div>
                           </div>
-                          <div>
-                            <span className="text-[9px] font-bold text-slate-450 tracking-wider uppercase block">Tanggal</span>
-                            <span className="text-xs font-extrabold text-slate-700 block">
-                              {new Date(insp.assigned_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
-                            </span>
-                          </div>
-                        </div>
 
-                        {/* Status badge & detail action */}
-                        <div className="flex items-center gap-3 self-stretch md:self-auto justify-between md:justify-end">
-                          {isUnassigned ? (
-                            <span className="text-[10px] font-extrabold px-3 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 uppercase tracking-wide">
-                              Mencari Verifikator
+                          {/* Status + Action */}
+                          <div className="flex items-center gap-3 shrink-0">
+                            {/* Status badge with dot */}
+                            <span className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                              <span className={`h-2.5 w-2.5 rounded-full ${statusCfg.dot}`} />
+                              {statusCfg.label}
                             </span>
-                          ) : (
-                            <span
-                              className={`text-[10px] font-extrabold px-3 py-1.5 rounded-full uppercase tracking-wide ${
-                                insp.status === 'completed'
-                                  ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
-                                  : 'bg-blue-50 text-[#094074] border border-blue-200'
-                              }`}
+
+                            <button
+                              onClick={() => {
+                                if (insp.status === 'completed') {
+                                  onViewReport(insp);
+                                } else {
+                                  onViewDetail(insp);
+                                }
+                              }}
+                              className="text-xs font-semibold text-[#3B82F6] hover:text-[#2563EB] flex items-center gap-0.5 cursor-pointer transition-colors whitespace-nowrap"
                             >
-                              {insp.status === 'completed' ? 'Audit Selesai' : 'Inspektur Dilokasi'}
-                            </span>
-                          )}
-
-                          <button
-                            onClick={() => {
-                              if (insp.status === 'completed') {
-                                onViewReport(insp);
-                              } else {
-                                alert(`Sesi inspeksi sedang berlangsung di lokasi. Silakan tunggu laporan audit selesai diunggah.`);
-                              }
-                            }}
-                            className="px-4 py-2 text-xs font-extrabold text-slate-700 border border-slate-300 rounded-xl hover:bg-slate-50 transition-all cursor-pointer"
-                          >
-                            Lihat Detail
-                          </button>
+                              Lihat Detail
+                              <ChevronRight className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Pagination */}
+                {inspections.length > ITEMS_PER_PAGE && (
+                  <div className="flex items-center justify-center gap-1.5 mt-5 pt-4 border-t border-slate-100">
+                    <button
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`h-8 w-8 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                          currentPage === page
+                            ? 'bg-[#3B82F6] text-white shadow-sm'
+                            : 'border border-slate-200 text-slate-600 hover:bg-slate-50'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      className="p-1.5 rounded-lg border border-slate-200 text-slate-500 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Right Column (Compliance Stats & Bento promotion boxes) */}
-          <div className="space-y-6">
-            
-            {/* Compliance Graph */}
-            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-left flex flex-col justify-between">
-              <div>
-                <h3 className="text-sm font-extrabold text-[#052746] uppercase tracking-wider flex items-center gap-2">
-                  <Gauge className="h-5 w-5 text-[#298EEE]" />
+          {/* RIGHT: Compliance Stats (2/5 width on lg) */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden h-full">
+              {/* Header */}
+              <div className="px-5 sm:px-6 py-4 border-b border-slate-100">
+                <h3 className="text-sm sm:text-base font-bold text-[#1F3E5A] flex items-center gap-2">
+                  <Gauge className="h-4 w-4 text-[#3B82F6]" />
                   Statistik Kepatuhan Properti
                 </h3>
-                <p className="text-[10px] text-slate-400 mt-1">
-                  Rata-rata akreditasi dari kos milik Anda di Kota Padang
-                </p>
               </div>
 
-              {/* Bar Chart Container */}
-              <div className="w-full bg-white border border-slate-100 rounded-2xl p-4 mt-6 flex flex-col gap-6">
-                <div className="flex justify-between items-end h-56 pt-6 pb-2 px-2 border-b border-slate-100 gap-2">
-                  {/* Kebersihan Bar */}
-                  <div className="flex flex-col items-center justify-end h-full flex-1 gap-2">
-                    <span className="text-[10px] font-bold text-slate-700">{kebersihanAvg}%</span>
-                    <div className="w-full bg-slate-50 rounded-t-lg h-full flex items-end">
-                      <div className="w-full bg-[#052746] rounded-t-md transition-all duration-700" style={{ height: `${kebersihanAvg}%` }} />
+              {/* Bar Chart */}
+              <div className="px-5 sm:px-6 py-6">
+                <div className="flex justify-between items-end h-52 gap-3">
+                  {barChartData.map((bar) => (
+                    <div key={bar.label} className="flex flex-col items-center justify-end h-full flex-1 gap-2">
+                      <span className="text-[10px] font-bold text-slate-600">{bar.value}%</span>
+                      <div className="w-full bg-slate-100 rounded-t-lg h-full flex items-end">
+                        <div
+                          className={`w-full ${bar.color} rounded-t-md transition-all duration-700 ease-out`}
+                          style={{ height: `${bar.value}%` }}
+                        />
+                      </div>
+                      <span className="text-[8px] sm:text-[9px] font-bold text-slate-500 text-center leading-tight">
+                        {bar.label}
+                      </span>
                     </div>
-                    <span className="text-[9px] font-bold text-[#43474E] text-center leading-tight">BERSIH</span>
-                  </div>
-
-                  {/* Keamanan Bar */}
-                  <div className="flex flex-col items-center justify-end h-full flex-1 gap-2">
-                    <span className="text-[10px] font-bold text-slate-700">{keamananAvg}%</span>
-                    <div className="w-full bg-slate-50 rounded-t-lg h-full flex items-end">
-                      <div className="w-full bg-[#298EEE] rounded-t-md transition-all duration-700" style={{ height: `${keamananAvg}%` }} />
-                    </div>
-                    <span className="text-[9px] font-bold text-[#43474E] text-center leading-tight">AMAN</span>
-                  </div>
-
-                  {/* Fasilitas Bar */}
-                  <div className="flex flex-col items-center justify-end h-full flex-1 gap-2">
-                    <span className="text-[10px] font-bold text-slate-700">{fasilitasAvg}%</span>
-                    <div className="w-full bg-slate-50 rounded-t-lg h-full flex items-end">
-                      <div className="w-full bg-[#1ACDFF] rounded-t-md transition-all duration-700" style={{ height: `${fasilitasAvg}%` }} />
-                    </div>
-                    <span className="text-[9px] font-bold text-[#43474E] text-center leading-tight">FASILITAS</span>
-                  </div>
-
-                  {/* Lokasi Bar */}
-                  <div className="flex flex-col items-center justify-end h-full flex-1 gap-2">
-                    <span className="text-[10px] font-bold text-slate-700">{lokasiAvg}%</span>
-                    <div className="w-full bg-slate-50 rounded-t-lg h-full flex items-end">
-                      <div className="w-full bg-[#052746] rounded-t-md transition-all duration-700" style={{ height: `${lokasiAvg}%` }} />
-                    </div>
-                    <span className="text-[9px] font-bold text-[#43474E] text-center leading-tight">LOKASI</span>
-                  </div>
-
-                  {/* Legalitas Bar */}
-                  <div className="flex flex-col items-center justify-end h-full flex-1 gap-2">
-                    <span className="text-[10px] font-bold text-slate-700">{legalitasAvg}%</span>
-                    <div className="w-full bg-slate-50 rounded-t-lg h-full flex items-end">
-                      <div className="w-full bg-[#298EEE] rounded-t-md transition-all duration-700" style={{ height: `${legalitasAvg}%` }} />
-                    </div>
-                    <span className="text-[9px] font-bold text-[#43474E] text-center leading-tight">LEGAL</span>
-                  </div>
+                  ))}
                 </div>
 
                 {/* Legend */}
-                <div className="flex justify-between items-center text-[10px] text-slate-500 font-bold px-2">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-1">
-                      <div className="h-2.5 w-2.5 bg-[#052746] rounded-sm" />
-                      <span>Utama</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <div className="h-2.5 w-2.5 bg-[#298EEE] rounded-sm" />
-                      <span>Pendukung</span>
-                    </div>
+                <div className="flex items-center gap-4 mt-5 pt-4 border-t border-slate-100">
+                  <div className="flex items-center gap-1.5">
+                    <div className="h-2.5 w-2.5 bg-[#1F3E5A] rounded-sm" />
+                    <span className="text-[10px] font-semibold text-slate-500">Utama</span>
                   </div>
-                  <span className="italic font-mono text-[9px] text-slate-400">*Diperbarui otomatis</span>
+                  <div className="flex items-center gap-1.5">
+                    <div className="h-2.5 w-2.5 bg-[#3B82F6] rounded-sm" />
+                    <span className="text-[10px] font-semibold text-slate-500">Pendukung</span>
+                  </div>
                 </div>
               </div>
             </div>
-
-            {/* Upgrade Bento Box */}
-            <div className="bg-[#052746] rounded-[32px] p-8 border border-blue-900/50 shadow-md relative overflow-hidden text-left flex flex-col justify-between min-h-[300px]">
-              <div className="absolute inset-0 bg-[#298EEE]/10 pointer-events-none blur-3xl rounded-full translate-x-20 translate-y-20" />
-              <div className="space-y-4 relative z-10">
-                <span className="text-[10px] font-extrabold px-3 py-1 bg-[#298EEE] text-white rounded-full uppercase tracking-wider block w-fit">TERVERIFIKASI</span>
-                <h4 className="text-2xl font-black text-white leading-tight">
-                  Dapatkan Laporan<br />Super Lengkap
-                </h4>
-                <p className="text-xs text-blue-200 font-medium">
-                  Upgrade ke Paket Komparasi untuk membandingkan 3 kos sekaligus secara langsung di dashboard Anda.
-                </p>
-              </div>
-              <button
-                onClick={() => {
-                  setOrderCategory('multi');
-                  setShowRequestModal(true);
-                }}
-                className="mt-6 flex items-center gap-2 bg-white hover:bg-slate-50 text-[#052746] font-extrabold text-xs px-5 py-3.5 rounded-xl transition-all cursor-pointer shadow-md relative z-10 w-fit self-start"
-              >
-                <span>Upgrade Sekarang</span>
-                <ExternalLink className="h-4 w-4" />
-              </button>
-            </div>
-
-            {/* Help Bento Box */}
-            <div className="bg-[#B8CDE3] rounded-[32px] p-8 border border-blue-200/80 shadow-md text-left flex flex-col justify-between min-h-[300px]">
-              <div className="space-y-4">
-                <h4 className="text-3xl font-black text-[#052746] leading-tight">
-                  Butuh Bantuan?
-                </h4>
-                <p className="text-xs text-[#2F5276] font-medium leading-relaxed">
-                  Hubungi Customer Service kami jika Anda mengalami kendala pada pesanan atau butuh konsultasi pemilihan paket verifikasi kos.
-                </p>
-              </div>
-              <a
-                href="https://wa.me/6281234567890?text=Halo%20InspeksiKos,%20saya%20butuh%20bantuan%20terkait%20pesanan%20inspeksi%20saya."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-6 flex items-center gap-2 bg-[#1D9E75] hover:bg-[#158260] text-white font-extrabold text-xs px-5 py-3.5 rounded-xl transition-all cursor-pointer shadow-md w-fit self-start"
-              >
-                {/* Whatsapp Icon representation */}
-                <PhoneCall className="h-4 w-4" />
-                <span>Hubungi Whatsapp</span>
-              </a>
-            </div>
-
           </div>
-
         </div>
 
-      </div>
+        {/* ========== BOTTOM TWO CARDS ========== */}
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          {/* LEFT: Upgrade / Dark card */}
+          <div className="bg-[#1F3E5A] rounded-2xl p-6 sm:p-8 relative overflow-hidden flex flex-col justify-between min-h-[220px]">
+            {/* Decorative blur */}
+            <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-[#3B82F6]/15 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="space-y-3 relative z-10">
+              <span className="inline-block text-[10px] font-bold px-3 py-1 bg-[#3B82F6] text-white rounded-full uppercase tracking-wider">
+                TERVERIFIKASI
+              </span>
+              <h4 className="text-xl sm:text-2xl font-extrabold text-white leading-tight">
+                Dapatkan Laporan<br />Super Lengkap
+              </h4>
+              <p className="text-xs text-blue-200/80 leading-relaxed max-w-sm">
+                Upgrade ke Paket Komparasi untuk membandingkan 3 kos sekaligus secara langsung di dashboard Anda.
+              </p>
+            </div>
+
+            <button
+              onClick={() => {
+                setOrderCategory('multi');
+                setShowRequestModal(true);
+              }}
+              className="mt-5 flex items-center gap-2 bg-white hover:bg-slate-50 text-[#1F3E5A] font-bold text-xs sm:text-sm px-5 py-3 rounded-xl transition-all cursor-pointer shadow-md w-fit relative z-10"
+            >
+              <span>Upgrade Sekarang</span>
+              <ExternalLink className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* RIGHT: Help / Light card */}
+          <div className="bg-[#D6E8F7] rounded-2xl p-6 sm:p-8 flex flex-col justify-between min-h-[220px]">
+            <div className="space-y-3">
+              <h4 className="text-xl sm:text-2xl font-extrabold text-[#1F3E5A] leading-tight">
+                Butuh Bantuan?
+              </h4>
+              <p className="text-xs sm:text-sm text-[#2F5276] leading-relaxed">
+                Hubungi Customer Service kami jika Anda mengalami kendala pada pesanan atau butuh konsultasi pemilihan paket verifikasi kos.
+              </p>
+            </div>
+
+            <a
+              href="https://wa.me/6281234567890?text=Halo%20InspeksiKos,%20saya%20butuh%20bantuan%20terkait%20pesanan%20inspeksi%20saya."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 flex items-center gap-2 bg-[#25D366] hover:bg-[#20BD5A] text-white font-bold text-xs sm:text-sm px-5 py-3 rounded-xl transition-all cursor-pointer shadow-md w-fit"
+            >
+              <PhoneCall className="h-4 w-4" />
+              <span>Hubungi Whatsapp</span>
+            </a>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

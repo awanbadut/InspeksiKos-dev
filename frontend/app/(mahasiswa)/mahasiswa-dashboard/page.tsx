@@ -9,6 +9,7 @@ import StudentDashboard from '../../dashboard/components/StudentDashboard';
 import ReportModal from '../../dashboard/components/ReportModal';
 import ComparisonModal from '../../dashboard/components/ComparisonModal';
 import RequestModal from '../../dashboard/components/RequestModal';
+import DetailKosModal from '../../dashboard/components/DetailKosModal';
 
 export default function MahasiswaDashboardPage() {
   const router = useRouter();
@@ -18,11 +19,13 @@ export default function MahasiswaDashboardPage() {
   // Core Data
   const [inspections, setInspections] = useState<any[]>([]);
   const [selectedInspection, setSelectedInspection] = useState<any | null>(null);
+  const [selectedDetailInspection, setSelectedDetailInspection] = useState<any | null>(null);
   
   // Modals state
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [showReportModal, setShowReportModal] = useState(false);
   const [showComparisonModal, setShowComparisonModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   
   const [orderCategory, setOrderCategory] = useState<'single' | 'multi'>('single');
   const [selectedComparisonGroup, setSelectedComparisonGroup] = useState<any[]>([]);
@@ -39,6 +42,7 @@ export default function MahasiswaDashboardPage() {
         return;
       }
 
+      email: userEmail; // avoid unused, let's set state
       setEmail(userEmail);
       fetchInspections();
     }
@@ -104,6 +108,11 @@ export default function MahasiswaDashboardPage() {
     }
   };
 
+  const handleViewDetail = (inspection: any) => {
+    setSelectedDetailInspection(inspection);
+    setShowDetailModal(true);
+  };
+
   const handleCompare = (groupItems: any[]) => {
     setSelectedComparisonGroup(groupItems);
     setShowComparisonModal(true);
@@ -128,6 +137,7 @@ export default function MahasiswaDashboardPage() {
         mapReady={mapReady}
         handleLogout={handleLogout}
         onViewReport={handleViewReport}
+        onViewDetail={handleViewDetail}
         onCompare={handleCompare}
         setShowRequestModal={setShowRequestModal}
         setOrderCategory={setOrderCategory}
@@ -141,6 +151,15 @@ export default function MahasiswaDashboardPage() {
           setSelectedInspection(null);
         }}
         inspection={selectedInspection}
+      />
+
+      <DetailKosModal
+        isOpen={showDetailModal}
+        onClose={() => {
+          setShowDetailModal(false);
+          setSelectedDetailInspection(null);
+        }}
+        inspection={selectedDetailInspection}
       />
 
       <ComparisonModal
