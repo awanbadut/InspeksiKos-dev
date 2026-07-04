@@ -98,15 +98,15 @@ export default function Home() {
           <div className="relative w-full h-[450px] max-w-[500px] mx-auto">
             {/* Orange Card (top-left) */}
             <div className="absolute top-0 left-0 w-[240px] h-[240px] rounded-3xl overflow-hidden shadow-md z-10">
-              <img src="/assets/cowok%20lagi%20megang%20hp%20latar%20oren.png" alt="Person waving" className="w-full h-full object-cover" />
+              <img src="/assets/cowok_lagi_megang_hp_latar_oren.png" alt="Person waving" className="w-full h-full object-cover" />
             </div>
             {/* House Card (middle-right) */}
             <div className="absolute top-8 right-0 w-[240px] h-[240px] rounded-3xl overflow-hidden shadow-md z-20">
-              <img src="/assets/orang%20di%20depan%20rumah.png" alt="House scene" className="w-full h-full object-cover" />
+              <img src="/assets/orang_di_depan_rumah.png" alt="House scene" className="w-full h-full object-cover" />
             </div>
             {/* Laptop Card (bottom-left) */}
             <div className="absolute bottom-0 left-[60px] w-[270px] h-[200px] rounded-3xl overflow-hidden shadow-md z-30">
-              <img src="/assets/latar%20biru%20lagi%20jempol%20sampai%20main%20laptop.png" alt="Verification" className="w-full h-full object-cover" />
+              <img src="/assets/latar_biru_lagi_jempol_sampai_main_laptop.png" alt="Verification" className="w-full h-full object-cover" />
             </div>
             {/* Light blue pill accent */}
             <div className="absolute bottom-[50px] right-[60px] w-[140px] h-[48px] bg-[#6ED4F8] rounded-full z-40 shadow-sm opacity-90"></div>
@@ -128,7 +128,7 @@ export default function Home() {
             <div className="bg-[#FF9B3E] rounded-2xl p-5 text-black flex flex-col justify-between">
               <div>
                 <div className="h-28 mb-3 rounded-xl overflow-hidden">
-                  <img src="/assets/5%20orang%20bahagia.png" alt="Mahasiswa" className="w-full h-full object-cover" />
+                  <img src="/assets/5_orang_bahagia.png" alt="Mahasiswa" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex gap-6 mb-2">
                   <div>
@@ -148,7 +148,7 @@ export default function Home() {
             <div className="bg-[#FFD147] rounded-2xl p-5 text-black flex flex-col justify-between">
               <div>
                 <div className="h-28 mb-3 rounded-xl overflow-hidden">
-                  <img src="/assets/kos%20dan%20jeri%20jempol.png" alt="Kost" className="w-full h-full object-cover" />
+                  <img src="/assets/kos_dan_jeri_jempol.png" alt="Kost" className="w-full h-full object-cover" />
                 </div>
                 <div className="mb-2">
                   <div className="text-xl font-bold">1752+</div>
@@ -162,7 +162,7 @@ export default function Home() {
             <div className="bg-[#3B82F6] rounded-2xl p-5 text-white flex flex-col justify-between">
               <div>
                 <div className="h-28 mb-3 rounded-xl overflow-hidden">
-                  <img src="/assets/baju%20inspeksi%20kos.png" alt="Mitra" className="w-full h-full object-cover" />
+                  <img src="/assets/baju_inspeksi_kos.png" alt="Mitra" className="w-full h-full object-cover" />
                 </div>
                 <div className="mb-2">
                   <div className="text-xl font-bold">50+</div>
