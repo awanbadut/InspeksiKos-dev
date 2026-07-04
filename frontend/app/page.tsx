@@ -95,19 +95,21 @@ export default function Home() {
           </div>
 
           {/* Right: Illustration collage matching Figma */}
-          <div className="relative h-[420px] flex items-center justify-center">
-            {/* Top-right: person waving (orange-tinted) */}
-            <div className="absolute top-0 right-4 w-[200px] h-[200px] rounded-2xl overflow-hidden shadow-lg z-10">
-              <img src="/assets/Gemini_Generated_Image_jmdup3jmdup3jmdu.png" alt="Person waving" className="w-full h-full object-cover" />
+          <div className="relative w-full h-[450px] max-w-[500px] mx-auto">
+            {/* Orange Card (top-left) */}
+            <div className="absolute top-0 left-0 w-[240px] h-[240px] rounded-3xl overflow-hidden shadow-md z-10">
+              <img src="/assets/cowok%20lagi%20megang%20hp%20latar%20oren.png" alt="Person waving" className="w-full h-full object-cover" />
             </div>
-            {/* Bottom-left: house scene with people */}
-            <div className="absolute bottom-0 left-0 w-[280px] h-[240px] rounded-2xl overflow-hidden shadow-lg z-20">
-              <img src="/assets/Gemini_Generated_Image_xpspmtxpspmtxpsp.png" alt="House scene" className="w-full h-full object-cover" />
+            {/* House Card (middle-right) */}
+            <div className="absolute top-8 right-0 w-[240px] h-[240px] rounded-3xl overflow-hidden shadow-md z-20">
+              <img src="/assets/orang%20di%20depan%20rumah.png" alt="House scene" className="w-full h-full object-cover" />
             </div>
-            {/* Middle accent card */}
-            <div className="absolute top-[140px] right-[40px] w-[180px] h-[160px] rounded-2xl overflow-hidden shadow-lg z-30 border-4 border-white">
-              <img src="/assets/Gemini_Generated_Image_35wl5g35wl5g35wl.png" alt="Verification" className="w-full h-full object-cover" />
+            {/* Laptop Card (bottom-left) */}
+            <div className="absolute bottom-0 left-[60px] w-[270px] h-[200px] rounded-3xl overflow-hidden shadow-md z-30">
+              <img src="/assets/latar%20biru%20lagi%20jempol%20sampai%20main%20laptop.png" alt="Verification" className="w-full h-full object-cover" />
             </div>
+            {/* Light blue pill accent */}
+            <div className="absolute bottom-[50px] right-[60px] w-[140px] h-[48px] bg-[#6ED4F8] rounded-full z-40 shadow-sm opacity-90"></div>
           </div>
         </div>
       </section>
@@ -117,49 +119,55 @@ export default function Home() {
         <div className="border border-slate-300 rounded-[32px] p-8 md:p-10">
           <div className="text-center mb-8">
             <h2 className="text-3xl md:text-[34px] font-extrabold text-black mb-1">Telah Diandalkan oleh Mahasiswa</h2>
-            <p className="text-sm text-slate-600">Diandalkan oleh Mahasiswa Kampus Terbaik Sumatra Barat</p>
+            <p className="text-sm text-slate-600">Diandalkan oleh Mahasiswa Kampuk Terbaik Sumatra Barat</p>
           </div>
 
           {/* Top 3 stat cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
             {/* Card Orange */}
-            <div className="bg-[#FF9B3E] rounded-2xl p-5 text-black">
-              <div className="h-28 mb-3 rounded-xl overflow-hidden bg-orange-400/30">
-                <img src="/assets/Gemini_Generated_Image_35wl5g35wl5g35wl.png" alt="Mahasiswa" className="w-full h-full object-cover" />
-              </div>
-              <div className="flex gap-6 mb-2">
-                <div>
-                  <div className="text-xl font-bold">2500+</div>
-                  <div className="text-[11px]">Mahasiswa</div>
+            <div className="bg-[#FF9B3E] rounded-2xl p-5 text-black flex flex-col justify-between">
+              <div>
+                <div className="h-28 mb-3 rounded-xl overflow-hidden">
+                  <img src="/assets/5%20orang%20bahagia.png" alt="Mahasiswa" className="w-full h-full object-cover" />
                 </div>
-                <div>
-                  <div className="text-xl font-bold">30+</div>
-                  <div className="text-[11px]">Karyawan</div>
+                <div className="flex gap-6 mb-2">
+                  <div>
+                    <div className="text-xl font-bold">2500+</div>
+                    <div className="text-[11px]">Mahasiswa</div>
+                  </div>
+                  <div>
+                    <div className="text-xl font-bold">30+</div>
+                    <div className="text-[11px]">Karyawan</div>
+                  </div>
                 </div>
               </div>
               <p className="text-[10px] leading-snug text-black/70 mt-2">Adipiscing nulla neque aliquam gravida adipiscing lorem eget. Congue pharetra volutpat euismod in.</p>
             </div>
 
             {/* Card Yellow-Green */}
-            <div className="bg-[#FFD147] rounded-2xl p-5 text-black">
-              <div className="h-28 mb-3 rounded-xl overflow-hidden bg-yellow-400/30">
-                <img src="/assets/Gemini_Generated_Image_lbgxwwlbgxwwlbgx.png" alt="Kost" className="w-full h-full object-cover" />
-              </div>
-              <div className="mb-2">
-                <div className="text-xl font-bold">1752+</div>
-                <div className="text-[11px]">Kost Ter-audit</div>
+            <div className="bg-[#FFD147] rounded-2xl p-5 text-black flex flex-col justify-between">
+              <div>
+                <div className="h-28 mb-3 rounded-xl overflow-hidden">
+                  <img src="/assets/kos%20dan%20jeri%20jempol.png" alt="Kost" className="w-full h-full object-cover" />
+                </div>
+                <div className="mb-2">
+                  <div className="text-xl font-bold">1752+</div>
+                  <div className="text-[11px]">Kost Ter-audit</div>
+                </div>
               </div>
               <p className="text-[10px] leading-snug text-black/70 mt-2">Diam leo cursus sem viverra in id. Nulla nulla neque amet eros molestie lobortis nunc. Amet sed tristique non fames etiam fringilla ante aliquet gravida.</p>
             </div>
 
             {/* Card Blue */}
-            <div className="bg-[#3B82F6] rounded-2xl p-5 text-white">
-              <div className="h-28 mb-3 rounded-xl overflow-hidden bg-blue-400/30">
-                <img src="/assets/Gemini_Generated_Image_p4vfwdp4vfwdp4vf.png" alt="Mitra" className="w-full h-full object-cover" />
-              </div>
-              <div className="mb-2">
-                <div className="text-xl font-bold">50+</div>
-                <div className="text-[11px]">Mitra Lapangan</div>
+            <div className="bg-[#3B82F6] rounded-2xl p-5 text-white flex flex-col justify-between">
+              <div>
+                <div className="h-28 mb-3 rounded-xl overflow-hidden">
+                  <img src="/assets/baju%20inspeksi%20kos.png" alt="Mitra" className="w-full h-full object-cover" />
+                </div>
+                <div className="mb-2">
+                  <div className="text-xl font-bold">50+</div>
+                  <div className="text-[11px]">Mitra Lapangan</div>
+                </div>
               </div>
               <p className="text-[10px] leading-snug text-white/70 mt-2">Diam leo cursus sem viverra in id. Nulla nulla neque amet eros molestie lobortis nunc. Amet sed tristique non fames etiam fringilla ante aliquet gravida.</p>
             </div>
@@ -258,10 +266,16 @@ export default function Home() {
         {/* Bento grid — row 1: 2 cols */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-5">
           {/* Large card: Audit Langsung On-Demand */}
-          <div className="md:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 flex flex-col md:flex-row gap-5">
-            {/* Left: illustration */}
-            <div className="w-full md:w-[45%] shrink-0 rounded-xl overflow-hidden bg-slate-100 aspect-square md:aspect-auto">
-              <img src="/assets/Gemini_Generated_Image_vb0i0evb0i0evb0i.png" alt="Audit On-Demand" className="w-full h-full object-cover" />
+          <div className="md:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 flex flex-col md:flex-row gap-5 items-center">
+            {/* Left: nodes path SVG */}
+            <div className="w-full md:w-[45%] shrink-0 h-full min-h-[160px] relative bg-slate-50 rounded-xl overflow-hidden border border-slate-100 flex items-center justify-center p-4">
+              <svg className="absolute w-[80%] h-[80%] text-slate-300" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="3 3">
+                <path d="M 15,20 Q 50,20 50,50 T 85,80" />
+              </svg>
+              <div className="absolute top-4 left-4 w-7 h-7 bg-yellow-100 rounded-full flex items-center justify-center text-[10px] font-bold text-yellow-600 border border-yellow-200 shadow-sm">👤</div>
+              <div className="absolute top-4 right-4 w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center text-[10px] font-bold text-blue-600 border border-blue-200 shadow-sm">🏢</div>
+              <div className="absolute bottom-4 left-4 w-7 h-7 bg-red-100 rounded-full flex items-center justify-center text-[10px] font-bold text-red-600 border border-red-200 shadow-sm">📍</div>
+              <div className="absolute bottom-4 right-4 w-7 h-7 bg-orange-100 rounded-full flex items-center justify-center text-[10px] font-bold text-orange-600 border border-orange-200 shadow-sm">📋</div>
             </div>
             {/* Right: text */}
             <div className="flex flex-col justify-center">
@@ -277,6 +291,7 @@ export default function Home() {
               </span>
             </div>
           </div>
+
 
           {/* Small card: Verifikasi Foto AI — dark blue */}
           <div className="bg-[#1F3E5A] rounded-2xl p-6 text-white flex flex-col justify-between">
