@@ -48,7 +48,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto bg-[#D6E8F7] rounded-full flex items-center justify-between px-3 py-2 border border-[#C5DBEF]">
           {/* Logo */}
           <Link href="/" className="pl-3 flex items-center shrink-0">
-            <img src="/logo.webp" alt="InspeksiKos" className="h-7 w-auto object-contain" />
+            <img src="/logo.webp" alt="InspeksiKos" className="h-12 w-auto object-contain" />
           </Link>
 
           {/* Center Nav */}
@@ -95,21 +95,21 @@ export default function Home() {
           </div>
 
           {/* Right: Illustration collage matching Figma */}
-          <div className="relative w-full h-[450px] max-w-[500px] mx-auto">
+          <div className="relative w-full h-[400px] max-w-[500px] mx-auto">
             {/* Orange Card (top-left) */}
-            <div className="absolute top-0 left-0 w-[240px] h-[240px] rounded-3xl overflow-hidden shadow-md z-10">
+            <div className="absolute top-0 left-0 w-[300px] aspect-[16/9] rounded-2xl overflow-hidden shadow-lg z-10 bg-[#FF9B3E]">
               <img src="/assets/cowok_lagi_megang_hp_latar_oren.png" alt="Person waving" className="w-full h-full object-cover" />
             </div>
             {/* House Card (middle-right) */}
-            <div className="absolute top-8 right-0 w-[240px] h-[240px] rounded-3xl overflow-hidden shadow-md z-20">
+            <div className="absolute top-16 right-0 w-[280px] aspect-[16/9] rounded-2xl overflow-hidden shadow-lg z-20 bg-[#C0D8EF]">
               <img src="/assets/orang_di_depan_rumah.png" alt="House scene" className="w-full h-full object-cover" />
             </div>
             {/* Laptop Card (bottom-left) */}
-            <div className="absolute bottom-0 left-[60px] w-[270px] h-[200px] rounded-3xl overflow-hidden shadow-md z-30">
+            <div className="absolute bottom-0 left-6 w-[300px] aspect-[16/9] rounded-2xl overflow-hidden shadow-lg z-30 bg-[#3B82F6]">
               <img src="/assets/latar_biru_lagi_jempol_sampai_main_laptop.png" alt="Verification" className="w-full h-full object-cover" />
             </div>
             {/* Light blue pill accent */}
-            <div className="absolute bottom-[50px] right-[60px] w-[140px] h-[48px] bg-[#6ED4F8] rounded-full z-40 shadow-sm opacity-90"></div>
+            <div className="absolute bottom-[40px] right-[40px] w-[120px] h-[36px] bg-[#6ED4F8] rounded-full z-40 shadow-md opacity-95"></div>
           </div>
         </div>
       </section>

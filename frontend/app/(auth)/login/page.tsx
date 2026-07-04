@@ -47,15 +47,15 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-slate-50 font-sans text-slate-800">
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-[#E8F4FD] font-sans text-slate-800">
       
       {/* Left side: Promo Panel */}
-      <div className="hidden lg:flex lg:col-span-5 relative flex-col justify-between p-12 bg-primary text-white overflow-hidden">
+      <div className="hidden lg:flex lg:col-span-5 relative flex-col justify-between p-12 bg-[#1F3E5A] text-white overflow-hidden">
         
         {/* Logo */}
         <Link href="/" className="relative z-10">
-          <div className="bg-white rounded-xl px-3 py-2 w-fit">
-            <img src="/logo.webp" alt="InspeksiKos" className="h-10 w-auto object-contain" />
+          <div className="bg-white rounded-xl px-3.5 py-2.5 w-fit shadow-md">
+            <img src="/logo.webp" alt="InspeksiKos" className="h-14 w-auto object-contain" />
           </div>
         </Link>
 
@@ -103,9 +103,9 @@ export default function LoginPage() {
       </div>
 
       {/* Right side: Login Form Column */}
-      <div className="lg:col-span-7 flex flex-col justify-center items-center px-6 py-12 relative bg-slate-50">
+      <div className="lg:col-span-7 flex flex-col justify-center items-center px-6 py-12 relative bg-[#E8F4FD]">
         <div className="absolute top-10 left-6">
-          <Link href="/" className="flex items-center gap-1.5 text-xs font-extrabold text-slate-500 hover:text-primary transition-all uppercase tracking-wider font-mono">
+          <Link href="/" className="flex items-center gap-1.5 text-xs font-extrabold text-slate-500 hover:text-[#1F3E5A] transition-all uppercase tracking-wider font-mono">
             <ArrowLeft className="h-4 w-4" /> Kembali
           </Link>
         </div>
@@ -116,7 +116,7 @@ export default function LoginPage() {
             <div className="flex justify-center lg:hidden mb-4">
               <img src="/logo.webp" alt="InspeksiKos Logo" className="h-16 w-auto object-contain" />
             </div>
-            <h1 className="text-xl font-extrabold tracking-tight text-primary">
+            <h1 className="text-xl font-extrabold tracking-tight text-[#1F3E5A]">
               Selamat Datang Kembali
             </h1>
             <p className="text-xs text-slate-500">
@@ -141,7 +141,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="email@domain.com"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-accent rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#1F3E5A] rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
               />
             </div>
 
@@ -150,7 +150,7 @@ export default function LoginPage() {
                 <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block font-mono">
                   Password
                 </label>
-                <Link href="/forgot-password" className="text-[10px] font-bold text-slate-400 hover:text-primary transition-all font-mono">
+                <Link href="/forgot-password" className="text-[10px] font-bold text-slate-400 hover:text-[#1F3E5A] transition-all font-mono">
                   Lupa Password?
                 </Link>
               </div>
@@ -161,7 +161,7 @@ export default function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-accent rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
+                  className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#1F3E5A] rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
                 />
                 <button
                   type="button"
@@ -176,7 +176,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center items-center py-3.5 bg-gradient-to-r from-primary to-accent-light hover:from-primary hover:to-accent text-white font-bold rounded-full text-xs uppercase tracking-wider transition-all disabled:opacity-50 mt-6 shadow-md shadow-primary/10 cursor-pointer grab-btn-transition active:scale-[0.95] hover:scale-[1.02]"
+              className="w-full flex justify-center items-center py-3.5 bg-[#1F3E5A] hover:bg-[#152a3d] text-white font-bold rounded-full text-xs uppercase tracking-wider transition-all disabled:opacity-50 mt-6 shadow-md shadow-primary/10 cursor-pointer grab-btn-transition active:scale-[0.95] hover:scale-[1.02]"
             >
               {isLoading ? (
                 <Loader className="animate-spin h-4 w-4" />
@@ -188,7 +188,7 @@ export default function LoginPage() {
 
           <div className="text-center text-xs text-slate-500 pt-2 font-medium">
             Belum punya akun?{' '}
-            <Link href="/register" className="font-extrabold text-brand-teal hover:underline transition-all font-mono">
+            <Link href="/register" className="font-extrabold text-[#1F3E5A] hover:underline transition-all font-mono">
               Daftar Sekarang
             </Link>
           </div>

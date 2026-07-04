@@ -60,16 +60,16 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-slate-50 font-sans text-slate-800">
+    <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-[#E8F4FD] font-sans text-slate-800">
       
       {/* Left side: Premium Promo Panel (Hidden on small screens) */}
-      <div className="hidden lg:flex lg:col-span-5 relative flex-col justify-between p-12 bg-primary text-white border-r border-slate-200 overflow-hidden shadow-2xl">
+      <div className="hidden lg:flex lg:col-span-5 relative flex-col justify-between p-12 bg-[#1F3E5A] text-white border-r border-slate-200 overflow-hidden shadow-2xl">
         {/* Soft Teal glow accent */}
         <div className="absolute top-[-20%] left-[-20%] w-[400px] h-[400px] rounded-full bg-teal-500/10 blur-[100px] pointer-events-none" />
         
         {/* Header */}
         <Link href="/" className="relative flex items-center z-10 group">
-          <img src="/logo.webp" alt="InspeksiKos Logo" className="h-14 w-auto object-contain brightness-0 invert" />
+          <img src="/logo.webp" alt="InspeksiKos Logo" className="h-16 w-auto object-contain" />
         </Link>
 
         {/* Marketing/Feature Points */}
@@ -117,9 +117,9 @@ export default function RegisterPage() {
       </div>
 
       {/* Right side: Register Form Column */}
-      <div className="lg:col-span-7 flex flex-col justify-center items-center px-6 py-12 relative bg-slate-50 overflow-y-auto">
+      <div className="lg:col-span-7 flex flex-col justify-center items-center px-6 py-12 relative bg-[#E8F4FD] overflow-y-auto">
         <div className="absolute top-10 left-6">
-          <Link href="/" className="flex items-center gap-1.5 text-xs font-extrabold text-slate-500 hover:text-primary transition-all uppercase tracking-wider font-mono">
+          <Link href="/" className="flex items-center gap-1.5 text-xs font-extrabold text-slate-500 hover:text-[#1F3E5A] transition-all uppercase tracking-wider font-mono">
             <ArrowLeft className="h-4 w-4" /> Kembali
           </Link>
         </div>
@@ -130,7 +130,7 @@ export default function RegisterPage() {
             <div className="flex justify-center lg:hidden mb-4">
               <img src="/logo.webp" alt="InspeksiKos Logo" className="h-16 w-auto object-contain" />
             </div>
-            <h1 className="text-xl font-extrabold tracking-tight text-primary">
+            <h1 className="text-xl font-extrabold tracking-tight text-[#1F3E5A]">
               Buat Akun Mahasiswa
             </h1>
             <p className="text-xs text-slate-500">
@@ -161,7 +161,7 @@ export default function RegisterPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Nama Lengkap Anda"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-accent rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#1F3E5A] rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
               />
             </div>
 
@@ -175,7 +175,7 @@ export default function RegisterPage() {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="contoh: 08123456789"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-accent rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#1F3E5A] rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
               />
             </div>
 
@@ -189,7 +189,7 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="nama@email.com"
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-accent rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
+                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#1F3E5A] rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
               />
             </div>
 
@@ -204,7 +204,7 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-accent rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
+                  className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#1F3E5A] rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
                 />
                 <button
                   type="button"
@@ -227,7 +227,7 @@ export default function RegisterPage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-accent rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
+                  className="w-full pl-3.5 pr-10 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#1F3E5A] rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none transition-all text-xs"
                 />
                 <button
                   type="button"
@@ -242,7 +242,7 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center items-center py-3.5 bg-gradient-to-r from-primary to-accent-light hover:from-primary hover:to-accent text-white font-bold rounded-full text-xs uppercase tracking-wider transition-all disabled:opacity-50 mt-5 shadow-md shadow-primary/10 cursor-pointer grab-btn-transition active:scale-[0.95] hover:scale-[1.02]"
+              className="w-full flex justify-center items-center py-3.5 bg-[#1F3E5A] hover:bg-[#152a3d] text-white font-bold rounded-full text-xs uppercase tracking-wider transition-all disabled:opacity-50 mt-5 shadow-md shadow-primary/10 cursor-pointer grab-btn-transition active:scale-[0.95] hover:scale-[1.02]"
             >
               {isLoading ? (
                 <Loader className="animate-spin h-4 w-4" />
@@ -254,7 +254,7 @@ export default function RegisterPage() {
 
           <div className="text-center text-xs text-slate-500 pt-1 font-medium">
             Sudah punya akun?{' '}
-            <Link href="/login" className="font-extrabold text-brand-teal hover:underline transition-all font-mono">
+            <Link href="/login" className="font-extrabold text-[#1F3E5A] hover:underline transition-all font-mono">
               Masuk
             </Link>
           </div>
