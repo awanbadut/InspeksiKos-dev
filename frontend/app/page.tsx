@@ -1,152 +1,20 @@
-// Reading this as: High-growth prop-tech landing page for college students and landlords, with a clean B2B2C startup visual language. Optimized with a dual-layout system: a premium desktop marketing page and a mobile-first app shell for mobile users to match the Gojek/Shopee class native experience.
-// DESIGN_VARIANCE: 8 | MOTION_INTENSITY: 6 | VISUAL_DENSITY: 4
-
 "use client";
 
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { 
-  Sparkles, 
-  ShieldCheck, 
   CheckSquare, 
-  ClipboardList, 
-  Zap, 
   ArrowRight, 
-  Cpu, 
-  Star,
-  Download,
   ChevronDown,
-  Menu,
-  X,
-  Search,
-  PhoneCall
+  ArrowUpRight
 } from 'lucide-react';
 
 export default function Home() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [activeUni, setActiveUni] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const uniContainerRef = useRef<HTMLDivElement>(null);
 
   const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
   };
-
-  const universities = [
-    {
-      name: "Politeknik Negeri Padang",
-      short: "PNP",
-      logoColor: "text-amber-600 bg-white border-slate-200",
-      accent: "#f59e0b",
-      verifiedCount: "480+",
-      inspectors: "8 Verifikator",
-      initials: "PNP",
-      logoFile: "logo-pnp.png"
-    },
-    {
-      name: "Universitas Andalas",
-      short: "UNAND",
-      logoColor: "text-emerald-700 bg-white border-slate-200",
-      accent: "#047857",
-      verifiedCount: "620+",
-      inspectors: "12 Verifikator",
-      initials: "UNAND",
-      logoFile: "logo-unand.svg"
-    },
-    {
-      name: "Universitas Negeri Padang",
-      short: "UNP",
-      logoColor: "text-blue-700 bg-white border-slate-200",
-      accent: "#1d4ed8",
-      verifiedCount: "580+",
-      inspectors: "10 Verifikator",
-      initials: "UNP",
-      logoFile: "logo-unp.jpg"
-    },
-    {
-      name: "UIN Imam Bonjol",
-      short: "UIN IB",
-      logoColor: "text-teal-700 bg-white border-slate-200",
-      accent: "#0f766e",
-      verifiedCount: "350+",
-      inspectors: "6 Verifikator",
-      initials: "UIN",
-      logoFile: "logo-uinib.png"
-    },
-    {
-      name: "Universitas Bung Hatta",
-      short: "UBH",
-      logoColor: "text-rose-700 bg-white border-slate-200",
-      accent: "#be123c",
-      verifiedCount: "290+",
-      inspectors: "5 Verifikator",
-      initials: "UBH",
-      logoFile: "logo-ubh.png"
-    },
-    {
-      name: "UPI YPTK Padang",
-      short: "UPI YPTK",
-      logoColor: "text-indigo-700 bg-white border-slate-200",
-      accent: "#4338ca",
-      verifiedCount: "410+",
-      inspectors: "7 Verifikator",
-      initials: "UPI",
-      logoFile: "logo-upiyptk.jpg"
-    },
-    {
-      name: "Universitas Baiturrahmah",
-      short: "UNBRAH",
-      logoColor: "text-sky-700 bg-white border-slate-200",
-      accent: "#0284c7",
-      verifiedCount: "180+",
-      inspectors: "4 Verifikator",
-      initials: "UNBRAH",
-      logoFile: "logo-unbrah.png"
-    },
-    {
-      name: "Poltekkes Kemenkes Padang",
-      short: "POLTEKKES",
-      logoColor: "text-teal-600 bg-white border-slate-200",
-      accent: "#0d9488",
-      verifiedCount: "210+",
-      inspectors: "5 Verifikator",
-      initials: "POLTEKKES",
-      logoFile: "logo-poltekkes.png"
-    }
-  ];
-
-  const handleUniChange = (index: number) => {
-    if (index === activeUni || isTransitioning) return;
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setActiveUni(index);
-      setIsTransitioning(false);
-    }, 250);
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setActiveUni((prev) => (prev + 1) % universities.length);
-        setIsTransitioning(false);
-      }, 250);
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    if (uniContainerRef.current) {
-      const activeChild = uniContainerRef.current.children[activeUni] as HTMLElement;
-      if (activeChild) {
-        uniContainerRef.current.scrollTo({
-          left: activeChild.offsetLeft - uniContainerRef.current.offsetWidth / 2 + activeChild.offsetWidth / 2,
-          behavior: 'smooth'
-        });
-      }
-    }
-  }, [activeUni]);
 
   const faqs = [
     {
@@ -168,598 +36,464 @@ export default function Home() {
   ];
 
   return (
-    <div className="relative min-h-screen bg-[#F0F8FF]/45 text-[#0f172a] overflow-hidden font-sans selection:bg-teal-500/20 selection:text-[#003057]">
-      
-      {/* ========================================================================= */}
-      {/* 1. RESPONSIVE LANDING PAGE */}
-      {/* ========================================================================= */}
-      <div className="w-full">
-        
-        {/* Background Soft Color Glows */}
-        <div className="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] rounded-full bg-blue-500/5 blur-[120px] pointer-events-none" />
-        <div className="absolute top-[40%] right-[-10%] w-[600px] h-[600px] rounded-full bg-teal-500/5 blur-[120px] pointer-events-none" />
-        
-        {/* Grid Overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#00305703_1px,transparent_1px),linear-gradient(to_bottom,#00305703_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none" />
-
-        {/* Navigation Bar - Figma Style */}
-        <header className="w-full px-6 pt-4 sticky top-0 z-30 bg-transparent">
-          <div className="max-w-7xl mx-auto px-6 py-3 bg-[#D2E9FE] border border-[#B8CDE3] rounded-2xl flex items-center justify-between shadow-sm">
-            <Link href="/" className="flex items-center group">
-              <img 
-                src="/logo.webp" 
-                alt="InspeksiKos Logo" 
-                className="h-16 w-auto object-contain hover:scale-[1.02] active:scale-[0.98] transition-all duration-200" 
-              />
-            </Link>
-
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center gap-8 text-[11px] font-bold uppercase tracking-wider text-slate-500">
-              <a href="#fitur" className="grab-nav-link hover:text-[#003057]">How it Works</a>
-              <a href="#bento" className="grab-nav-link hover:text-[#003057]">About Us</a>
-              <a href="#harga" className="grab-nav-link hover:text-[#003057]">Pricing</a>
-              <a href="#faq" className="grab-nav-link hover:text-[#003057]">FAQ</a>
-            </nav>
-
-            {/* Desktop CTAs */}
-            <div className="hidden md:flex items-center gap-4">
-              <Link href="/login" className="px-5 py-2 text-[11px] font-bold uppercase tracking-wider text-slate-655 hover:text-[#003057] transition-all grab-btn-transition active:scale-[0.95] hover:scale-[1.02]">
-                Masuk
-              </Link>
-              <Link href="/register" className="px-6 py-3 text-[11px] font-bold uppercase tracking-wider bg-[#003057] hover:bg-[#001e38] text-white rounded-full shadow-sm hover:shadow-md transition-all grab-btn-transition active:scale-[0.95] hover:scale-[1.02] hover:-translate-y-[1px]">
-                Mulai Audit
-              </Link>
-            </div>
-
-            {/* Mobile Navigation Toggle Button */}
-            <div className="flex md:hidden items-center gap-3">
-              <Link href="/login" className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-655 hover:text-[#003057]">
-                Masuk
-              </Link>
-              <button
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 text-slate-600 hover:text-[#003057] focus:outline-none focus:ring-1 focus:ring-slate-200 rounded-lg"
-              >
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </button>
+    <div className="relative min-h-screen bg-[#F6F9FC] text-black font-sans pb-24">
+      {/* Navbar */}
+      <header className="w-full px-6 pt-6 pb-8 sticky top-0 z-50 flex justify-center">
+        <div className="w-full max-w-5xl bg-[#E6F0FA] rounded-full flex items-center justify-between px-2 py-2 shadow-sm border border-[#D9E8F5]">
+          <div className="pl-4">
+            <div className="px-3 py-1 bg-blue-100 rounded text-blue-900 font-bold text-sm tracking-wide">
+              logo
             </div>
           </div>
-
-          {/* Mobile Navigation Dropdown Drawer */}
-          {mobileMenuOpen && (
-            <div className="md:hidden border-b border-slate-200 bg-white/95 backdrop-blur-md px-6 py-4 space-y-4 shadow-xl rounded-b-3xl absolute top-18 left-0 right-0 z-20 animate-in slide-in-from-top duration-200">
-              <nav className="flex flex-col gap-3.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                <a
-                  href="#fitur"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="hover:text-[#003057] transition-all py-1 border-b border-slate-100 font-semibold"
-                >
-                  How it Works
-                </a>
-                <a
-                  href="#bento"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="hover:text-[#003057] transition-all py-1 border-b border-slate-100 font-semibold"
-                >
-                  About Us
-                </a>
-                <a
-                  href="#harga"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="hover:text-[#003057] transition-all py-1 border-b border-slate-100 font-semibold"
-                >
-                  Pricing
-                </a>
-                <a
-                  href="#faq"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="hover:text-[#003057] transition-all py-1 font-semibold"
-                >
-                  FAQ
-                </a>
-              </nav>
-              <div className="pt-2 flex flex-col gap-2">
-                <Link
-                  href="/register"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="w-full text-center py-3.5 text-[10px] font-bold uppercase tracking-wider bg-[#003057] hover:bg-[#001e38] text-white rounded-full shadow-sm transition-all grab-btn-transition active:scale-[0.95] hover:scale-[1.02]"
-                >
-                  Mulai Audit
-                </Link>
-              </div>
-            </div>
-          )}
-        </header>
-
-        {/* Main Content Area */}
-        <main className="max-w-7xl mx-auto px-6 pt-12 pb-24 z-10 relative">
           
-          {/* Split Hero Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center min-h-[70dvh] mb-24">
-            {/* Left Hero Content */}
-            <div className="lg:col-span-6 space-y-6 text-left">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-teal-50 border border-teal-200/60 text-teal-800 shadow-sm">
-                <Sparkles className="h-3 w-3 text-teal-600 shrink-0 animate-pulse" />
-                <span className="tracking-widest uppercase text-[9px] font-extrabold font-mono">Platform Audit Properti On-Demand Pertama</span>
-              </div>
+          <nav className="hidden md:flex items-center space-x-1">
+            <Link href="/" className="px-5 py-2 bg-[#D1E5F7] rounded-full text-sm font-semibold text-slate-800 border border-[#B6D4F1]">
+              Home
+            </Link>
+            <Link href="#about" className="px-5 py-2 text-sm font-medium text-slate-700 hover:text-black">
+              About Us
+            </Link>
+            <Link href="#how-it-works" className="px-5 py-2 text-sm font-medium text-slate-700 hover:text-black">
+              How it Works
+            </Link>
+            <Link href="#pricing" className="px-5 py-2 text-sm font-medium text-slate-700 hover:text-black">
+              Pricing
+            </Link>
+          </nav>
+          
+          <div className="pr-1">
+            <Link href="/login" className="px-5 py-2.5 bg-[#1F3E5A] text-white text-sm font-semibold rounded-full flex items-center gap-1.5 hover:bg-[#152a3d] transition-colors">
+              Get Started <ArrowUpRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </header>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-[52px] font-black leading-[1.08] tracking-tighter text-[#003057] text-wrap-pretty">
-                Bebas Manipulasi Iklan.<br />
-                Validasi Fasilitas Kos Anda.
-              </h1>
-
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-[50ch] text-wrap-pretty">
-                Validasi keaslian fasilitas kos secara langsung melalui verifikator berlisensi dengan uji kebersihan air, kecepatan internet, dan verifikasi foto bertenaga AI.
-              </p>
-
-              <div className="flex gap-3.5 pt-2">
-                <Link href="/login" className="flex items-center justify-center gap-2 h-14 bg-gradient-to-r from-[#003057] to-[#0f766e] hover:from-[#001e38] hover:to-[#115e59] text-white font-bold rounded-full px-8 shadow-md hover:shadow-lg hover:scale-[1.03] active:scale-[0.95] hover:-translate-y-[1px] transition-all grab-btn-transition text-[11px] uppercase tracking-wider">
-                  Mulai Audit Sekarang
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link href="/register" className="flex items-center justify-center h-14 border border-slate-300 bg-white hover:bg-slate-50 text-slate-705 font-bold rounded-full px-8 hover:scale-[1.03] active:scale-[0.95] hover:-translate-y-[1px] transition-all grab-btn-transition text-[11px] uppercase tracking-wider shadow-sm">
-                  Gabung Verifikator
-                </Link>
-              </div>
-            </div>
-
-            {/* Right Hero Visual - Modern Browser Shell Device */}
-            <div className="lg:col-span-6 relative flex justify-center">
-              <div className="w-full max-w-[520px] rounded-3xl border border-slate-200/80 bg-white p-2.5 shadow-2xl relative z-10 transition-all duration-300 hover:scale-[1.015] hover:-translate-y-1 hover:shadow-3xl grab-btn-transition">
-                <div className="flex items-center gap-1.5 px-3 py-2 border-b border-slate-100">
-                  <span className="w-3 h-3 rounded-full bg-red-400" />
-                  <span className="w-3 h-3 rounded-full bg-amber-400" />
-                  <span className="w-3 h-3 rounded-full bg-emerald-400" />
-                  <div className="w-48 bg-slate-50 border border-slate-100 rounded-md py-0.5 text-[9px] text-slate-400 text-center mx-auto truncate font-mono">
-                    inspeksikos.dev/dashboard/order
-                  </div>
-                </div>
-                <div className="rounded-b-xl overflow-hidden border border-slate-200/50 aspect-[4/3] relative bg-slate-50">
-                  <img 
-                    src="/assets/Gemini_Generated_Image_xpspmtxpspmtxpsp.png" 
-                    alt="InspeksiKos Dashboard" 
-                    className="w-full h-full object-cover" 
-                  />
-                </div>
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-tr from-teal-500/10 to-blue-500/5 rounded-full filter blur-3xl -z-10 transform scale-90" />
+      {/* Hero Section */}
+      <main className="max-w-6xl mx-auto px-6 pt-8 pb-20">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-32">
+          <div className="space-y-8">
+            <h1 className="text-[52px] font-bold leading-[1.1] text-black tracking-tight">
+              Bebas Manipulasi Iklan<br />
+              Validasi Fasilitas Kos<br />
+              Anda
+            </h1>
+            <p className="text-base text-black leading-relaxed max-w-lg">
+              Validasi keaslian fasilitas kos secara langsung melalui verifikator berlisensi dengan uji kebersihan air, kecepatan internet, dan verifikasi foto bertenaga AI.
+            </p>
+            <div>
+              <Link href="/register" className="inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#1F3E5A] text-white font-semibold rounded-lg hover:bg-[#152a3d] transition-colors">
+                Mulai Audit Sekarang <ArrowRight className="w-5 h-5" />
+              </Link>
             </div>
           </div>
+          
+          {/* Hero Illustration Collage */}
+          <div className="relative flex justify-center items-center h-[500px]">
+             {/* Note: In a real app we'd export the SVG/PNG layers from Figma. Using placeholder divs styled to match the collage. */}
+             <div className="absolute top-0 right-10 w-[300px] h-[300px] bg-[#FFC55C] rounded-3xl overflow-hidden shadow-lg transform rotate-3">
+               <img src="/assets/Gemini_Generated_Image_jmdup3jmdup3jmdu.png" alt="Person" className="w-full h-full object-cover mix-blend-multiply opacity-80" />
+             </div>
+             <div className="absolute bottom-10 left-10 w-[240px] h-[200px] bg-[#3E86FF] rounded-3xl shadow-xl transform -rotate-2 border-4 border-white flex flex-col justify-end p-4">
+                <div className="bg-white/20 h-2 w-1/2 rounded mb-2"></div>
+                <div className="bg-white/20 h-2 w-3/4 rounded"></div>
+             </div>
+             <div className="absolute top-1/2 right-0 transform -translate-y-1/2 w-[220px] h-[280px] bg-[#E1F0FF] rounded-3xl shadow-xl border-4 border-white flex items-center justify-center overflow-hidden">
+                <img src="/assets/Gemini_Generated_Image_xpspmtxpspmtxpsp.png" alt="House" className="w-full h-full object-cover opacity-90" />
+             </div>
+             <div className="absolute top-1/4 left-1/4 w-[160px] h-[60px] bg-[#4CE0D8] rounded-full shadow-lg z-10 animate-bounce"></div>
+          </div>
+        </div>
 
-          {/* Animated University Credibility Showcase Section */}
-          {/* Telah Diandalkan oleh Mahasiswa Section */}
-          <section className="mb-28 max-w-5xl mx-auto space-y-10">
-            <div className="text-center space-y-2">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#003057] font-mono">
-                DIANDALKAN OLEH MAHASISWA KAMPUS TERBAIK SUMATERA BARAT
-              </span>
-              <h2 className="text-3xl md:text-4xl font-black text-[#003057] tracking-tight">
-                Telah Diandalkan oleh Mahasiswa
-              </h2>
+        {/* Telah Diandalkan oleh Mahasiswa */}
+        <section className="mb-24">
+          <div className="border-[1.5px] border-slate-300 rounded-[40px] p-10 bg-transparent relative overflow-hidden">
+            <div className="text-center mb-10">
+              <h2 className="text-4xl font-bold text-black mb-2">Telah Diandalkan oleh Mahasiswa</h2>
+              <p className="text-sm text-slate-700">Diandalkan oleh Mahasiswa Kampus Terbaik Sumatra Barat</p>
             </div>
 
+            {/* Top 3 Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              {/* Card 1 Orange */}
+              <div className="bg-[#FF9B3E] rounded-3xl overflow-hidden p-6 text-black flex flex-col shadow-sm">
+                <div className="h-32 mb-4 relative bg-orange-300/30 rounded-xl flex items-center justify-center">
+                  <div className="text-5xl">🧑‍🎓</div>
+                </div>
+                <div className="flex gap-4 mb-3">
+                  <div>
+                    <div className="text-xl font-bold">2500+</div>
+                    <div className="text-xs font-medium">Mahasiswa</div>
+                  </div>
+                  <div>
+                    <div className="text-xl font-bold">30+</div>
+                    <div className="text-xs font-medium">Karyawan</div>
+                  </div>
+                </div>
+                <p className="text-[11px] leading-snug mt-auto">Adipiscing nulla neque aliquam gravida adipiscing lorem eget. Congue pharetra volutpat euismod in.</p>
+              </div>
+
+              {/* Card 2 Yellow */}
+              <div className="bg-[#FFD147] rounded-3xl overflow-hidden p-6 text-black flex flex-col shadow-sm">
+                <div className="h-32 mb-4 relative bg-yellow-300/30 rounded-xl flex items-center justify-center">
+                  <div className="text-5xl">🏠</div>
+                </div>
+                <div className="mb-3">
+                  <div className="text-xl font-bold">1752+</div>
+                  <div className="text-xs font-medium">Kost Ter-audit</div>
+                </div>
+                <p className="text-[11px] leading-snug mt-auto">Diam leo cursus sem viverra in id. Nulla nulla neque amet eros molestie lobortis nunc. Amet sed tristique non fames etiam fringilla ante aliquet gravida.</p>
+              </div>
+
+              {/* Card 3 Blue */}
+              <div className="bg-[#3E86FF] rounded-3xl overflow-hidden p-6 text-white flex flex-col shadow-sm">
+                <div className="h-32 mb-4 relative bg-blue-400/30 rounded-xl flex items-center justify-center">
+                  <div className="text-5xl">📄</div>
+                </div>
+                <div className="mb-3">
+                  <div className="text-xl font-bold">50+</div>
+                  <div className="text-xs font-medium">Mitra Lapangan</div>
+                </div>
+                <p className="text-[11px] leading-snug mt-auto opacity-90">Diam leo cursus sem viverra in id. Nulla nulla neque amet eros molestie lobortis nunc. Amet sed tristique non fames etiam fringilla ante aliquet gravida.</p>
+              </div>
+            </div>
+
+            {/* Bottom 3 Uni Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              {/* Card 1: PNP */}
-              <div className="bg-[#FE9000] border border-[#70B4F4] rounded-3xl p-6 shadow-sm flex flex-col justify-between h-[240px] text-left hover:scale-[1.015] hover:shadow-md transition-all duration-300 grab-btn-transition">
-                <div className="flex justify-between items-center border-b border-[#B8CDE3]/40 pb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-12 h-12 rounded-full bg-[#052746] flex items-center justify-center p-2.5">
-                      <img src="/logo-pnp.png" alt="PNP" className="max-w-full max-h-full object-contain" />
+              {/* PNP */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#1F3E5A] rounded-full overflow-hidden flex items-center justify-center p-1">
+                      <img src="/logo-pnp.png" alt="PNP" className="w-full h-full object-contain" />
                     </div>
                     <div>
-                      <h4 className="text-base font-black text-slate-900 leading-none">PNP</h4>
-                      <p className="text-[10px] text-slate-800 font-medium mt-0.5">Politeknik Negeri Padang</p>
+                      <div className="font-bold text-sm text-black">PNP</div>
+                      <div className="text-[10px] text-slate-600">Politeknik Negeri Padang</div>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 bg-emerald-50/20 text-[#052746] border border-[#1D9E75]/40 text-[9px] font-black uppercase rounded-full font-mono">
-                    Terverifikasi
-                  </span>
+                  <span className="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-semibold rounded border border-green-200">✓ Terverifikasi</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="flex justify-between mt-auto">
                   <div>
-                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">410+</h5>
-                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Kost Ter-audit</p>
+                    <div className="font-bold text-sm text-black">410+</div>
+                    <div className="text-[10px] text-slate-500">Kost Ter-audit</div>
                   </div>
-                  <div>
-                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">7</h5>
-                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Mitra Lapangan</p>
+                  <div className="text-right">
+                    <div className="font-bold text-sm text-black">7 Verifikator</div>
+                    <div className="text-[10px] text-slate-500">Mitra Lapangan</div>
                   </div>
                 </div>
               </div>
 
-              {/* Card 2: UNP */}
-              <div className="bg-[#FFF9E3] border border-[#FFDB43] rounded-3xl p-6 shadow-sm flex flex-col justify-between h-[240px] text-left hover:scale-[1.015] hover:shadow-md transition-all duration-300 grab-btn-transition">
-                <div className="flex justify-between items-center border-b border-[#B8CDE3]/40 pb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-12 h-12 rounded-full bg-[#052746] flex items-center justify-center p-2.5">
-                      <img src="/logo-unp.jpg" alt="UNP" className="max-w-full max-h-full object-contain rounded-full" />
+              {/* UNP */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#1F3E5A] rounded-full overflow-hidden flex items-center justify-center p-1">
+                      <img src="/logo-unp.jpg" alt="UNP" className="w-full h-full object-contain rounded-full" />
                     </div>
                     <div>
-                      <h4 className="text-base font-black text-slate-900 leading-none">UNP</h4>
-                      <p className="text-[10px] text-slate-800 font-medium mt-0.5">Universitas Negeri Padang</p>
+                      <div className="font-bold text-sm text-black">UNP</div>
+                      <div className="text-[10px] text-slate-600">Universitas Negeri Padang</div>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 bg-emerald-50/20 text-[#052746] border border-[#1D9E75]/40 text-[9px] font-black uppercase rounded-full font-mono">
-                    Terverifikasi
-                  </span>
+                  <span className="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-semibold rounded border border-green-200">✓ Terverifikasi</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="flex justify-between mt-auto">
                   <div>
-                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">410+</h5>
-                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Kost Ter-audit</p>
+                    <div className="font-bold text-sm text-black">410+</div>
+                    <div className="text-[10px] text-slate-500">Kost Ter-audit</div>
                   </div>
-                  <div>
-                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">7</h5>
-                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Mitra Lapangan</p>
+                  <div className="text-right">
+                    <div className="font-bold text-sm text-black">7 Verifikator</div>
+                    <div className="text-[10px] text-slate-500">Mitra Lapangan</div>
                   </div>
                 </div>
               </div>
 
-              {/* Card 3: UNAND */}
-              <div className="bg-[#E1FFF5] border border-[#49DEAE] rounded-3xl p-6 shadow-sm flex flex-col justify-between h-[240px] text-left hover:scale-[1.015] hover:shadow-md transition-all duration-300 grab-btn-transition">
-                <div className="flex justify-between items-center border-b border-[#B8CDE3]/40 pb-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-12 h-12 rounded-full bg-[#052746] flex items-center justify-center p-2.5">
-                      <img src="/logo-unand.svg" alt="UNAND" className="max-w-full max-h-full object-contain" />
+              {/* UNAND */}
+              <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col">
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-[#1F3E5A] rounded-full overflow-hidden flex items-center justify-center p-1">
+                      <img src="/logo-unand.svg" alt="UNAND" className="w-full h-full object-contain" />
                     </div>
                     <div>
-                      <h4 className="text-base font-black text-slate-900 leading-none">UNAND</h4>
-                      <p className="text-[10px] text-slate-800 font-medium mt-0.5">Universitas Andalas</p>
+                      <div className="font-bold text-sm text-black">UNAND</div>
+                      <div className="text-[10px] text-slate-600">Universitas Andalas</div>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 bg-emerald-50/20 text-[#052746] border border-[#1D9E75]/40 text-[9px] font-black uppercase rounded-full font-mono">
-                    Terverifikasi
-                  </span>
+                  <span className="px-2 py-1 bg-green-50 text-green-700 text-[10px] font-semibold rounded border border-green-200">✓ Terverifikasi</span>
                 </div>
-                <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="flex justify-between mt-auto">
                   <div>
-                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">410+</h5>
-                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Kost Ter-audit</p>
+                    <div className="font-bold text-sm text-black">410+</div>
+                    <div className="text-[10px] text-slate-500">Kost Ter-audit</div>
                   </div>
-                  <div>
-                    <h5 className="text-2xl font-black text-[#052746] font-mono leading-none">7</h5>
-                    <p className="text-[9px] font-extrabold text-slate-850 uppercase tracking-wider font-mono mt-1">Mitra Lapangan</p>
+                  <div className="text-right">
+                    <div className="font-bold text-sm text-black">7 Verifikator</div>
+                    <div className="text-[10px] text-slate-500">Mitra Lapangan</div>
                   </div>
                 </div>
               </div>
 
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* Bento Grid (Features / Technology Section) */}
-          <section id="bento" className="mb-28 max-w-5xl mx-auto space-y-12">
-            <div className="text-center space-y-3">
-              <div className="inline-flex px-3 py-1 rounded-full bg-teal-50 text-[#0f766e] border border-teal-100 text-[9px] font-extrabold uppercase tracking-wider font-mono">
-                Audit Mekanis & Visual
+        {/* Keunggulan Verifikasi Lapangan */}
+        <section className="mb-24 text-center">
+          <h2 className="text-3xl font-bold text-black mb-2">Keunggulan Verifikasi Lapangan</h2>
+          <p className="text-sm text-slate-700 mb-10">Pemeriksaan fisik langsung menggunakan parameter baku untuk menjamin kelayakan kamar<br/>kos pilihan Anda.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-left">
+            {/* Box 1 (Span 2) */}
+            <div className="md:col-span-2 bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex relative overflow-hidden">
+               <div className="w-1/2 relative z-10">
+                 {/* Visual placeholder for the connected nodes in figma */}
+                 <svg className="absolute top-10 left-10 w-full h-full text-slate-300" viewBox="0 0 200 200" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4">
+                    <path d="M 0,0 Q 100,50 50,150 T 200,200" />
+                 </svg>
+                 <div className="absolute top-5 left-5 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center text-yellow-600 border border-yellow-200 z-20 shadow-sm text-xs">👤</div>
+                 <div className="absolute top-20 left-32 w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 border border-blue-200 z-20 shadow-sm text-sm">🏢</div>
+                 <div className="absolute bottom-20 left-20 w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-red-600 border border-red-200 z-20 shadow-sm text-xs">📍</div>
+                 <div className="absolute bottom-5 left-40 w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 border border-orange-200 z-20 shadow-sm text-sm">📋</div>
+               </div>
+               <div className="w-1/2 flex flex-col justify-center relative z-10">
+                 <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-green-600 mb-4 border border-green-100">
+                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                 </div>
+                 <h3 className="text-xl font-bold text-black mb-3">Audit Langsung On-Demand</h3>
+                 <p className="text-sm text-slate-600 mb-4 leading-relaxed">
+                   Bukan sekadar pencocokan data. Inspektur berlisensi mendatangi kamar kos secara fisik untuk memeriksa AC, sirkulasi udara, kelembapan, dan ukuran riil kamar secara langsung.
+                 </p>
+                 <div className="inline-flex px-3 py-1 bg-green-50 text-green-700 text-xs font-semibold rounded-full border border-green-200 w-fit">
+                   • Terintegrasi GPS & Timestamp
+                 </div>
+               </div>
+            </div>
+
+            {/* Box 2 (Blue) */}
+            <div className="bg-[#3E86FF] rounded-3xl p-8 text-white shadow-md flex flex-col justify-center">
+              <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center mb-4">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
               </div>
-              <h2 className="text-3xl md:text-4xl font-black text-[#003057] tracking-tight">
-                Keunggulan Verifikasi Lapangan
-              </h2>
-              <p className="text-xs text-slate-500 max-w-lg mx-auto leading-relaxed">
-                Pemeriksaan fisik langsung menggunakan parameter baku untuk menjamin kelayakan kamar kos pilihan Anda.
+              <h3 className="text-xl font-bold mb-3">Verifikasi Foto AI</h3>
+              <p className="text-xs opacity-90 mb-6 leading-relaxed">
+                Setiap foto bukti yang diunggah oleh verifikator diproses secara otomatis oleh kecerdasan buatan untuk mencocokkan kelengkapan fasilitas kamar dengan iklan.
               </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              
-              {/* Box 1: Large Visual (Inspector in action) */}
-              <div className="md:col-span-2 rounded-3xl border border-slate-150 bg-white p-8 shadow-sm flex flex-col md:flex-row gap-6 items-center overflow-hidden hover:shadow-md hover:scale-[1.015] hover:border-slate-250 transition-all duration-300 grab-btn-transition group">
-                <div className="w-full md:w-1/2 aspect-square rounded-2xl overflow-hidden border border-slate-200 relative bg-slate-100 shrink-0">
-                  <img 
-                    src="/assets/Gemini_Generated_Image_jmdup3jmdup3jmdu.png" 
-                    alt="Inspector verifying facilities" 
-                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-500" 
-                  />
-                </div>
-                <div className="space-y-4 text-left">
-                  <div className="h-10 w-10 rounded-lg bg-teal-50 flex items-center justify-center text-teal-700">
-                    <ShieldCheck className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-lg font-black text-[#003057] leading-snug">Audit Langsung On-Demand</h3>
-                  <p className="text-xs text-slate-655 leading-relaxed">
-                    Bukan sekadar pencocokan data. Inspektur berlisensi mendatangi kamar kos secara fisik untuk memeriksa AC, sirkulasi udara, kelembapan, dan ukuran riil kamar secara langsung.
-                  </p>
-                  <div className="text-[9px] font-extrabold text-[#0f766e] uppercase tracking-wider font-mono flex items-center gap-1.5 pt-1 px-3 py-1 bg-teal-50/70 border border-teal-150 rounded-full w-fit">
-                    <span className="h-1.5 w-1.5 rounded-full bg-teal-600 animate-pulse" /> Terintegrasi GPS & Timestamp
-                  </div>
-                </div>
-              </div>
-
-              {/* Box 2: Validasi Foto AI */}
-              <div className="rounded-3xl border border-[#001e38] bg-[#003057] p-8 shadow-md flex flex-col justify-between hover:shadow-xl hover:scale-[1.015] transition-all duration-300 grab-btn-transition group text-white">
-                <div className="space-y-4 text-left">
-                  <div className="h-10 w-10 rounded-lg bg-white/10 flex items-center justify-center text-teal-300">
-                    <Cpu className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-base font-black uppercase font-mono tracking-wide text-teal-300">Verifikasi Foto AI</h3>
-                  <p className="text-xs text-teal-100/80 leading-relaxed">
-                    Setiap foto bukti yang diunggah oleh verifikator diproses secara otomatis oleh kecerdasan buatan untuk mencocokkan kelengkapan fasilitas kamar dengan iklan.
-                  </p>
-                </div>
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mt-6 text-xs text-teal-205 font-mono leading-normal text-left space-y-1.5">
-                  <div className="flex items-center gap-2"><CheckSquare className="h-3.5 w-3.5 text-teal-400" /> Furniture lengkap dan bagus</div>
-                  <div className="flex items-center gap-2"><CheckSquare className="h-3.5 w-3.5 text-teal-400" /> AC & Kelistrikan Cocok</div>
-                  <div className="flex items-center gap-2"><CheckSquare className="h-3.5 w-3.5 text-teal-400" /> Kamar mandi & Air baik</div>
-                </div>
-              </div>
-
-              {/* Box 3: Kebersihan Air */}
-              <div className="rounded-3xl border border-slate-150 bg-white p-8 shadow-sm flex flex-col justify-between hover:shadow-md hover:scale-[1.015] hover:border-slate-250 transition-all duration-300 grab-btn-transition">
-                <div className="space-y-4 text-left">
-                  <div className="h-10 w-10 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600">
-                    <CheckSquare className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Uji Kebersihan Air</h3>
-                  <p className="text-xs text-slate-655 leading-relaxed">
-                    Pengukuran kebersihan air kamar mandi secara langsung oleh verifikator lapangan menggunakan alat TDS Meter. Menghindarkan Anda dari risiko alergi kulit.
-                  </p>
-                </div>
-                <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-                  <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">Status Air:</span>
-                  <span className="px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-200 text-[9px] font-bold rounded-full font-mono">Higienis & Layak Pakai</span>
-                </div>
-              </div>
-
-              {/* Box 4: Uji Kecepatan Internet */}
-              <div className="rounded-3xl border border-slate-150 bg-white p-8 shadow-sm flex flex-col justify-between hover:shadow-md hover:scale-[1.015] hover:border-slate-250 transition-all duration-300 grab-btn-transition">
-                <div className="space-y-4 text-left">
-                  <div className="h-10 w-10 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
-                    <Zap className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Uji Internet Kamar</h3>
-                  <p className="text-xs text-slate-655 leading-relaxed">
-                    Uji kecepatan internet langsung dari dalam kamar kos menggunakan alat Speed Test. Memastikan koneksi WiFi memadai untuk kegiatan kuliah online.
-                  </p>
-                </div>
-                <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-                  <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">Koneksi WiFi:</span>
-                  <span className="px-3 py-1 bg-amber-50 text-amber-800 border border-amber-200 text-[9px] font-bold rounded-full font-mono">Stabil & Lancar</span>
-                </div>
-              </div>
-
-              {/* Box 5: Laporan Valid PDF */}
-              <div className="rounded-3xl border border-slate-150 bg-white p-8 shadow-sm flex flex-col justify-between hover:shadow-md hover:scale-[1.015] hover:border-slate-250 transition-all duration-300 grab-btn-transition">
-                <div className="space-y-4 text-left">
-                  <div className="h-10 w-10 rounded-lg bg-rose-50 flex items-center justify-center text-rose-600">
-                    <ClipboardList className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-base font-black text-[#003057] uppercase font-mono tracking-wide">Hasil Laporan Lengkap</h3>
-                  <p className="text-xs text-slate-655 leading-relaxed">
-                    Laporan berformat PDF resmi ringkasan kepatuhan fasilitas kos secara terperinci untuk mempermudah Anda membandingkan berbagai kos secara objektif.
-                  </p>
-                </div>
-                <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
-                  <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider font-mono">Berkas Laporan:</span>
-                  <span className="inline-flex items-center gap-1 text-[9px] font-black text-blue-605 uppercase tracking-wider font-mono hover:text-blue-700 transition-colors">
-                    <Download className="h-3 w-3" /> Unduh PDF
-                  </span>
-                </div>
-              </div>
-
-            </div>
-          </section>
-
-          {/* Asymmetric Workflow Section */}
-          <section id="fitur" className="mb-28 max-w-5xl mx-auto space-y-12">
-            <div className="text-center space-y-3">
-              <h2 className="text-3xl md:text-4xl font-black text-[#003057]">Bagaimana Cara Kerjanya?</h2>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">Proses validasi on-demand terverifikasi hanya dalam 3 tahapan sistematis.</p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-              <div className="lg:col-span-4 p-9 rounded-3xl bg-white border border-slate-155 shadow-sm relative flex flex-col justify-between hover:shadow-md hover:scale-[1.015] transition-all duration-300 grab-btn-transition text-left">
-                <div className="space-y-4">
-                  <div className="text-3xl font-black text-slate-300 font-mono">01</div>
-                  <h3 className="text-base font-extrabold text-[#003057] leading-snug">Pesan & Input Klaim</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Masukkan alamat kos target dan isi daftar fasilitas dari foto iklan kosan yang ingin dibuktikan kesesuaian fisiknya.
-                  </p>
-                </div>
-                <div className="pt-6 border-t border-slate-100 mt-6 text-[10px] font-bold text-slate-400 font-mono">Dukungan: Inspeksi Single / Grup</div>
-              </div>
-
-              <div className="lg:col-span-4 p-9 rounded-3xl bg-[#0f766e] text-white shadow-xl relative flex flex-col justify-between hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 grab-btn-transition text-left">
-                <div className="absolute top-[-20%] left-[-20%] w-[180px] h-[180px] rounded-full bg-white/10 blur-[50px] pointer-events-none" />
-                <div className="space-y-4 relative z-10">
-                  <div className="text-3xl font-black text-teal-200/40 font-mono">02</div>
-                  <h3 className="text-base font-extrabold text-white leading-snug">Inspeksi Lapangan Instan</h3>
-                  <p className="text-xs text-teal-50/90 leading-relaxed">
-                    Verifikator terdekat menuju lokasi secara langsung untuk mendokumentasikan foto fasilitas, uji kebersihan air, dan kecepatan internet.
-                  </p>
-                </div>
-                <div className="pt-6 border-t border-teal-850 mt-6 text-[10px] font-bold text-teal-200 font-mono relative z-10">Matchmaking: &lt; 30 Menit</div>
-              </div>
-
-              <div className="lg:col-span-4 p-9 rounded-3xl bg-white border border-slate-155 shadow-sm relative flex flex-col justify-between hover:shadow-md hover:scale-[1.015] transition-all duration-300 grab-btn-transition text-left">
-                <div className="space-y-4">
-                  <div className="text-3xl font-black text-slate-300 font-mono">03</div>
-                  <h3 className="text-base font-extrabold text-[#003057] leading-snug">Terima Laporan Valid</h3>
-                  <p className="text-xs text-slate-500 leading-relaxed">
-                    Hasil laporan kecocokan visual diverifikasi oleh teknologi AI. Ringkasan skor, dokumen laporan PDF, dan asisten konsultasi siap diakses di dashboard.
-                  </p>
-                </div>
-                <div className="pt-6 border-t border-slate-100 mt-6 text-[10px] font-bold text-slate-400 font-mono">Output: PDF Laporan + Chatbot AI</div>
+              <div className="bg-white text-black p-4 rounded-xl text-xs space-y-2 font-medium">
+                <div className="flex items-center gap-2"><CheckSquare className="w-3.5 h-3.5 text-blue-600" /> Furniture lengkap dan bagus</div>
+                <div className="flex items-center gap-2"><CheckSquare className="w-3.5 h-3.5 text-blue-600" /> AC & Kelistrikan Cocok</div>
+                <div className="flex items-center gap-2"><CheckSquare className="w-3.5 h-3.5 text-blue-600" /> Kamar mandi & Air baik</div>
               </div>
             </div>
-          </section>
 
-          {/* Pricing / Service Kategori Section */}
-          <section id="harga" className="mb-28 max-w-4xl mx-auto space-y-12">
-            <div className="text-center space-y-3">
-              <h2 className="text-3xl md:text-4xl font-black text-[#003057]">Pilihan Kategori Layanan</h2>
-              <p className="text-xs text-slate-500 max-w-md mx-auto">Sistem pembayaran transparan tanpa biaya tambahan, terintegrasi secure gateway Midtrans.</p>
+            {/* Bottom 3 Boxes */}
+            <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col">
+              <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 mb-4 border border-blue-100">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
+              </div>
+              <h3 className="text-lg font-bold text-black mb-3">Uji Kebersihan Air</h3>
+              <p className="text-xs text-slate-600 mb-6 flex-grow leading-relaxed">
+                Pengukuran kebersihan air kamar mandi secara langsung oleh verifikator lapangan. Menghindarkan Anda dari risiko alergi kulit akibat air keruh atau berkarat.
+              </p>
+              <div className="inline-flex px-3 py-1.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded-full border border-blue-100 w-fit mt-auto">
+                • menggunakan alat TDS Meter
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
-              <div className="bg-white border border-slate-155 rounded-3xl p-9 shadow-sm flex flex-col justify-between hover:shadow-md hover:scale-[1.015] transition-all duration-300 grab-btn-transition text-left">
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <div className="px-3 py-1 rounded-full bg-blue-55 text-blue-800 border border-blue-200 text-[9px] font-extrabold uppercase tracking-wider font-mono">
-                      Personal Audit
-                    </div>
-                    <span className="text-[10px] font-extrabold text-slate-400 font-mono uppercase">1 Properti</span>
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-black text-[#003057]">Inspeksi Tunggal</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed">
-                      Layanan audit mendetail untuk satu properti pilihan Anda. Cocok jika Anda telah yakin pada satu opsi kosan dan hanya butuh validasi final.
-                    </p>
-                  </div>
-                  <div className="text-3xl font-black text-[#003057] font-mono py-2 border-t border-b border-slate-100">
-                    Rp 50.000 <span className="text-[11px] text-slate-400 font-normal uppercase font-sans">/ properti</span>
-                  </div>
-                  <ul className="space-y-3 text-xs text-slate-655">
-                    <li className="flex items-center gap-2.5"><CheckSquare className="h-4 w-4 text-teal-600 shrink-0" /> Audit 5+ titik fasilitas kamar kos</li>
-                    <li className="flex items-center gap-2.5"><CheckSquare className="h-4 w-4 text-teal-600 shrink-0" /> Uji kebersihan air kamar mandi</li>
-                    <li className="flex items-center gap-2.5"><CheckSquare className="h-4 w-4 text-teal-600 shrink-0" /> Speedtest bandwidth WiFi dalam kamar</li>
-                    <li className="flex items-center gap-2.5"><CheckSquare className="h-4 w-4 text-teal-600 shrink-0" /> Laporan PDF lengkap + Chatbot AI</li>
-                  </ul>
+            <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col">
+              <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center text-orange-500 mb-4 border border-orange-100">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/><path d="M16 12l-4-4-4 4"/></svg>
+              </div>
+              <h3 className="text-lg font-bold text-black mb-3">Uji Internet Kamar</h3>
+              <p className="text-xs text-slate-600 mb-6 flex-grow leading-relaxed">
+                Uji kecepatan internet langsung dari dalam kamar kos. Memastikan koneksi WiFi memadai dan stabil untuk kegiatan kuliah online maupun streaming harian.
+              </p>
+              <div className="inline-flex px-3 py-1.5 bg-orange-50 text-orange-600 text-[10px] font-semibold rounded-full border border-orange-100 w-fit mt-auto">
+                • menggunakan alat Speed Test
+              </div>
+            </div>
+
+            <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm flex flex-col">
+              <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center text-red-500 mb-4 border border-red-100">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              </div>
+              <h3 className="text-lg font-bold text-black mb-3">Hasil Laporan Lengkap</h3>
+              <p className="text-xs text-slate-600 mb-6 flex-grow leading-relaxed">
+                Laporan ringkasan kepatuhan fasilitas kos dalam format PDF resmi untuk mempermudah Anda membandingkan berbagai kos secara objektif.
+              </p>
+              <div className="inline-flex px-3 py-1.5 bg-blue-50 text-blue-600 text-[10px] font-semibold rounded-full border border-blue-100 w-fit mt-auto">
+                • laporan berformat PDF
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Bagaimana Cara Kerjanya? */}
+        <section className="mb-24 text-center">
+          <h2 className="text-3xl font-bold text-black mb-2">Bagaimana Cara Kerjanya?</h2>
+          <p className="text-sm text-slate-700 mb-12">Proses validasi on-demand terverifikasi hanya dalam 3 tahapan sistematis.</p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+            {/* Decorative arrow path */}
+            <div className="hidden md:block absolute top-1/3 left-[20%] w-[60%] h-[2px] bg-slate-200 z-0 border-t-2 border-dashed border-slate-300"></div>
+            
+            {/* Step 1 */}
+            <div className="bg-[#567A99] rounded-3xl p-8 text-white flex flex-col text-left shadow-lg relative z-10">
+              <div className="text-4xl font-light mb-4 opacity-80">01</div>
+              <h3 className="text-xl font-bold mb-3">Pesan & Input Klaim</h3>
+              <p className="text-xs leading-relaxed mb-8 opacity-90 flex-grow">
+                Masukkan alamat kos target dan isi daftar fasilitas dari foto iklan kosan yang ingin dibuktikan kesesuaian fisiknya.
+              </p>
+              <div className="bg-[#3E86FF] text-white text-xs font-semibold py-3 px-4 rounded-full text-center mt-auto">
+                Inspeksi Single / Grup
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="bg-[#FF9B3E] rounded-3xl p-8 text-white flex flex-col text-left shadow-lg relative z-10">
+              <div className="text-4xl font-light mb-4 opacity-80">02</div>
+              <h3 className="text-xl font-bold mb-3">Inspeksi Lapangan Instan</h3>
+              <p className="text-xs leading-relaxed mb-8 opacity-90 flex-grow">
+                Verifikator terdekat menuju lokasi secara langsung untuk mendokumentasikan foto fasilitas, uji kebersihan air, dan kecepatan internet.
+              </p>
+              <div className="bg-[#FFD147] text-orange-900 text-xs font-semibold py-3 px-4 rounded-full text-center mt-auto">
+                Matchmaking {'<'} 30 Menit
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="bg-[#8CB2D4] rounded-3xl p-8 text-white flex flex-col text-left shadow-lg relative z-10">
+              <div className="text-4xl font-light mb-4 opacity-80">03</div>
+              <h3 className="text-xl font-bold mb-3">Terima Laporan Valid</h3>
+              <p className="text-xs leading-relaxed mb-8 opacity-90 flex-grow">
+                Hasil laporan kecocokan visual diverifikasi oleh teknologi AI. Ringkasan skor, dokumen laporan PDF, dan asisten konsultasi siap diakses di dashboard.
+              </p>
+              <div className="bg-[#C2DFFF] text-blue-900 text-xs font-semibold py-3 px-4 rounded-full text-center mt-auto">
+                PDF Laporan + Chatbot A
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Pilihan Kategori Layanan */}
+        <section className="mb-24">
+          <div className="border-[1.5px] border-slate-300 rounded-[40px] p-10 bg-transparent text-center">
+            <h2 className="text-3xl font-bold text-black mb-2">Pilihan Kategori Layanan</h2>
+            <p className="text-sm text-slate-700 mb-10">Sistem pembayaran transparan tanpa biaya tambahan, terintegrasi secure gateway<br/>Midtrans.</p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
+              {/* Box 1 */}
+              <div className="bg-[#3E86FF] rounded-3xl p-8 text-white flex flex-col shadow-lg">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-bold">Inspeksi Tunggal</h3>
                 </div>
-                <Link href="/login" className="mt-8 flex items-center justify-center gap-2 w-full py-4 bg-[#003057] hover:bg-[#001e38] text-white font-bold rounded-full text-xs uppercase tracking-wider transition-all grab-btn-transition active:scale-[0.95] hover:scale-[1.02]">
+                <div className="mb-2 flex items-end gap-1">
+                  <span className="text-4xl font-bold">Rp 50.000</span>
+                  <span className="text-sm opacity-80 mb-1">/ properti</span>
+                </div>
+                
+                <div className="flex justify-between items-center text-[10px] mb-8 pb-4 border-b border-blue-400">
+                   <div className="px-2 py-1 bg-white/20 rounded-full">Personal Audit</div>
+                   <div>1 Properti</div>
+                </div>
+
+                <p className="text-xs opacity-90 mb-6 leading-relaxed">
+                  Bukan sekadar pencocokan data. Inspektur berlisensi mendatangi kamar kos secara fisik untuk memeriksa AC, sirkulasi udara, kelembapan, dan ukuran riil kamar secara langsung.
+                </p>
+
+                <div className="space-y-3 text-xs font-medium mb-8 flex-grow">
+                  <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-white" /> Audit 5+ titik fasilitas kamar kos</div>
+                  <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-white" /> Uji kebersihan air kamar mandi</div>
+                  <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-white" /> Speedtest bandwidth WiFi dalam kamar</div>
+                  <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-white" /> Laporan PDF lengkap + Chatbot AI</div>
+                </div>
+
+                <Link href="/login" className="block w-full py-3.5 bg-[#5BA0FF] hover:bg-[#4d8be6] text-white font-bold rounded-full text-center text-sm transition-colors mt-auto shadow-sm">
                   Pilih Layanan
                 </Link>
               </div>
 
-              <div className="bg-white border-2 border-[#0f766e] rounded-3xl p-9 shadow-md flex flex-col justify-between relative hover:shadow-lg hover:scale-[1.015] transition-all duration-300 grab-btn-transition text-left">
-                <div className="absolute -top-3.5 right-6 px-3 py-1 bg-[#0f766e] text-[8px] font-black uppercase tracking-wider rounded-md text-white font-mono shadow-sm">
+              {/* Box 2 */}
+              <div className="bg-[#FFD147] rounded-3xl p-8 text-black flex flex-col shadow-lg relative border-2 border-yellow-400">
+                <div className="absolute -top-4 right-8 bg-[#FF9B3E] text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-md">
                   Paling Hemat
                 </div>
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <div className="px-3 py-1 rounded-full bg-teal-55 text-[#0f766e] border border-teal-200 text-[9px] font-extrabold uppercase tracking-wider font-mono">
-                      Comparison Group
-                    </div>
-                    <span className="text-[10px] font-extrabold text-teal-700 font-mono uppercase">Hingga 5 Properti</span>
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-black text-[#003057]">Inspeksi Grup</h3>
-                    <p className="text-xs text-slate-500 leading-relaxed">
-                      Bandingkan beberapa kos sekaligus secara komparatif untuk menemukan opsi ternyaman. Sangat ideal untuk mahasiswa dari luar kota.
-                    </p>
-                  </div>
-                  <div className="text-3xl font-black text-[#003057] font-mono py-2 border-t border-b border-slate-100">
-                    Rp 45.000 <span className="text-[11px] text-slate-400 font-normal uppercase font-sans">/ properti</span>
-                  </div>
-                  <ul className="space-y-3 text-xs text-slate-655">
-                    <li className="flex items-center gap-2.5"><CheckSquare className="h-4 w-4 text-[#0f766e] shrink-0" /> Audit komparatif hingga 5 properti kos</li>
-                    <li className="flex items-center gap-2.5"><CheckSquare className="h-4 w-4 text-[#0f766e] shrink-0" /> Tabel perbandingan skor & nominal sewa</li>
-                    <li className="flex items-center gap-2.5"><CheckSquare className="h-4 w-4 text-[#0f766e] shrink-0" /> Uji kebersihan air & WiFi di setiap kosan</li>
-                    <li className="flex items-center gap-2.5"><CheckSquare className="h-4 w-4 text-[#0f766e] shrink-0" /> Asisten AI untuk rekomendasi kos terbaik</li>
-                  </ul>
+                
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-bold">Inspeksi Grup</h3>
                 </div>
-                <Link href="/login" className="mt-8 flex items-center justify-center gap-2 w-full py-4 bg-[#0f766e] hover:bg-[#0b544f] text-white font-bold rounded-full text-xs uppercase tracking-wider transition-all grab-btn-transition active:scale-[0.95] hover:scale-[1.02]">
+                <div className="mb-2 flex items-end gap-1">
+                  <span className="text-4xl font-bold">Rp 45.000</span>
+                  <span className="text-sm opacity-70 mb-1">/ properti</span>
+                </div>
+                
+                <div className="flex justify-between items-center text-[10px] mb-8 pb-4 border-b border-yellow-500/30">
+                   <div className="px-2 py-1 bg-white/50 rounded-full">Comparison Group</div>
+                   <div>Hingga 5 Properti</div>
+                </div>
+
+                <p className="text-xs opacity-90 mb-6 leading-relaxed text-slate-800">
+                  Bandingkan beberapa kos sekaligus secara komparatif untuk menemukan opsi ternyaman. Sangat ideal untuk mahasiswa dari luar kota.
+                </p>
+
+                <div className="space-y-3 text-xs font-medium mb-8 flex-grow text-slate-800">
+                  <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-black" /> Audit 5+ titik fasilitas kamar kos</div>
+                  <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-black" /> Tabel perbandingan skor & nominal sewa</div>
+                  <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-black" /> Uji kebersihan air & WiFi di setiap kosan</div>
+                  <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-black" /> Asisten AI untuk rekomendasi kos terbaik</div>
+                </div>
+
+                <Link href="/login" className="block w-full py-3.5 bg-[#FFC107] hover:bg-[#eab006] text-black font-bold rounded-full text-center text-sm transition-colors mt-auto shadow-sm">
                   Pilih Layanan
                 </Link>
               </div>
             </div>
-          </section>
-
-          {/* Testimonial Section */}
-          <section className="mb-28 max-w-4xl mx-auto py-12 border-t border-b border-slate-205">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center text-left">
-              <div className="md:col-span-8 space-y-4">
-                <div className="flex gap-0.5">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />)}
-                </div>
-                <blockquote className="text-base sm:text-lg font-extrabold text-[#003057] leading-relaxed text-wrap-pretty italic">
-                  &ldquo;Saya dari luar kota Padang, sehingga survei kosan satu per satu sangat sulit. Menggunakan Inspeksi Grup sangat menghemat biaya tiket pesawat saya. Laporannya sangat valid.&rdquo;
-                </blockquote>
-                <div className="pt-2">
-                  <h4 className="text-xs font-black text-[#003057]">Anisa Putri</h4>
-                  <p className="text-[10px] text-slate-400 uppercase tracking-wider mt-0.5">Mahasiswa D4 TRPL, Politeknik Negeri Padang</p>
-                </div>
-              </div>
-              
-              <div className="md:col-span-4 flex md:justify-end">
-                <div className="p-7 rounded-3xl border border-slate-150 bg-white shadow-sm space-y-4 max-w-[260px] text-left grab-btn-transition hover:scale-[1.015]">
-                  <div className="text-2xl font-black text-teal-600 font-mono">1.250+</div>
-                  <p className="text-[10.5px] text-slate-500 leading-normal">
-                    Mahasiswa telah terbantu memverifikasi kelayakan kos mereka sebelum membayar DP sewa.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* FAQ Section */}
-          <section id="faq" className="mb-28 max-w-3xl mx-auto space-y-8">
-            <div className="text-center space-y-3">
-              <h2 className="text-3xl md:text-4xl font-black text-[#003057]">Pertanyaan Umum</h2>
-              <p className="text-xs text-slate-500">Menjawab keraguan teknis mengenai validitas dan survei lapangan.</p>
-            </div>
-
-            <div className="space-y-0">
-              {faqs.map((faq, idx) => {
-                const isOpen = activeFaq === idx;
-                return (
-                  <div key={idx} className="border-b border-slate-200 bg-transparent text-left transition-all duration-300">
-                    <button
-                      onClick={() => toggleFaq(idx)}
-                      className="w-full py-5 flex items-center justify-between text-left font-bold text-[11.5px] uppercase tracking-wide text-[#003057] hover:text-[#0f766e] transition-all focus:outline-none"
-                    >
-                      <span>{faq.q}</span>
-                      <ChevronDown className={`h-4 w-4 text-slate-400 transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`} />
-                    </button>
-                    {isOpen && (
-                      <div className="pb-5 pt-0.5 text-xs text-slate-600 leading-relaxed animate-in fade-in duration-350">
-                        {faq.a}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-
-          {/* Premium Startup CTA Banner */}
-          <section className="bg-gradient-to-r from-[#003057] to-[#0f766e] rounded-[2.2rem] p-8 md:p-14 text-center text-white space-y-8 max-w-4xl mx-auto shadow-2xl relative overflow-hidden mb-8">
-            <div className="absolute top-[-40%] left-[-20%] w-[380px] h-[380px] rounded-full bg-teal-400/10 blur-[80px] pointer-events-none" />
-            <div className="absolute bottom-[-30%] right-[-20%] w-[380px] h-[380px] rounded-full bg-blue-400/10 blur-[80px] pointer-events-none" />
-
-            <div className="max-w-2xl mx-auto space-y-4 relative z-10">
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight leading-tight">Amankan Kamar Kos Idaman Anda</h2>
-              <p className="text-xs text-teal-50/90 leading-relaxed max-w-md mx-auto">
-                Hindari kekecewaan akibat iklan yang tidak sesuai. Dapatkan pembuktian nyata bersama verifikator ahli sekarang.
-              </p>
-            </div>
-
-            <div className="pt-2 relative z-10">
-              <Link href="/login" className="inline-flex items-center gap-2 px-8 py-4 bg-white hover:bg-slate-100 text-[#003057] font-black rounded-full text-xs uppercase tracking-wider transition-all shadow-lg hover:scale-[1.03] active:scale-[0.95] grab-btn-transition">
-                Mulai Audit <ArrowRight className="h-4 w-4 text-[#003057]" />
-              </Link>
-            </div>
-          </section>
-
-        </main>
-
-        {/* Footer */}
-        <footer className="border-t border-slate-200 bg-white py-12 text-xs text-slate-500 relative z-10 text-left">
-          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex flex-col items-center md:items-start gap-3">
-              <img 
-                src="/logo.webp" 
-                alt="InspeksiKos Logo" 
-                className="h-14 w-auto object-contain hover:scale-[1.01] transition-transform duration-200" 
-              />
-              <p className="text-[10px] text-slate-400 text-center md:text-left">
-                Platform Verifikasi & Audit Properti Kos On-Demand pertama di Indonesia.
-              </p>
-            </div>
-
-            <div className="flex flex-wrap justify-center gap-6 text-[11px] font-bold text-slate-400">
-              <a href="#" className="hover:text-[#003057] transition-colors">Syarat & Ketentuan</a>
-              <a href="#" className="hover:text-[#003057] transition-colors">Kebijakan Privasi</a>
-              <a href="#" className="hover:text-[#003057] transition-colors">Bantuan</a>
-            </div>
-
-            <p className="text-[10px] text-slate-400 text-center md:text-right">
-              © 2026 InspeksiKos. Capstone Project D4 TRPL Politeknik Negeri Padang. All rights reserved.
-            </p>
           </div>
-        </footer>
+        </section>
 
-      </div>
+        {/* Pertanyaan Umum */}
+        <section className="mb-24 text-center max-w-3xl mx-auto">
+          <h2 className="text-3xl font-bold text-black mb-2">Pertanyaan Umum</h2>
+          <p className="text-sm text-slate-700 mb-8">Menjawab keraguan teknis mengenai validitas dan survei lapangan.</p>
+
+          <div className="space-y-0 text-left">
+            {faqs.map((faq, idx) => {
+              const isOpen = activeFaq === idx;
+              return (
+                <div key={idx} className="border-b border-slate-300 transition-all duration-300">
+                  <button
+                    onClick={() => toggleFaq(idx)}
+                    className="w-full py-5 flex items-center justify-between text-left font-bold text-sm text-black hover:text-blue-600 transition-all focus:outline-none"
+                  >
+                    <span>{faq.q}</span>
+                    <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform duration-300 ${isOpen ? 'transform rotate-180' : ''}`} />
+                  </button>
+                  {isOpen && (
+                    <div className="pb-5 pt-1 text-sm text-slate-600 leading-relaxed animate-in fade-in duration-300">
+                      {faq.a}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        {/* CTA Footer */}
+        <section className="bg-[#3E86FF] rounded-[40px] p-12 text-center text-white space-y-6 max-w-5xl mx-auto shadow-lg">
+          <h2 className="text-4xl font-bold tracking-tight mb-2">Amankan Kamar Kos Idaman Anda</h2>
+          <p className="text-sm opacity-90 max-w-2xl mx-auto mb-8">
+            Hindari kekecewaan akibat iklan yang tidak sesuai. Dapatkan pembuktian nyata bersama verifikator ahli sekarang.
+          </p>
+          <Link href="/login" className="inline-flex items-center gap-2 px-8 py-3.5 bg-white text-black font-bold rounded-full text-sm transition-all hover:bg-slate-100 shadow-md">
+            Mulai Audit <ArrowRight className="h-4 w-4 text-black" />
+          </Link>
+        </section>
+      </main>
     </div>
   );
 }
