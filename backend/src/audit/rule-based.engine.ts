@@ -41,6 +41,9 @@ export class RuleBasedEngine {
 
       if (isClaimed) {
         totalWeight += Number(item.weight);
+        
+        const aiVal = extractedData?.fasilitas?.[facilityName];
+        const inspectorVal = inspectorData?.fasilitas?.[facilityName];
 
         // Fetch actual values based on type of facility
         let actualVal: any;
@@ -49,13 +52,15 @@ export class RuleBasedEngine {
         } else if (facilityName === 'kecepatan_internet' || facilityName === 'internet') {
           actualVal = { nilai: technicalData.internet_speed };
         } else {
-          // Merge Gemini extraction with inspector manual evaluations
-          const aiVal = extractedData?.fasilitas?.[facilityName];
-          const inspectorVal = inspectorData?.fasilitas?.[facilityName];
+          const hasAiAda = aiVal?.ada === true;
+          const hasInspectorAda = inspectorVal ? inspectorVal.ada === true : true;
           
+          const hasAiWifi = aiVal?.router_terlihat === true;
+          const hasInspectorWifi = inspectorVal ? inspectorVal.router_terlihat === true : true;
+
           actualVal = {
-            ada: aiVal?.ada === true || inspectorVal?.ada === true,
-            router_terlihat: aiVal?.router_terlihat === true || inspectorVal?.router_terlihat === true,
+            ada: hasAiAda && hasInspectorAda,
+            router_terlihat: hasAiWifi && hasInspectorWifi,
             kondisi: aiVal?.kondisi || inspectorVal?.kondisi || 'baik',
           };
         }
@@ -74,8 +79,19 @@ export class RuleBasedEngine {
           actualText = `${technicalData.internet_speed} Mbps`;
         } else {
           claimedText = claimed?.ada === true || claimed?.router_terlihat === true ? 'Ada' : 'Tidak Ada';
-          const actualAda = actualVal?.ada === true || actualVal?.router_terlihat === true;
-          actualText = actualAda ? 'Ada (AI/Foto)' : 'Tidak Ada';
+          
+          const aiAda = aiVal?.ada === true || aiVal?.router_terlihat === true;
+          const inspectorAda = inspectorVal ? (inspectorVal.ada === true || inspectorVal.router_terlihat === true) : true;
+          
+          if (aiAda && inspectorAda) {
+            actualText = 'Ada (Terverifikasi)';
+          } else if (inspectorAda && !aiAda) {
+            actualText = 'Tidak Terdeteksi AI (Foto Tidak Sesuai)';
+          } else if (!inspectorAda && aiAda) {
+            actualText = 'Tidak Ada (Hasil Verifikator Lapangan)';
+          } else {
+            actualText = 'Tidak Ada';
+          }
         }
 
         if (match) {
@@ -123,11 +139,25 @@ export class RuleBasedEngine {
 
             const aiVal = extractedData?.fasilitas?.[facilityName];
             const inspectorVal = inspectorData?.fasilitas?.[facilityName];
-            const actualAda = aiVal?.ada === true || aiVal?.router_terlihat === true || inspectorVal?.ada === true || inspectorVal?.router_terlihat === true;
+            
+            const hasAiCustom = aiVal?.ada === true || aiVal?.router_terlihat === true;
+            const hasInspectorCustom = inspectorVal ? (inspectorVal.ada === true || inspectorVal.router_terlihat === true) : true;
+            
+            const actualAda = hasAiCustom && hasInspectorCustom;
             const match = actualAda === true;
 
             const claimedText = claimed?.ada === true || claimed?.router_terlihat === true ? 'Ada' : 'Tidak Ada';
-            const actualText = actualAda ? 'Ada (AI/Foto)' : 'Tidak Ada';
+            
+            let actualText = '';
+            if (hasAiCustom && hasInspectorCustom) {
+              actualText = 'Ada (Terverifikasi)';
+            } else if (hasInspectorCustom && !hasAiCustom) {
+              actualText = 'Tidak Terdeteksi AI (Foto Tidak Sesuai)';
+            } else if (!hasInspectorCustom && hasAiCustom) {
+              actualText = 'Tidak Ada (Hasil Verifikator Lapangan)';
+            } else {
+              actualText = 'Tidak Ada';
+            }
 
             if (match) {
               matchedWeight += defaultWeight;

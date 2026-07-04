@@ -143,4 +143,37 @@ describe('RuleBasedEngine', () => {
     expect(result.breakdownData.matched).toBe(1);
     expect(result.breakdownData.neutral).toBe(3);
   });
+
+  it('should result in mismatch if inspector claims facility is present but AI Vision says it is missing', () => {
+    const claimData = {
+      fasilitas: {
+        wifi: { ada: true },
+      },
+    };
+
+    const extractedData = {
+      fasilitas: {
+        wifi: { ada: false }, // AI says missing
+      },
+    };
+
+    const technicalData = {
+      tds_value: 120,
+      internet_speed: 30,
+    };
+
+    const inspectorData = {
+      fasilitas: {
+        wifi: { ada: true }, // Inspector claims present
+      },
+    };
+
+    const result = engine.execute(claimData, extractedData, technicalData, mockRuleItems, inspectorData);
+
+    // AI says missing, inspector claims present. Enforce mutual agreement: evaluated as missing.
+    // Penalty is -0.5. Score = -0.5 / 1.0 * 100 = -50%, bounded to 0.
+    expect(result.score).toBe(0);
+    expect(result.breakdownData.mismatched).toBe(1);
+    expect(result.breakdownData.items[0].actual).toBe('Tidak Terdeteksi AI (Foto Tidak Sesuai)');
+  });
 });

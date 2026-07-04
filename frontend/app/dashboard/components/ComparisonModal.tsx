@@ -35,8 +35,8 @@ export default function ComparisonModal({
       <div className="bg-white rounded-2xl w-full max-w-4xl p-6 shadow-2xl relative border border-slate-200 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-5">
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-indigo-400 flex items-center gap-1.5">
-              <Sparkles className="h-4 w-4 text-indigo-400 animate-pulse" />
+            <h3 className="text-sm font-bold uppercase tracking-wider text-[#003057] flex items-center gap-1.5">
+              <Sparkles className="h-4 w-4 text-[#0f766e] animate-pulse" />
               Hasil Analisis Komparatif Properti Kos
             </h3>
             <p className="text-[10px] text-slate-400 mt-1 leading-relaxed font-medium">
@@ -54,11 +54,11 @@ export default function ComparisonModal({
 
         {/* Smart Recommendation Card */}
         {bestKos && bestKos.property && (
-          <div className="mb-6 p-4 bg-indigo-950/20 border border-indigo-900/30 rounded-xl relative overflow-hidden text-left text-slate-800">
-            <div className="absolute top-0 right-0 bg-indigo-600 text-white text-[8px] font-extrabold px-3 py-1 uppercase rounded-bl-lg tracking-wider">
+          <div className="mb-6 p-4 bg-teal-50 border border-teal-200 rounded-xl relative overflow-hidden text-left text-slate-800">
+            <div className="absolute top-0 right-0 bg-[#003057] text-white text-[8px] font-extrabold px-3 py-1 uppercase rounded-bl-lg tracking-wider">
               Rekomendasi Terbaik
             </div>
-            <h4 className="text-xs font-bold text-indigo-305 flex items-center gap-1.5 mb-1">
+            <h4 className="text-xs font-bold text-[#003057] flex items-center gap-1.5 mb-1">
               🌟 Pilihan Utama: {bestKos.property.name}
             </h4>
             <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
@@ -88,7 +88,7 @@ export default function ComparisonModal({
                 <td className="p-3 font-semibold text-slate-600">Skor Akreditasi</td>
                 {selectedComparisonGroup.map((insp) => (
                   <td key={insp.inspection_id} className="p-3 text-center border-l border-slate-200/60">
-                    <span className="font-extrabold text-xs text-blue-600">
+                    <span className="font-extrabold text-xs text-[#0f766e]">
                       {insp.audit_report?.score}%
                     </span>
                   </td>
@@ -103,7 +103,7 @@ export default function ComparisonModal({
                       insp.audit_report?.confidence_level === 'VALID'
                         ? 'bg-emerald-50 text-emerald-805 border border-emerald-200'
                         : insp.audit_report?.confidence_level === 'PARTIAL_VALID'
-                        ? 'bg-blue-50 text-blue-805 border border-blue-200 animate-pulse'
+                        ? 'bg-teal-50 text-[#0f766e] border border-teal-200 animate-pulse'
                         : 'bg-rose-50 text-rose-805 border border-rose-200'
                     }`}>
                       {insp.audit_report?.confidence_level === 'VALID'

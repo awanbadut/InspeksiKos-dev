@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, EyeOff, Loader, Shield, ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { Eye, EyeOff, Loader, ArrowLeft } from 'lucide-react';
 import api from '@/lib/api';
 
 export default function LoginPage() {
@@ -49,57 +49,56 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-12 bg-slate-50 font-sans text-slate-800">
       
-      {/* Left side: Premium Promo Panel (Hidden on small screens) */}
-      <div className="hidden lg:flex lg:col-span-5 relative flex-col justify-between p-12 bg-primary text-white border-r border-slate-200 overflow-hidden shadow-2xl">
-        {/* Soft Teal glow accent */}
-        <div className="absolute top-[-20%] left-[-20%] w-[400px] h-[400px] rounded-full bg-teal-500/10 blur-[100px] pointer-events-none" />
+      {/* Left side: Promo Panel */}
+      <div className="hidden lg:flex lg:col-span-5 relative flex-col justify-between p-12 bg-primary text-white overflow-hidden">
         
-        {/* Header */}
-        <Link href="/" className="relative flex items-center z-10 group">
-          <img src="/logo.webp" alt="InspeksiKos Logo" className="h-14 w-auto object-contain brightness-0 invert" />
+        {/* Logo */}
+        <Link href="/" className="relative z-10">
+          <div className="bg-white rounded-xl px-3 py-2 w-fit">
+            <img src="/logo.webp" alt="InspeksiKos" className="h-10 w-auto object-contain" />
+          </div>
         </Link>
 
-        {/* Marketing/Feature Points */}
-        <div className="relative space-y-8 z-10 my-auto">
-          <div className="space-y-3">
-            <h2 className="text-2xl font-black leading-snug">
-              Platform Verifikasi & Audit Properti Kos
+        {/* Content */}
+        <div className="relative z-10 my-auto space-y-8">
+          <div>
+            <h2 className="text-2xl font-bold leading-snug tracking-tight">
+              Cari kos yang sesuai iklan,
+              <br />bukan yang sesuai harapan.
             </h2>
-            <p className="text-xs text-teal-100/80 leading-relaxed">
-              Mengamankan pencarian tempat tinggal mahasiswa dengan audit lapangan terpercaya menggunakan AI Vision & verifikasi fisik terakreditasi oleh verifikator profesional.
+            <p className="text-[13px] text-white/60 leading-relaxed mt-3 max-w-xs">
+              Inspektur kami datang langsung ke lokasi, cek fasilitas, ukur kualitas air dan WiFi, lalu buat laporan yang bisa Anda baca sebelum bayar DP.
             </p>
           </div>
 
-          <div className="space-y-4">
-            <div className="flex gap-3">
-              <CheckCircle2 className="h-5 w-5 text-accent-bright shrink-0 mt-0.5" />
+          <div className="border-t border-white/10 pt-6 space-y-5">
+            <div className="flex gap-4 items-baseline">
+              <span className="text-[13px] font-mono text-white/30 tabular-nums">01</span>
               <div>
-                <h4 className="text-xs font-bold text-white">Akurasi Deteksi Fasilitas</h4>
-                <p className="text-[11px] text-teal-100/70 mt-0.5">Analisis visual foto oleh AI Vision mencegah penipuan foto iklan kos.</p>
+                <p className="text-[13px] font-semibold text-white/90">Pesan inspeksi lewat dashboard</p>
+                <p className="text-[11px] text-white/40 mt-0.5">Pilih kos, isi alamat, bayar via QRIS.</p>
               </div>
             </div>
-
-            <div className="flex gap-3">
-              <CheckCircle2 className="h-5 w-5 text-accent-bright shrink-0 mt-0.5" />
+            <div className="flex gap-4 items-baseline">
+              <span className="text-[13px] font-mono text-white/30 tabular-nums">02</span>
               <div>
-                <h4 className="text-xs font-bold text-white">Pengukuran Teknis Akurat</h4>
-                <p className="text-[11px] text-teal-100/70 mt-0.5">Pengujian langsung kualitas air bersih (TDS) dan kecepatan internet WiFi.</p>
+                <p className="text-[13px] font-semibold text-white/90">Inspektur verifikasi di lapangan</p>
+                <p className="text-[11px] text-white/40 mt-0.5">Foto real-time, uji TDS air, speed test WiFi.</p>
               </div>
             </div>
-
-            <div className="flex gap-3">
-              <CheckCircle2 className="h-5 w-5 text-accent-bright shrink-0 mt-0.5" />
+            <div className="flex gap-4 items-baseline">
+              <span className="text-[13px] font-mono text-white/30 tabular-nums">03</span>
               <div>
-                <h4 className="text-xs font-bold text-white">Laporan Valid (Scorecard)</h4>
-                <p className="text-[11px] text-teal-100/70 mt-0.5">Dapatkan sertifikat digital & scorecard valid untuk kos idaman Anda.</p>
+                <p className="text-[13px] font-semibold text-white/90">Terima scorecard dari Gemini AI</p>
+                <p className="text-[11px] text-white/40 mt-0.5">Bandingkan skor antar kos, putuskan sendiri.</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Footer info inside promo panel */}
-        <div className="relative text-[10px] text-teal-200/50 z-10 font-mono">
-          © 2026 InspeksiKos. Politeknik Negeri Padang.
+        {/* Footer */}
+        <div className="relative z-10 text-[10px] text-white/30 font-mono">
+          Politeknik Negeri Padang &middot; 2026
         </div>
       </div>
 

@@ -150,10 +150,15 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
                   key={i}
                   className="flex items-center justify-between p-3 bg-slate-50/50 rounded-2xl border border-slate-200"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-col">
                     <span className="text-xs font-bold capitalize text-slate-700">
                       {item.facility.replace(/_/g, ' ')}
                     </span>
+                    {item.status !== 'NEUTRAL' && (
+                      <span className="text-[9px] text-slate-400 mt-0.5">
+                        Iklan: <span className="font-semibold text-slate-500">{item.claimed}</span> &middot; Lapangan: <span className="font-semibold text-slate-605">{item.actual}</span>
+                      </span>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     {item.status === 'MATCH' && (

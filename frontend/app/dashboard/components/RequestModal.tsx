@@ -469,7 +469,7 @@ export default function RequestModal({
         
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-4 text-slate-800">
-          <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-blue-900">
+          <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-[#003057]">
             <span>⚡ Pesan Verifikator Kos (Gojek-Style)</span>
           </h3>
           <button
@@ -500,7 +500,7 @@ export default function RequestModal({
                 onClick={() => setOrderCategory('single')}
                 className={`p-4 rounded-xl border flex items-center gap-4 cursor-pointer transition-all ${
                   orderCategory === 'single'
-                    ? 'border-blue-500 bg-blue-50/50'
+                    ? 'border-[#0f766e] bg-teal-50/50'
                     : 'border-slate-200 bg-slate-50/40 hover:border-slate-200'
                 }`}
               >
@@ -511,13 +511,13 @@ export default function RequestModal({
                   onChange={() => setOrderCategory('single')}
                   className="hidden"
                 />
-                <div className="h-9 w-9 rounded-lg bg-blue-50 border border-blue-200 flex items-center justify-center shrink-0 text-lg">
+                <div className="h-9 w-9 rounded-lg bg-teal-50 border border-teal-200 flex items-center justify-center shrink-0 text-lg">
                   🏠
                 </div>
                 <div className="text-left flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-800 block">Inspeksi Tunggal</span>
-                    <span className="text-[10px] font-black text-blue-600">Rp 50.000</span>
+                    <span className="text-[10px] font-black text-[#0f766e]">Rp 50.000</span>
                   </div>
                   <span className="text-[9px] text-slate-400 block leading-relaxed mt-0.5">
                     Verifikasi 1 properti kos. Dapatkan scorecard Gemini AI untuk fasilitas iklan.
@@ -530,7 +530,7 @@ export default function RequestModal({
                 onClick={() => setOrderCategory('multi')}
                 className={`p-4 rounded-xl border flex items-center gap-4 cursor-pointer transition-all ${
                   orderCategory === 'multi'
-                    ? 'border-blue-500 bg-blue-50/50'
+                    ? 'border-[#0f766e] bg-teal-50/50'
                     : 'border-slate-200 bg-slate-50/40 hover:border-slate-200'
                 }`}
               >
@@ -560,7 +560,7 @@ export default function RequestModal({
               <button
                 type="button"
                 onClick={() => setCurrentStepModal(2)}
-                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider cursor-pointer"
+                className="px-6 py-2.5 bg-[#003057] hover:bg-[#003057]/90 text-white font-bold rounded-xl text-xs uppercase tracking-wider cursor-pointer"
               >
                 Lanjut Pengisian Form
               </button>
@@ -583,7 +583,7 @@ export default function RequestModal({
                     value={propertyName}
                     onChange={(e) => setPropertyName(e.target.value)}
                     placeholder="Contoh: Kos Anggrek Indah TRPL"
-                    className="w-full px-3.5 py-2.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-200 focus:border-[#0f766e] rounded-xl text-xs text-slate-800 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -594,7 +594,7 @@ export default function RequestModal({
                     value={propertyAddress}
                     onChange={(e) => setPropertyAddress(e.target.value)}
                     placeholder="Jl. Limau Manis No. 40, Padang"
-                    className="w-full px-3.5 py-2.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
+                    className="w-full px-3.5 py-2.5 bg-white border border-slate-200 focus:border-[#0f766e] rounded-xl text-xs text-slate-800 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-1.5">
@@ -603,7 +603,7 @@ export default function RequestModal({
                     <button
                       type="button"
                       onClick={() => setShowMapPicker(!showMapPicker)}
-                      className="text-[9px] text-blue-500 hover:underline font-bold cursor-pointer"
+                      className="text-[9px] text-[#0f766e] hover:underline font-bold cursor-pointer"
                     >
                       📍 {showMapPicker ? 'Tutup Peta' : 'Pilih di Peta'}
                     </button>
@@ -629,7 +629,7 @@ export default function RequestModal({
                     onChange={(e) => setPropertyDesc(e.target.value)}
                     placeholder="Catatan mengenai fasilitas..."
                     rows={2}
-                    className="w-full px-3.5 py-2 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs text-slate-800 focus:outline-none"
+                    className="w-full px-3.5 py-2 bg-white border border-slate-200 focus:border-[#0f766e] rounded-xl text-xs text-slate-800 focus:outline-none"
                   />
                 </div>
                 <div className="space-y-2">
@@ -641,7 +641,7 @@ export default function RequestModal({
                           type="checkbox"
                           checked={claims[facility]}
                           onChange={(e) => setClaims({ ...claims, [facility]: e.target.checked })}
-                          className="rounded border-slate-200 text-blue-600 focus:ring-0 bg-white"
+                          className="rounded border-slate-200 text-[#0f766e] focus:ring-0 bg-white"
                         />
                         <span className="capitalize">{facility.replace(/_/g, ' ')}</span>
                       </label>
@@ -653,12 +653,12 @@ export default function RequestModal({
                       placeholder="Tambah fasilitas kustom... (e.g. TV, Kulkas)"
                       value={customFacilitySingle}
                       onChange={(e) => setCustomFacilitySingle(e.target.value)}
-                      className="flex-1 px-3 py-1.5 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-[10px] text-slate-800 placeholder-slate-400 focus:outline-none"
+                      className="flex-1 px-3 py-1.5 bg-white border border-slate-200 focus:border-[#0f766e] rounded-xl text-[10px] text-slate-800 placeholder-slate-400 focus:outline-none"
                     />
                     <button
                       type="button"
                       onClick={handleAddCustomFacilitySingle}
-                      className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-[9px] uppercase tracking-wider transition-all cursor-pointer"
+                      className="px-3 py-1.5 bg-[#003057] hover:bg-[#003057]/90 text-white font-bold rounded-xl text-[9px] uppercase tracking-wider transition-all cursor-pointer"
                     >
                       Tambah
                     </button>
@@ -676,14 +676,14 @@ export default function RequestModal({
                 </div>
                 <div className="flex items-center justify-between border-t border-slate-200 pt-4 mt-6">
                   <button type="button" onClick={() => setCurrentStepModal(1)} className="px-4 py-2 text-xs font-bold text-slate-400 hover:text-slate-700 uppercase cursor-pointer">Kembali</button>
-                  <button type="submit" className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider cursor-pointer">Lanjut Bayar</button>
+                  <button type="submit" className="px-5 py-2.5 bg-[#003057] hover:bg-[#003057]/90 text-white font-bold rounded-xl text-xs uppercase tracking-wider cursor-pointer">Lanjut Bayar</button>
                 </div>
               </form>
             ) : (
               /* Form Multi-Kos */
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-indigo-600 font-bold uppercase tracking-wider">Mendaftarkan {multiProperties.length} Kos</span>
+                  <span className="text-[10px] text-[#003057] font-bold uppercase tracking-wider">Mendaftarkan {multiProperties.length} Kos</span>
                   <button
                     type="button"
                     onClick={() => {
@@ -694,7 +694,7 @@ export default function RequestModal({
                         tdsExpectation: 500, internetExpectation: 10, lat: null, lng: null, showPicker: false
                       }]);
                     }}
-                    className="text-[9px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold px-2.5 py-1.5 rounded-lg cursor-pointer"
+                    className="text-[9px] bg-teal-50 hover:bg-teal-100 text-[#0f766e] border border-teal-200 font-bold px-2.5 py-1.5 rounded-lg cursor-pointer"
                   >
                     ➕ Tambah Kos
                   </button>
@@ -757,7 +757,7 @@ export default function RequestModal({
                               copy[idx].showPicker = !copy[idx].showPicker;
                               setMultiProperties(copy);
                             }}
-                            className="text-[9px] text-blue-500 font-bold hover:underline cursor-pointer"
+                            className="text-[9px] text-[#0f766e] font-bold hover:underline cursor-pointer"
                           >
                             {p.showPicker ? 'Tutup Peta' : '📍 Pilih di Peta'}
                           </button>
@@ -790,7 +790,7 @@ export default function RequestModal({
                                   copy[idx].claims[facility] = e.target.checked;
                                   setMultiProperties(copy);
                                 }}
-                                className="rounded border-slate-200 text-blue-600 focus:ring-0 scale-75 bg-white"
+                                className="rounded border-slate-200 text-[#0f766e] focus:ring-0 scale-75 bg-white"
                               />
                               <span className="capitalize truncate">{facility.replace(/_/g, ' ')}</span>
                             </label>
@@ -802,12 +802,12 @@ export default function RequestModal({
                             placeholder="Tambah fasilitas..."
                             value={customFacilityMulti[idx] || ''}
                             onChange={(e) => setCustomFacilityMulti((prev) => ({ ...prev, [idx]: e.target.value }))}
-                            className="flex-1 px-2 py-1 bg-white border border-slate-200 focus:border-indigo-500 rounded-md text-[9px] text-slate-800 focus:outline-none placeholder-slate-400"
+                            className="flex-1 px-2 py-1 bg-white border border-slate-200 focus:border-[#0f766e] rounded-md text-[9px] text-slate-800 focus:outline-none placeholder-slate-400"
                           />
                           <button
                             type="button"
                             onClick={(e) => handleAddCustomFacilityMulti(idx, e)}
-                            className="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold rounded-md text-[8px] uppercase tracking-wider transition-all cursor-pointer"
+                            className="px-2.5 py-1 bg-teal-50 hover:bg-teal-100 text-[#0f766e] border border-teal-200 font-bold rounded-md text-[8px] uppercase tracking-wider transition-all cursor-pointer"
                           >
                             Tambah
                           </button>
@@ -823,7 +823,7 @@ export default function RequestModal({
                     type="button"
                     onClick={handleCreateOrderInvoice}
                     disabled={requestLoading}
-                    className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
+                    className="px-5 py-2.5 bg-[#003057] hover:bg-[#003057]/90 disabled:bg-gray-800 text-white font-bold rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 cursor-pointer"
                   >
                     {requestLoading && <Loader2 className="h-3 w-3 animate-spin" />}
                     Lanjut Bayar
@@ -862,10 +862,10 @@ export default function RequestModal({
               return (
                 <div className="space-y-4">
                   {isSandbox ? (
-                    <div className="bg-blue-50 border border-blue-200 rounded-xl p-3.5 text-center space-y-1.5 max-w-sm mx-auto shadow-inner">
-                      <div className="flex items-center justify-center gap-1.5 text-blue-600">
+                    <div className="bg-teal-50 border border-teal-200 rounded-xl p-3.5 text-center space-y-1.5 max-w-sm mx-auto shadow-inner">
+                      <div className="flex items-center justify-center gap-1.5 text-[#0f766e]">
                         <ShieldCheck className="h-4 w-4" />
-                        <span className="text-xs font-bold font-mono tracking-wider uppercase text-blue-700">Midtrans Sandbox Active</span>
+                        <span className="text-xs font-bold font-mono tracking-wider uppercase text-[#003057]">Midtrans Sandbox Active</span>
                       </div>
                       <p className="text-[10px] text-slate-500 leading-relaxed">
                         Menggunakan gerbang pembayaran resmi Midtrans Sandbox. Pindai kode QRIS di bawah atau klik tombol untuk membayar.
@@ -884,7 +884,7 @@ export default function RequestModal({
                     {/* QRIS Header */}
                     <div className="flex items-center justify-between border-b border-gray-200 pb-1.5">
                       <span className="text-xs font-extrabold text-[#da251d]">QRIS</span>
-                      <span className="text-[8px] font-black text-blue-900 font-mono">GPN</span>
+                      <span className="text-[8px] font-black text-[#003057] font-mono">GPN</span>
                     </div>
                     
                     {/* Real scannable QR Code */}
@@ -911,7 +911,7 @@ export default function RequestModal({
                           href={paymentRedirectUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-extrabold rounded-xl text-[11px] shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all duration-200 uppercase tracking-wider"
+                          className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-gradient-to-r from-[#003057] to-[#0f766e] hover:from-[#003057]/90 hover:to-[#0f766e]/90 text-white font-extrabold rounded-xl text-[11px] shadow-lg shadow-[#003057]/20 active:scale-[0.98] transition-all duration-200 uppercase tracking-wider"
                         >
                           🚀 Bayar via Midtrans Sandbox
                         </a>
@@ -942,7 +942,7 @@ export default function RequestModal({
                 disabled={true}
                 className="px-5 py-2.5 bg-slate-100 text-slate-400 border border-slate-200 font-bold rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-not-allowed w-56"
               >
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-500" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-[#0f766e]" />
                 Menunggu Pembayaran...
               </button>
             </div>
@@ -956,9 +956,9 @@ export default function RequestModal({
             {matchingStatus === 'searching' ? (
               <div className="space-y-6">
                 <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
-                  <span className="absolute inset-0 rounded-full bg-blue-500/20 animate-ping" style={{ animationDuration: '2s' }} />
-                  <span className="absolute inset-2 rounded-full bg-indigo-500/30 animate-pulse" style={{ animationDuration: '1.5s' }} />
-                  <div className="relative h-12 w-12 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30 border border-blue-400">
+                  <span className="absolute inset-0 rounded-full bg-[#0f766e]/20 animate-ping" style={{ animationDuration: '2s' }} />
+                  <span className="absolute inset-2 rounded-full bg-[#003057]/30 animate-pulse" style={{ animationDuration: '1.5s' }} />
+                  <div className="relative h-12 w-12 rounded-full bg-gradient-to-tr from-[#003057] to-[#0f766e] flex items-center justify-center shadow-lg shadow-[#003057]/30 border border-teal-400">
                     <Loader2 className="h-5 w-5 text-white animate-spin" />
                   </div>
                 </div>
@@ -990,7 +990,7 @@ export default function RequestModal({
                     <div className="flex-1 min-w-0">
                       <span className="text-[10px] font-extrabold text-slate-805 block truncate">{mockInspector.name}</span>
                       <span className="text-[9px] text-slate-400 font-medium block">⭐ {mockInspector.rating} • Mitra Lapangan</span>
-                      <span className="text-[9px] text-blue-600 font-mono block mt-0.5">{mockInspector.phone}</span>
+                      <span className="text-[9px] text-[#0f766e] font-mono block mt-0.5">{mockInspector.phone}</span>
                     </div>
                   </div>
                 )}
@@ -999,7 +999,7 @@ export default function RequestModal({
                   <button
                     type="button"
                     onClick={handleCloseAndReset}
-                    className="px-6 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs uppercase tracking-wider cursor-pointer"
+                    className="px-6 py-2.5 bg-[#003057] hover:bg-[#003057]/90 text-white font-bold rounded-xl text-xs uppercase tracking-wider cursor-pointer"
                   >
                     Selesai & Ke Dasbor
                   </button>
