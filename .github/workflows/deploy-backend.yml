@@ -1,0 +1,24 @@
+name: Deploy Backend to VPS
+
+on:
+  push:
+    branches:
+      - testing
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Executing remote ssh commands
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 103.143.71.185
+          username: server-alde2
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: 22
+          script: |
+            cd /var/www/InspeksiKos-dev/backend
+            git pull origin testing
+            npm install
+            npm run build
+            pm2 restart inspeksikos-backend
