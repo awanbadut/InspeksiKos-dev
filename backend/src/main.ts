@@ -1,3 +1,4 @@
+// Trigger CI/CD deploy test on self-hosted VPS runner
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
