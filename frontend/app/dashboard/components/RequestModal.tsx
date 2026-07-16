@@ -520,7 +520,7 @@ export default function RequestModal({
                     <span className="text-[10px] font-black text-[#052746] bg-[#D2E9FE] px-2 py-0.5 rounded-md border border-[#B8CDE3] font-mono">Rp 50.000</span>
                   </div>
                   <span className="text-[9px] text-slate-400 block leading-relaxed mt-0.5">
-                    Verifikasi 1 properti kos. Dapatkan scorecard Gemini AI untuk fasilitas iklan.
+                    Verifikasi 1 properti kos. Dapatkan scorecard verifikasi lapangan untuk fasilitas iklan.
                   </span>
                 </div>
               </label>

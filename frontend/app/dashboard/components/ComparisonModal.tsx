@@ -40,7 +40,7 @@ export default function ComparisonModal({
               Hasil Analisis Komparatif Properti Kos
             </h3>
             <p className="text-[10px] text-slate-400 mt-1 leading-relaxed font-medium">
-              Perbandingan data iklan vs hasil verifikasi lapangan (TDS air, Wifi speed, fasilitas) bersertifikasi AI.
+              Perbandingan data iklan vs hasil verifikasi lapangan (TDS air, Wifi speed, fasilitas) secara faktual.
             </p>
           </div>
           <button

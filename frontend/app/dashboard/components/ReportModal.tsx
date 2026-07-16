@@ -139,7 +139,7 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
         <div className="space-y-4">
           <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 border-b border-slate-200 pb-2 flex items-center gap-1.5">
             <ClipboardList className="h-4 w-4 text-[#0f766e]" />
-            Kecocokan Fasilitas Lapangan (AI Vision)
+            Kecocokan Fasilitas Lapangan (Verifikasi Lapangan)
           </h4>
 
           {/* Match/Mismatch grid */}
@@ -214,73 +214,11 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
           </div>
         </div>
 
-        {/* Chatbot Gemini Section */}
+        {/* Note Section instead of AI Chatbot */}
         <div className="border-t border-slate-200 pt-4 mt-6">
-          <button
-            type="button"
-            onClick={initChat}
-            className="w-full flex items-center justify-between p-3 bg-teal-50 hover:bg-teal-100/75 border border-teal-200 rounded-full text-xs font-bold text-[#0f766e] transition-all cursor-pointer grab-btn-transition"
-          >
-            <span className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-[#0f766e] animate-pulse" />
-              Konsultasi Hasil Audit dengan AI Assistant
-            </span>
-            <span>{showChat ? 'Sembunyikan Chat' : 'Tanya AI'}</span>
-          </button>
-
-          {showChat && (
-            <div className="mt-3 bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden flex flex-col h-72 shadow-inner">
-              
-              {/* Chat message list */}
-              <div className="flex-1 p-3 overflow-y-auto space-y-3 max-h-56 text-[10px] leading-relaxed scrollbar-none">
-                {chatHistory.map((chat, idx) => (
-                  <div
-                    key={idx}
-                    className={`flex ${
-                      chat.role === 'user' ? 'justify-end' : 'justify-start'
-                    }`}
-                  >
-                    <div
-                      className={`max-w-[80%] rounded-2xl p-2.5 ${
-                        chat.role === 'user'
-                          ? 'bg-[#003057] text-white rounded-tr-none shadow-md'
-                          : 'bg-slate-100 text-slate-800 border border-slate-200 rounded-tl-none'
-                      }`}
-                    >
-                      <p className="whitespace-pre-line font-sans">{chat.parts[0].text}</p>
-                    </div>
-                  </div>
-                ))}
-                {chatLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-slate-100 text-slate-400 border border-slate-200 rounded-2xl rounded-tl-none p-2.5 flex items-center gap-1.5 font-mono">
-                      <Loader2 className="h-3 w-3 animate-spin text-[#0f766e]" />
-                      <span>AI sedang merespon...</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Input form */}
-              <form onSubmit={handleSendChatMessage} className="p-2 bg-white border-t border-slate-200 flex gap-2">
-                <input
-                  type="text"
-                  value={chatMessage}
-                  onChange={(e) => setChatMessage(e.target.value)}
-                  placeholder="Tanyakan mengenai hasil audit kos ke AI..."
-                  className="flex-1 px-3.5 py-2 bg-white border border-slate-200 rounded-full text-xs text-slate-800 focus:outline-none focus:border-[#0f766e] placeholder-slate-400"
-                  disabled={chatLoading}
-                />
-                <button
-                  type="submit"
-                  disabled={chatLoading || !chatMessage.trim()}
-                  className="px-4 py-2 bg-[#003057] hover:bg-[#001e38] disabled:opacity-40 text-white font-bold text-xs rounded-full transition-all cursor-pointer flex items-center justify-center"
-                >
-                  <Send className="h-3 w-3" />
-                </button>
-              </form>
-            </div>
-          )}
+          <div className="p-4 bg-[#F0F7FD] border border-[#D0E5F5] rounded-2xl text-[11px] leading-relaxed text-[#1F3E5A]">
+            <strong>💡 Catatan Verifikasi:</strong> Seluruh data di atas diverifikasi langsung oleh inspektur kami di lapangan melalui bukti foto ter-watermark GPS, pengukuran speedtest koneksi internet secara langsung dari dalam kamar, serta pengujian kadar zat padat terlarut (TDS) air mandi menggunakan alat ukur terkalibrasi.
+          </div>
         </div>
 
         <div className="flex justify-end border-t border-slate-200 pt-4 mt-6">

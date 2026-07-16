@@ -212,7 +212,7 @@ export default function RegisterPage() {
               Gabung dengan Ribuan Mahasiswa
             </h2>
             <p className="text-xs text-teal-100/80 leading-relaxed">
-              Daftarkan diri Anda untuk mengajukan permintaan inspeksi, verifikasi fasilitas iklan kos secara valid, dan nikmati fitur asisten laporan bertenaga AI.
+              Daftarkan diri Anda untuk mengajukan permintaan inspeksi, verifikasi fasilitas iklan kos secara valid, dan nikmati fitur asisten perbandingan laporan secara detail.
             </p>
           </div>
 
@@ -236,8 +236,8 @@ export default function RegisterPage() {
             <div className="flex gap-3">
               <CheckCircle2 className="h-5 w-5 text-teal-400 shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs font-bold text-white">Asisten Chatbot AI</h4>
-                <p className="text-[11px] text-teal-100/70 mt-0.5">Tanyakan kelayakan air TDS dan internet dengan chatbot asisten laporan lapangan.</p>
+                <h4 className="text-xs font-bold text-white">Asisten Perbandingan Laporan</h4>
+                <p className="text-[11px] text-teal-100/70 mt-0.5">Bandingkan kelayakan air TDS dan kecepatan internet antar kos dengan mudah.</p>
               </div>
             </div>
           </div>

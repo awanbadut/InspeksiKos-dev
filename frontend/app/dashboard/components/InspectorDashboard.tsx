@@ -531,7 +531,7 @@ export default function InspectorDashboard({
       setActiveTask(null);
     } catch (err: any) {
       console.error(err);
-      setAuditError(err.response?.data?.message || 'Gagal menjalankan audit AI. Pastikan foto sudah terunggah.');
+      setAuditError(err.response?.data?.message || 'Gagal memproses hasil laporan. Pastikan foto sudah terunggah.');
     } finally {
       setAuditRunning(false);
     }
@@ -594,7 +594,7 @@ export default function InspectorDashboard({
                 Selamat Datang, Inspektur!
               </h1>
               <p className="text-xs text-white/95 max-w-xl leading-relaxed font-medium">
-                Daftar kerja verifikator lapangan. Isi data TDS air, kecepatan internet, unggah bukti visual, dan jalankan audit AI.
+                Daftar kerja verifikator lapangan. Isi data TDS air, kecepatan internet, unggah bukti visual, dan proses hasil laporan.
               </p>
             </div>
           </div>
@@ -1168,7 +1168,7 @@ export default function InspectorDashboard({
                                 Langkah Akhir: Evaluasi
                               </h4>
                               <p className="text-[10px] text-slate-400 leading-relaxed font-mono">
-                                Menjalankan deteksi AI Vision pada berkas bukti visual dan menghitung skor akhir berdasarkan bobot kepatuhan.
+                                Memverifikasi berkas bukti visual lapangan dan menghitung skor akhir berdasarkan bobot kepatuhan fasilitas.
                               </p>
                               {auditError && (
                                 <div className="p-2.5 text-[10px] text-red-500 bg-rose-50 border border-rose-200 rounded-lg">
@@ -1183,10 +1183,10 @@ export default function InspectorDashboard({
                               {auditRunning ? (
                                 <>
                                   <Loader2 className="h-4 w-4 animate-spin" />
-                                  Memproses AI & Aturan...
+                                  Memproses Laporan & Aturan...
                                 </>
                               ) : (
-                                'Jalankan Evaluasi & Selesaikan'
+                                'Jalankan Analisis & Selesaikan'
                               )}
                             </button>
                           </div>
@@ -1489,7 +1489,7 @@ export default function InspectorDashboard({
                           <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
                             <h4 className="text-xs font-black text-slate-800">Semua Data Siap Di-Audit</h4>
                             <p className="text-[10px] text-slate-500 leading-relaxed">
-                              Bukti foto fasilitas, TDS air, dan video speedtest wifi telah lengkap terkumpul di lapangan. Silakan jalankan validasi AI.
+                              Bukti foto fasilitas, TDS air, dan video speedtest wifi telah lengkap terkumpul di lapangan. Silakan jalankan analisis laporan.
                             </p>
                           </div>
 
@@ -1509,10 +1509,10 @@ export default function InspectorDashboard({
                               {auditRunning ? (
                                 <>
                                   <Loader2 className="h-4 w-4 animate-spin text-white" />
-                                  Gemini AI Sedang Menilai...
+                                  Sistem Sedang Menilai...
                                 </>
                               ) : (
-                                '⚡ Jalankan Validasi AI & Selesaikan'
+                                '⚡ Jalankan Analisis & Selesaikan'
                               )}
                             </button>
                           </div>

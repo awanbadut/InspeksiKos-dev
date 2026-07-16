@@ -32,7 +32,7 @@ export default function Home() {
     },
     {
       q: "Apakah laporan kecocokan fasilitas ini terpercaya?",
-      a: "Laporan audit bersifat independen berbasis fakta lapangan yang dilengkapi dokumentasi foto, koordinat lokasi GPS, pengujian alat ukur langsung, dan validasi visual bertenaga kecerdasan buatan (AI)."
+      a: "Laporan audit bersifat independen berbasis fakta lapangan yang dilengkapi dokumentasi foto, koordinat lokasi GPS, pengujian alat ukur langsung, dan verifikasi visual foto secara nyata."
     },
     {
       q: "Bagaimana jika pemilik kos tidak mengizinkan masuk?",
@@ -85,7 +85,7 @@ export default function Home() {
               Anda
             </h1>
             <p className="text-sm text-slate-700 leading-relaxed max-w-md">
-              Validasi keaslian fasilitas kos secara langsung melalui verifikator berlisensi dengan uji kebersihan air, kecepatan internet, dan verifikasi foto bertenaga AI.
+              Validasi keaslian fasilitas kos secara langsung melalui verifikator berlisensi dengan uji kebersihan air, kecepatan internet, dan verifikasi foto secara real-time.
             </p>
             <div>
               <Link href="/register" className="inline-flex items-center gap-2 px-6 py-3 bg-[#1F3E5A] text-white font-semibold rounded-lg hover:bg-[#152a3d] transition-colors text-sm">
@@ -292,26 +292,26 @@ export default function Home() {
           </div>
 
 
-          {/* Small card: Verifikasi Foto AI — dark blue */}
+          {/* Small card: Verifikasi Foto Real-Time — dark blue */}
           <div className="bg-[#1F3E5A] rounded-2xl p-6 text-white flex flex-col justify-between">
             <div>
-              <h3 className="text-base font-bold mb-2">Verifikasi Foto AI</h3>
+              <h3 className="text-base font-bold mb-2">Verifikasi Foto Real-Time</h3>
               <p className="text-[11px] text-white/80 leading-relaxed mb-4">
-                Setiap foto bukti yang diunggah oleh verifikator diproses secara otomatis oleh kecerdasan buatan untuk mencocokkan kelengkapan fasilitas kamar dengan iklan.
+                Setiap foto bukti dilengkapi koordinat GPS dan timestamp waktu pengambilan guna menjamin foto diambil langsung di lokasi kos secara akurat.
               </p>
             </div>
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-[11px]">
                 <div className="w-5 h-5 rounded bg-blue-500/30 flex items-center justify-center"><Check className="w-3 h-3 text-blue-300" /></div>
-                Furniture lengkap dan bagus
+                Watermark GPS &amp; Timestamp
               </div>
               <div className="flex items-center gap-2 text-[11px]">
                 <div className="w-5 h-5 rounded bg-blue-500/30 flex items-center justify-center"><Check className="w-3 h-3 text-blue-300" /></div>
-                AC &amp; Kelistrikan Cocok
+                Bukti Foto Kondisi Asli
               </div>
               <div className="flex items-center gap-2 text-[11px]">
                 <div className="w-5 h-5 rounded bg-blue-500/30 flex items-center justify-center"><Check className="w-3 h-3 text-blue-300" /></div>
-                Kamar mandi &amp; Air baik
+                No Manipulasi / Re-upload
               </div>
             </div>
           </div>
@@ -414,10 +414,10 @@ export default function Home() {
             <div className="text-3xl font-light mb-1 opacity-60">03</div>
             <h3 className="text-lg font-bold mb-2">Terima Laporan Valid</h3>
             <p className="text-[11px] leading-relaxed mb-6 opacity-90 flex-grow">
-              Hasil laporan kecocokan visual diverifikasi oleh teknologi AI. Ringkasan skor, dokumen laporan PDF, dan asisten konsultasi siap diakses di dashboard.
+              Hasil laporan kecocokan diverifikasi langsung berdasarkan fakta lapangan. Ringkasan skor, dokumen laporan PDF, dan bukti foto siap diakses di dashboard.
             </p>
             <div className="bg-[#C2DFFF] text-blue-900 text-[11px] font-semibold py-2.5 px-4 rounded-full text-center mt-auto">
-              PDF Laporan + Chatbot AI
+              PDF Laporan + Bukti Foto
             </div>
           </div>
         </div>
@@ -450,7 +450,7 @@ export default function Home() {
                 <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-blue-500 shrink-0" /> Audit 5+ titik fasilitas kamar kos</div>
                 <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-blue-500 shrink-0" /> Uji kebersihan air kamar mandi</div>
                 <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-blue-500 shrink-0" /> Speedtest bandwidth WiFi dalam kamar</div>
-                <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-blue-500 shrink-0" /> Laporan PDF lengkap + Chatbot AI</div>
+                <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-blue-500 shrink-0" /> Laporan PDF lengkap + Uji Fisik Air &amp; WiFi</div>
               </div>
               <Link href="/login" className="block w-full py-3 bg-[#1F3E5A] text-white font-semibold rounded-full text-center text-sm hover:bg-[#152a3d] transition-colors mt-auto">
                 Pilih Layanan
@@ -478,7 +478,7 @@ export default function Home() {
                 <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-orange-500 shrink-0" /> Audit 5+ titik fasilitas kamar kos</div>
                 <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-orange-500 shrink-0" /> Tabel perbandingan skor &amp; nominal sewa</div>
                 <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-orange-500 shrink-0" /> Uji kebersihan air &amp; WiFi di setiap kosan</div>
-                <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-orange-500 shrink-0" /> Asisten AI untuk rekomendasi kos terbaik</div>
+                <div className="flex items-center gap-2"><CheckSquare className="w-4 h-4 text-orange-500 shrink-0" /> Perbandingan data komparatif kos terbaik</div>
               </div>
               <Link href="/login" className="block w-full py-3 bg-[#FF9B3E] text-white font-semibold rounded-full text-center text-sm hover:bg-[#e88a2e] transition-colors mt-auto">
                 Pilih Layanan

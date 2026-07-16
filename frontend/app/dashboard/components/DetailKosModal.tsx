@@ -204,7 +204,7 @@ export default function DetailKosModal({ isOpen, onClose, inspection }: DetailKo
                   </span>
                   <div className="text-left">
                     <p className={`text-xs font-bold ${isStep4Active ? 'text-[#1F3E5A]' : 'text-slate-400'}`}>Selesai</p>
-                    <p className="text-[10px] text-slate-400 mt-0.5">Laporan audit AI diterbitkan</p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">Laporan verifikasi diterbitkan</p>
                   </div>
                 </div>
               </div>
