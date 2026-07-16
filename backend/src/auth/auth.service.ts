@@ -53,19 +53,21 @@ export class AuthService {
     return { message: 'Kode OTP berhasil dikirim ke email Anda' };
   }
 
-  async register(registerDto: RegisterDto): Promise<{ message: string; user: Omit<User, 'password_hash'> }> {
+  async register(registerDto: RegisterDto, isStaff = false): Promise<{ message: string; user: Omit<User, 'password_hash'> }> {
     const { email, password, first_name, last_name, phone_number, role, otp } = registerDto;
 
-    // Verify OTP
-    const storedOtpData = this.otpMap.get(email);
-    if (!storedOtpData || storedOtpData.otp !== otp) {
-      throw new BadRequestException('Kode OTP salah atau tidak ditemukan');
-    }
-    if (Date.now() > storedOtpData.expires) {
+    // Verify OTP only if not registering staff
+    if (!isStaff) {
+      const storedOtpData = this.otpMap.get(email);
+      if (!storedOtpData || storedOtpData.otp !== otp) {
+        throw new BadRequestException('Kode OTP salah atau tidak ditemukan');
+      }
+      if (Date.now() > storedOtpData.expires) {
+        this.otpMap.delete(email);
+        throw new BadRequestException('Kode OTP telah kedaluwarsa');
+      }
       this.otpMap.delete(email);
-      throw new BadRequestException('Kode OTP telah kedaluwarsa');
     }
-    this.otpMap.delete(email);
 
     // Check if email already exists
     const existingUser = await this.userRepository.findOne({ where: { email } });

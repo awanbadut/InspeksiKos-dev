@@ -23,7 +23,19 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);
+    registerDto.role = UserRole.MAHASISWA;
+    return this.authService.register(registerDto, false);
+  }
+
+  @Post('register-staff')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @HttpCode(HttpStatus.CREATED)
+  async registerStaff(@Body() registerDto: RegisterDto) {
+    if (registerDto.role !== UserRole.ADMIN && registerDto.role !== UserRole.INSPEKTUR) {
+      throw new BadRequestException('Role staf tidak valid');
+    }
+    return this.authService.register(registerDto, true);
   }
 
   @Post('login')

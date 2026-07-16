@@ -8,6 +8,16 @@ import api from '@/lib/api';
 
 export default function RegisterPage() {
   const router = useRouter();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        router.push('/dashboard');
+      }
+    }
+  }, [router]);
   
   // Registration data
   const [name, setName] = useState('');

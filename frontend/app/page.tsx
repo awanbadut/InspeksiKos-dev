@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   ArrowRight,
   ChevronDown,
@@ -16,9 +16,28 @@ import {
 
 export default function Home() {
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('access_token');
+      const role = localStorage.getItem('user_role');
+      if (token) {
+        setIsLoggedIn(true);
+        setUserRole(role);
+      }
+    }
+  }, []);
 
   const toggleFaq = (index: number) => {
     setActiveFaq(activeFaq === index ? null : index);
+  };
+
+  const getDashboardUrl = () => {
+    if (userRole === 'admin') return '/admin/dashboard';
+    if (userRole === 'inspektur') return '/inspektur-dashboard';
+    return '/mahasiswa-dashboard';
   };
 
   const faqs = [
@@ -68,9 +87,15 @@ export default function Home() {
           </nav>
 
           {/* CTA */}
-          <Link href="/login" className="px-4 py-2 bg-[#1F3E5A] text-white text-[13px] font-semibold rounded-full flex items-center gap-1 hover:bg-[#152a3d] transition-colors shrink-0">
-            Get Started <ArrowUpRight className="w-3.5 h-3.5" />
-          </Link>
+          {isLoggedIn ? (
+            <Link href={getDashboardUrl()} className="px-4 py-2 bg-[#1F3E5A] text-white text-[13px] font-semibold rounded-full flex items-center gap-1 hover:bg-[#152a3d] transition-colors shrink-0">
+              Ke Dasbor <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
+          ) : (
+            <Link href="/login" className="px-4 py-2 bg-[#1F3E5A] text-white text-[13px] font-semibold rounded-full flex items-center gap-1 hover:bg-[#152a3d] transition-colors shrink-0">
+              Get Started <ArrowUpRight className="w-3.5 h-3.5" />
+            </Link>
+          )}
         </div>
       </header>
 
@@ -88,9 +113,15 @@ export default function Home() {
               Validasi keaslian fasilitas kos secara langsung melalui verifikator berlisensi dengan uji kebersihan air, kecepatan internet, dan verifikasi foto secara real-time.
             </p>
             <div>
-              <Link href="/register" className="inline-flex items-center gap-2 px-6 py-3 bg-[#1F3E5A] text-white font-semibold rounded-lg hover:bg-[#152a3d] transition-colors text-sm">
-                Mulai Audit Sekarang <ArrowRight className="w-4 h-4" />
-              </Link>
+              {isLoggedIn ? (
+                <Link href={getDashboardUrl()} className="inline-flex items-center gap-2 px-6 py-3 bg-[#1F3E5A] text-white font-semibold rounded-lg hover:bg-[#152a3d] transition-colors text-sm">
+                  Masuk ke Dasbor Anda <ArrowRight className="w-4 h-4" />
+                </Link>
+              ) : (
+                <Link href="/register" className="inline-flex items-center gap-2 px-6 py-3 bg-[#1F3E5A] text-white font-semibold rounded-lg hover:bg-[#152a3d] transition-colors text-sm">
+                  Mulai Audit Sekarang <ArrowRight className="w-4 h-4" />
+                </Link>
+              )}
             </div>
           </div>
 

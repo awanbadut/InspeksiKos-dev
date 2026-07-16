@@ -154,7 +154,7 @@ export default function AdminDashboardPage() {
     setCreateSuccess('');
 
     try {
-      await api.post('/auth/register', {
+      await api.post('/auth/register-staff', {
         email: newEmail,
         password: newPassword,
         first_name: newFirstName,

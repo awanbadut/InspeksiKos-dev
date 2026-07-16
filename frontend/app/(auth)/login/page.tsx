@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Eye, EyeOff, Loader, ArrowLeft } from 'lucide-react';
@@ -8,6 +8,17 @@ import api from '@/lib/api';
 
 export default function LoginPage() {
   const router = useRouter();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        router.push('/dashboard');
+      }
+    }
+  }, [router]);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -125,7 +136,7 @@ export default function LoginPage() {
             <div className="flex gap-4 items-baseline">
               <span className="text-[13px] font-mono text-white/30 tabular-nums">03</span>
               <div>
-                <p className="text-[13px] font-semibold text-white/90">Terima scorecard dari Gemini AI</p>
+                <p className="text-[13px] font-semibold text-white/90">Terima scorecard verifikasi lapangan</p>
                 <p className="text-[11px] text-white/40 mt-0.5">Bandingkan skor antar kos, putuskan sendiri.</p>
               </div>
             </div>
