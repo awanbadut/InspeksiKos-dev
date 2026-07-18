@@ -1,6 +1,8 @@
 'use client';
 
-import { X, CheckCircle2, Clock, Calendar, MapPin, ShieldCheck } from 'lucide-react';
+import { useState } from 'react';
+import { X, CheckCircle2, Clock, Calendar, MapPin, ShieldCheck, Loader2 } from 'lucide-react';
+import api from '@/lib/api';
 
 interface DetailKosModalProps {
   isOpen: boolean;
@@ -9,7 +11,25 @@ interface DetailKosModalProps {
 }
 
 export default function DetailKosModal({ isOpen, onClose, inspection }: DetailKosModalProps) {
+  const [loadingPayment, setLoadingPayment] = useState(false);
+
   if (!isOpen || !inspection) return null;
+
+  const handleProcessPayment = async () => {
+    setLoadingPayment(true);
+    try {
+      const res = await api.post(`/inspections/${inspection.inspection_id}/payment-token`);
+      const { redirect_url } = res.data;
+      if (redirect_url) {
+        window.open(redirect_url, '_blank');
+      }
+    } catch (err) {
+      console.error('Gagal memproses pembayaran:', err);
+      alert('Gagal mengambil token pembayaran. Silakan coba beberapa saat lagi.');
+    } finally {
+      setLoadingPayment(false);
+    }
+  };
 
   const property = inspection.property || {};
   const claimData = property.claim_data || {};
@@ -214,7 +234,11 @@ export default function DetailKosModal({ isOpen, onClose, inspection }: DetailKo
             <div className="space-y-3 bg-slate-50 p-4 border border-slate-200 rounded-2xl">
               <h5 className="text-xs font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-200 pb-2 flex justify-between items-center">
                 <span>Pembayaran</span>
-                <span className="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-700 text-[9px] font-black rounded-md border border-emerald-300 font-mono tracking-wider">LUNAS</span>
+                {claimData.payment_status === 'paid' ? (
+                  <span className="px-2.5 py-0.5 bg-emerald-500/10 text-emerald-700 text-[9px] font-black rounded-md border border-emerald-300 font-mono tracking-wider">LUNAS</span>
+                ) : (
+                  <span className="px-2.5 py-0.5 bg-rose-500/10 text-rose-700 text-[9px] font-black rounded-md border border-rose-300 font-mono tracking-wider">BELUM BAYAR</span>
+                )}
               </h5>
               
               <div className="space-y-1.5 text-xs text-slate-600 font-medium">
@@ -235,6 +259,25 @@ export default function DetailKosModal({ isOpen, onClose, inspection }: DetailKo
                   <span>{formattedTotal}</span>
                 </div>
               </div>
+
+              {claimData.payment_status !== 'paid' && (
+                <div className="pt-2">
+                  <button
+                    onClick={handleProcessPayment}
+                    disabled={loadingPayment}
+                    className="w-full py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold rounded-xl text-[11px] shadow-md transition-all uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    {loadingPayment ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        Memproses...
+                      </>
+                    ) : (
+                      'Bayar Sekarang'
+                    )}
+                  </button>
+                </div>
+              )}
             </div>
 
           </div>
