@@ -216,8 +216,9 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
 
         {/* Note Section instead of AI Chatbot */}
         <div className="border-t border-slate-200 pt-4 mt-6">
-          <div className="p-4 bg-[#F0F7FD] border border-[#D0E5F5] rounded-2xl text-[11px] leading-relaxed text-[#1F3E5A]">
-            <strong>💡 Catatan Verifikasi:</strong> Seluruh data di atas diverifikasi langsung oleh inspektur kami di lapangan melalui bukti foto ter-watermark GPS, pengukuran speedtest koneksi internet secara langsung dari dalam kamar, serta pengujian kadar zat padat terlarut (TDS) air mandi menggunakan alat ukur terkalibrasi.
+          <div className="p-4 bg-[#F0F7FD] border border-[#D0E5F5] rounded-2xl text-[11px] leading-relaxed text-[#1F3E5A] flex items-start gap-1.5">
+            <Sparkles className="h-4 w-4 text-sky-600 shrink-0 mt-0.5" />
+            <span><strong>Catatan Verifikasi:</strong> Seluruh data di atas diverifikasi langsung oleh inspektur kami di lapangan melalui bukti foto ter-watermark GPS, pengukuran speedtest koneksi internet secara langsung dari dalam kamar, serta pengujian kadar zat padat terlarut (TDS) air mandi menggunakan alat ukur terkalibrasi.</span>
           </div>
         </div>
 

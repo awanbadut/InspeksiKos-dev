@@ -20,6 +20,8 @@ import {
   User,
   Compass,
   Droplets,
+  Camera,
+  Video,
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -675,7 +677,7 @@ export default function InspectorDashboard({
                               : 'text-slate-500 hover:text-slate-800'
                           }`}
                         >
-                          📋 Tugas Saya
+                          <ClipboardList className="inline h-3 w-3 mr-1" /> Tugas Saya
                         </button>
                         <button
                           type="button"
@@ -775,7 +777,12 @@ export default function InspectorDashboard({
                                   >
                                     {acceptingTaskLoading[insp.inspection_id] ? (
                                       <Loader2 className="h-3 w-3 animate-spin text-white" />
-                                    ) : '⚡ Terima Orderan'}
+                                    ) : (
+                                      <>
+                                        <Sparkles className="inline h-3 w-3 mr-1" />
+                                        Terima Orderan
+                                      </>
+                                    )}
                                   </button>
                                 ) : (
                                   <>
@@ -1012,6 +1019,7 @@ export default function InspectorDashboard({
                                           <input
                                             type="file"
                                             accept="image/*"
+                                            capture="environment"
                                             disabled={isUploading}
                                             onChange={(e) => {
                                               const file = e.target.files?.[0];
@@ -1039,6 +1047,7 @@ export default function InspectorDashboard({
                                         <input
                                           type="file"
                                           accept="image/*"
+                                          capture="environment"
                                           disabled={isUploading}
                                           onChange={(e) => {
                                             const file = e.target.files?.[0];
@@ -1079,6 +1088,7 @@ export default function InspectorDashboard({
                                           <input
                                             type="file"
                                             accept="video/*"
+                                            capture="environment"
                                             disabled={isUploading}
                                             onChange={(e) => {
                                               const file = e.target.files?.[0];
@@ -1106,6 +1116,7 @@ export default function InspectorDashboard({
                                         <input
                                           type="file"
                                           accept="video/*"
+                                          capture="environment"
                                           disabled={isUploading}
                                           onChange={(e) => {
                                             const file = e.target.files?.[0];
@@ -1324,6 +1335,7 @@ export default function InspectorDashboard({
                                     <input
                                       type="file"
                                       accept="image/*"
+                                      capture="environment"
                                       className="hidden"
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
@@ -1343,8 +1355,8 @@ export default function InspectorDashboard({
                                       </div>
                                     </div>
                                   ) : (
-                                    <div className="h-16 w-16 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300 text-[18px] shrink-0">
-                                      📷
+                                    <div className="h-16 w-16 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300 shrink-0">
+                                      <Camera className="h-5 w-5 text-slate-400" />
                                     </div>
                                   )}
                                 </div>
@@ -1372,6 +1384,7 @@ export default function InspectorDashboard({
                                     <input
                                       type="file"
                                       accept="image/*"
+                                      capture="environment"
                                       className="hidden"
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
@@ -1391,8 +1404,8 @@ export default function InspectorDashboard({
                                       </div>
                                     </div>
                                   ) : (
-                                    <div className="h-16 w-16 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300 text-[18px] shrink-0">
-                                      📷
+                                    <div className="h-16 w-16 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300 shrink-0">
+                                      <Camera className="h-5 w-5 text-slate-400" />
                                     </div>
                                   )}
                                 </div>
@@ -1429,14 +1442,14 @@ export default function InspectorDashboard({
                                   </label>
                                   {taskPhotos.find(p => p.room_type === 'kecepatan_internet_video') ? (
                                     <div className="h-16 w-16 rounded-xl overflow-hidden border border-emerald-500 relative bg-slate-100 shrink-0 shadow-sm flex flex-col items-center justify-center">
-                                      <span className="text-[12px]">📹</span>
+                                      <Video className="h-4 w-4 text-emerald-600 mb-0.5" />
                                       <div className="absolute inset-0 bg-emerald-600/40 flex items-center justify-center text-white text-[8px] font-black font-mono">
                                         ✓ OK
                                       </div>
                                     </div>
                                   ) : (
-                                    <div className="h-16 w-16 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300 text-[18px] shrink-0">
-                                      🎥
+                                    <div className="h-16 w-16 rounded-xl border border-dashed border-slate-200 bg-slate-50 flex items-center justify-center text-slate-300 shrink-0">
+                                      <Video className="h-5 w-5 text-slate-400" />
                                     </div>
                                   )}
                                 </div>
@@ -1445,8 +1458,9 @@ export default function InspectorDashboard({
                           )}
 
                           {auditError && (
-                            <div className="p-3 text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl">
-                              ⚠️ {auditError}
+                            <div className="p-3 text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-1.5">
+                              <XCircle className="h-4 w-4 text-rose-500 shrink-0" />
+                              <span>{auditError}</span>
                             </div>
                           )}
 
@@ -1487,17 +1501,26 @@ export default function InspectorDashboard({
                           </div>
 
                           {auditError && (
-                            <div className="p-3 text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl">
-                              ⚠️ {auditError}
+                            <div className="p-3 text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-1.5">
+                              <XCircle className="h-4 w-4 text-rose-500 shrink-0" />
+                              <span>{auditError}</span>
                             </div>
                           )}
 
-                          <div className="pt-2">
+                          <div className="pt-2 flex items-center gap-3">
+                            <button
+                              type="button"
+                              disabled={auditRunning || techSaving}
+                              onClick={() => setCurrentStep(activeSteps.length - 1)}
+                              className="px-4 py-3 border border-slate-200 text-slate-600 text-[10px] font-bold uppercase rounded-xl transition-all cursor-pointer"
+                            >
+                              Kembali
+                            </button>
                             <button
                               type="button"
                               disabled={auditRunning || techSaving}
                               onClick={handleRunAudit}
-                              className="w-full py-3 bg-gradient-to-r from-[#003057] to-[#0f766e] text-white font-bold text-[10px] uppercase tracking-wider rounded-xl shadow-md cursor-pointer flex items-center justify-center gap-2"
+                              className="flex-1 py-3 bg-gradient-to-r from-[#003057] to-[#0f766e] text-white font-bold text-[10px] uppercase tracking-wider rounded-xl shadow-md cursor-pointer flex items-center justify-center gap-2"
                             >
                               {auditRunning ? (
                                 <>
@@ -1505,7 +1528,7 @@ export default function InspectorDashboard({
                                   Sistem Sedang Menilai...
                                 </>
                               ) : (
-                                '⚡ Jalankan Analisis & Selesaikan'
+                                'Jalankan Analisis & Selesaikan'
                               )}
                             </button>
                           </div>
@@ -1545,7 +1568,7 @@ export default function InspectorDashboard({
                               : 'text-slate-500 hover:text-slate-800'
                           }`}
                         >
-                          📋 Tugas Saya
+                          <ClipboardList className="inline h-3 w-3 mr-1" /> Tugas Saya
                         </button>
                         <button
                           type="button"

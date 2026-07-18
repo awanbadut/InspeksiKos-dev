@@ -8,6 +8,8 @@ import {
   Upload,
   Loader2,
   ShieldCheck,
+  Sparkles,
+  XCircle,
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -470,7 +472,8 @@ export default function RequestModal({
         {/* Modal Header */}
         <div className="sticky top-0 bg-white z-20 flex items-center justify-between border-b border-slate-200 pb-3 mb-4 text-slate-800 -mx-6 px-6 pt-1 rounded-t-2xl">
           <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-[#003057]">
-            <span>⚡ Pesan Verifikator Kos (Gojek-Style)</span>
+            <Sparkles className="h-4 w-4 text-amber-500" />
+            <span>Pesan Verifikator Kos (Gojek-Style)</span>
           </h3>
           <button
             type="button"
@@ -482,8 +485,9 @@ export default function RequestModal({
         </div>
 
         {requestError && (
-          <div className="mb-4 p-3 text-xs text-red-500 bg-rose-50 border border-rose-200 rounded-xl text-center font-bold">
-            ⚠️ {requestError}
+          <div className="mb-4 p-3 text-xs text-red-500 bg-rose-50 border border-rose-200 rounded-xl font-bold flex items-center justify-center gap-1.5">
+            <XCircle className="h-4 w-4 text-rose-500 shrink-0" />
+            <span>{requestError}</span>
           </div>
         )}
 
@@ -605,7 +609,10 @@ export default function RequestModal({
                       onClick={() => setShowMapPicker(!showMapPicker)}
                       className="text-[9px] text-[#0f766e] hover:underline font-bold cursor-pointer"
                     >
-                      📍 {showMapPicker ? 'Tutup Peta' : 'Pilih di Peta'}
+                      <span className="flex items-center gap-1 text-[9px] text-[#0f766e] hover:underline font-bold cursor-pointer">
+                        <MapPin className="h-3 w-3" />
+                        {showMapPicker ? 'Tutup Peta' : 'Pilih di Peta'}
+                      </span>
                     </button>
                   </div>
                   {showMapPicker && (
@@ -759,7 +766,10 @@ export default function RequestModal({
                             }}
                             className="text-[9px] text-[#0f766e] font-bold hover:underline cursor-pointer"
                           >
-                            {p.showPicker ? 'Tutup Peta' : '📍 Pilih di Peta'}
+                            <span className="flex items-center gap-1 text-[9px] text-[#0f766e] font-bold hover:underline cursor-pointer">
+                              <MapPin className="h-3 w-3" />
+                              {p.showPicker ? 'Tutup Peta' : 'Pilih di Peta'}
+                            </span>
                           </button>
                         </div>
                         {p.showPicker && (

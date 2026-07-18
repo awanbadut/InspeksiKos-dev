@@ -434,14 +434,16 @@ export default function AdminDashboardPage() {
                   </p>
 
                   {createError && (
-                    <div className="mb-4 p-3 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl text-center font-bold">
-                      ⚠️ {createError}
+                    <div className="mb-4 p-3 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl font-bold flex items-center justify-center gap-1.5">
+                      <XCircle className="h-4 w-4 shrink-0 text-rose-500" />
+                      <span>{createError}</span>
                     </div>
                   )}
 
                   {createSuccess && (
-                    <div className="mb-4 p-3 text-xs text-emerald-705 bg-emerald-50 border border-emerald-200 rounded-xl text-center font-bold">
-                      ✅ {createSuccess}
+                    <div className="mb-4 p-3 text-xs text-emerald-705 bg-emerald-50 border border-emerald-200 rounded-xl font-bold flex items-center justify-center gap-1.5">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
+                      <span>{createSuccess}</span>
                     </div>
                   )}
 
@@ -620,14 +622,16 @@ export default function AdminDashboardPage() {
                 </p>
 
                 {rulesSuccess && (
-                  <div className="mb-4 p-3 text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-xl text-center font-bold">
-                    ✅ {rulesSuccess}
+                  <div className="mb-4 p-3 text-xs text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-xl font-bold flex items-center justify-center gap-1.5">
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-500" />
+                    <span>{rulesSuccess}</span>
                   </div>
                 )}
 
                 {rulesError && (
-                  <div className="mb-4 p-3 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl text-center font-bold">
-                    ⚠️ {rulesError}
+                  <div className="mb-4 p-3 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl font-bold flex items-center justify-center gap-1.5">
+                    <XCircle className="h-4 w-4 shrink-0 text-rose-500" />
+                    <span>{rulesError}</span>
                   </div>
                 )}
 

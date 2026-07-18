@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Eye, EyeOff, Loader, CheckCircle2, ArrowLeft, MailCheck } from 'lucide-react';
+import { Eye, EyeOff, Loader, CheckCircle2, ArrowLeft, MailCheck, AlertCircle } from 'lucide-react';
 import api from '@/lib/api';
 
 export default function RegisterPage() {
@@ -295,8 +295,9 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <div className="p-3 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl text-center font-extrabold font-mono">
-              ⚠️ {error}
+            <div className="p-3 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl font-extrabold font-mono flex items-center justify-center gap-1.5">
+              <AlertCircle className="h-4 w-4 shrink-0" />
+              <span>{error}</span>
             </div>
           )}
 

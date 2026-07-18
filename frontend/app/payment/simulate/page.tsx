@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import { Loader2, CheckCircle2, ShieldCheck, Wallet, ArrowRight } from 'lucide-react';
+import { Loader2, CheckCircle2, ShieldCheck, Wallet, ArrowRight, AlertCircle } from 'lucide-react';
 import api from '@/lib/api';
 
 function PaymentSimulateContent() {
@@ -121,8 +121,9 @@ function PaymentSimulateContent() {
             </div>
 
             {error && (
-              <div className="p-3 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl text-center font-extrabold font-mono">
-                ⚠️ {error}
+              <div className="p-3 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl font-extrabold font-mono flex items-center justify-center gap-1.5">
+                <AlertCircle className="h-4 w-4 shrink-0 text-rose-500" />
+                <span>{error}</span>
               </div>
             )}
 

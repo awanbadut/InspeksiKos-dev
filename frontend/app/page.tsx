@@ -12,6 +12,10 @@ import {
   Wifi,
   FileText,
   Check,
+  User,
+  Building,
+  MapPin,
+  ClipboardList,
 } from 'lucide-react';
 
 export default function Home() {
@@ -302,10 +306,10 @@ export default function Home() {
               <svg className="absolute w-[80%] h-[80%] text-slate-300" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="3 3">
                 <path d="M 15,20 Q 50,20 50,50 T 85,80" />
               </svg>
-              <div className="absolute top-4 left-4 w-7 h-7 bg-yellow-100 rounded-full flex items-center justify-center text-[10px] font-bold text-yellow-600 border border-yellow-200 shadow-sm">👤</div>
-              <div className="absolute top-4 right-4 w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center text-[10px] font-bold text-blue-600 border border-blue-200 shadow-sm">🏢</div>
-              <div className="absolute bottom-4 left-4 w-7 h-7 bg-red-100 rounded-full flex items-center justify-center text-[10px] font-bold text-red-600 border border-red-200 shadow-sm">📍</div>
-              <div className="absolute bottom-4 right-4 w-7 h-7 bg-orange-100 rounded-full flex items-center justify-center text-[10px] font-bold text-orange-600 border border-orange-200 shadow-sm">📋</div>
+              <div className="absolute top-4 left-4 w-7 h-7 bg-yellow-100 rounded-full flex items-center justify-center border border-yellow-200 shadow-sm"><User className="h-3.5 w-3.5 text-yellow-600" /></div>
+              <div className="absolute top-4 right-4 w-7 h-7 bg-blue-100 rounded-full flex items-center justify-center border border-blue-200 shadow-sm"><Building className="h-3.5 w-3.5 text-blue-600" /></div>
+              <div className="absolute bottom-4 left-4 w-7 h-7 bg-red-100 rounded-full flex items-center justify-center border border-red-200 shadow-sm"><MapPin className="h-3.5 w-3.5 text-red-600" /></div>
+              <div className="absolute bottom-4 right-4 w-7 h-7 bg-orange-100 rounded-full flex items-center justify-center border border-orange-200 shadow-sm"><ClipboardList className="h-3.5 w-3.5 text-orange-600" /></div>
             </div>
             {/* Right: text */}
             <div className="flex flex-col justify-center">
