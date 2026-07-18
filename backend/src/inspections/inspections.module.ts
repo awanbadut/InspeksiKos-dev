@@ -7,12 +7,14 @@ import { InspectionsService } from './inspections.service';
 import { InspectionsController } from './inspections.controller';
 import { AuthModule } from '../auth/auth.module';
 import { StorageModule } from '../storage/storage.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Inspection, InspectionPhoto, Property]),
     AuthModule,
     StorageModule,
+    NotificationModule,
   ],
   controllers: [InspectionsController],
   providers: [InspectionsService],

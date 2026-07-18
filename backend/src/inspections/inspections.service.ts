@@ -10,6 +10,8 @@ import { UpdateInspectionStatusDto } from './dto/update-inspection-status.dto';
 import { InputTechnicalDataDto } from './dto/input-technical-data.dto';
 import { UserRole } from '../auth/entities/user.entity';
 import { StorageService } from '../storage/storage.service';
+import { NotificationService } from '../notification/notification.service';
+import { User } from '../auth/entities/user.entity';
 
 @Injectable()
 export class InspectionsService {
@@ -21,13 +23,13 @@ export class InspectionsService {
     @InjectRepository(Property)
     private propertyRepository: Repository<Property>,
     private storageService: StorageService,
+    private notificationService: NotificationService,
   ) {}
 
   async create(createInspectionDto: CreateInspectionDto, userId: string): Promise<Inspection> {
     const { property_id } = createInspectionDto;
 
-    // Check if property exists
-    const property = await this.propertyRepository.findOne({ where: { property_id } });
+    const property = await this.propertyRepository.findOne({ where: { property_id }, relations: { user: true } });
     if (!property) {
       throw new NotFoundException('Properti tidak ditemukan');
     }
@@ -42,7 +44,20 @@ export class InspectionsService {
       status: InspectionStatus.ASSIGNED,
     });
 
-    return this.inspectionRepository.save(newInspection);
+    const savedInspection = await this.inspectionRepository.save(newInspection);
+
+    // Send email notification to student
+    try {
+      const studentEmail = property.user?.email;
+      const studentName = `${property.user?.first_name || ''} ${property.user?.last_name || ''}`.trim() || property.user?.email;
+      if (studentEmail) {
+        await this.notificationService.sendOrderCreatedNotification(studentEmail, studentName, property.name);
+      }
+    } catch (err: any) {
+      console.error(`Gagal mengirim email pengajuan order: ${err.message}`);
+    }
+
+    return savedInspection;
   }
 
   async findAll(userId: string, role: UserRole): Promise<Inspection[]> {
@@ -108,6 +123,8 @@ export class InspectionsService {
       }
     }
 
+    const oldInspectorId = inspection.inspector_id;
+
     if (status) {
       inspection.status = status;
       if (status === InspectionStatus.COMPLETED) {
@@ -121,7 +138,35 @@ export class InspectionsService {
       inspection.inspector_id = inspector_id;
     }
 
-    return this.inspectionRepository.save(inspection);
+    const savedInspection = await this.inspectionRepository.save(inspection);
+
+    // If inspector was just assigned, send email notification to student!
+    if (savedInspection.inspector_id && savedInspection.inspector_id !== oldInspectorId) {
+      try {
+        const inspector = await this.inspectionRepository.manager.findOne(User, {
+          where: { user_id: savedInspection.inspector_id }
+        });
+        const property = savedInspection.property;
+        const studentEmail = property?.user?.email;
+        const studentName = `${property?.user?.first_name || ''} ${property?.user?.last_name || ''}`.trim() || property?.user?.email;
+        
+        if (studentEmail && inspector) {
+          const inspectorName = `${inspector.first_name || ''} ${inspector.last_name || ''}`.trim() || inspector.email;
+          const inspectorPhone = inspector.phone_number || 'Tidak ada nomor telepon';
+          await this.notificationService.sendInspectorAssignedNotification(
+            studentEmail,
+            studentName,
+            property.name,
+            inspectorName,
+            inspectorPhone,
+          );
+        }
+      } catch (err: any) {
+        console.error(`Gagal mengirim email verifikator ditugaskan: ${err.message}`);
+      }
+    }
+
+    return savedInspection;
   }
 
   async inputTechnical(
@@ -309,22 +354,45 @@ export class InspectionsService {
 
     if (isMock) {
       const isPaid = inspection.property?.claim_data?.payment_status === 'paid';
-      if (isPaid) {
-        const compId = inspection.property?.claim_data?.comparison_id;
+      const emailSent = inspection.property?.claim_data?.email_receipt_sent === true;
+      
+      if (isPaid && !emailSent) {
+        const property = inspection.property;
+        const currentClaimData = property.claim_data || {};
+        const compId = currentClaimData.comparison_id;
+
         if (compId) {
           const allProperties = await this.propertyRepository.find();
           const relatedProperties = allProperties.filter(p => p.claim_data?.comparison_id === compId);
           for (const p of relatedProperties) {
-            if (p.claim_data?.payment_status !== 'paid') {
-              p.claim_data = {
-                ...p.claim_data,
-                payment_status: 'paid',
-              };
-              await this.propertyRepository.save(p);
-            }
+            p.claim_data = {
+              ...p.claim_data,
+              payment_status: 'paid',
+              email_receipt_sent: true,
+            };
+            await this.propertyRepository.save(p);
           }
+        } else {
+          property.claim_data = {
+            ...currentClaimData,
+            payment_status: 'paid',
+            email_receipt_sent: true,
+          };
+          await this.propertyRepository.save(property);
+        }
+
+        // Send payment receipt notification
+        try {
+          const studentEmail = property.user?.email;
+          const studentName = `${property.user?.first_name || ''} ${property.user?.last_name || ''}`.trim() || property.user?.email;
+          if (studentEmail) {
+            await this.notificationService.sendOrderPaidNotification(studentEmail, studentName, property.name);
+          }
+        } catch (err: any) {
+          console.error(`Gagal mengirim email verifikasi bayar: ${err.message}`);
         }
       }
+
       return {
         paid: isPaid,
       };
@@ -346,8 +414,9 @@ export class InspectionsService {
 
       const status = response.data.transaction_status;
       const isPaid = status === 'settlement' || status === 'capture';
+      const emailSent = inspection.property?.claim_data?.email_receipt_sent === true;
 
-      if (isPaid && inspection.property?.claim_data?.payment_status !== 'paid') {
+      if (isPaid && !emailSent) {
         const property = inspection.property;
         const currentClaimData = property.claim_data || {};
         const compId = currentClaimData.comparison_id;
@@ -359,6 +428,7 @@ export class InspectionsService {
             p.claim_data = {
               ...p.claim_data,
               payment_status: 'paid',
+              email_receipt_sent: true,
             };
             await this.propertyRepository.save(p);
           }
@@ -366,15 +436,26 @@ export class InspectionsService {
           property.claim_data = {
             ...currentClaimData,
             payment_status: 'paid',
+            email_receipt_sent: true,
           };
           await this.propertyRepository.save(property);
+        }
+
+        // Send payment receipt notification
+        try {
+          const studentEmail = property.user?.email;
+          const studentName = `${property.user?.first_name || ''} ${property.user?.last_name || ''}`.trim() || property.user?.email;
+          if (studentEmail) {
+            await this.notificationService.sendOrderPaidNotification(studentEmail, studentName, property.name);
+          }
+        } catch (err: any) {
+          console.error(`Gagal mengirim email verifikasi bayar: ${err.message}`);
         }
       }
 
       return { paid: isPaid };
     } catch (err: any) {
       console.error('Failed to check Midtrans transaction status:', err.response?.data || err.message);
-      // Fallback check
       return {
         paid: inspection.property?.claim_data?.payment_status === 'paid',
       };

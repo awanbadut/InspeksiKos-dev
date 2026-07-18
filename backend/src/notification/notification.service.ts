@@ -125,4 +125,63 @@ export class NotificationService {
       this.logger.error(`Error executing notification trigger: ${err.message}`);
     }
   }
+
+  async sendOrderCreatedNotification(userEmail: string, userName: string, propertyName: string) {
+    const subject = `Permintaan Inspeksi Baru Dibuat - ${propertyName}`;
+    const emailHtml = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <h2 style="color: #003057; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 0;">Pengajuan Inspeksi Kos</h2>
+        <p>Halo, <strong>${userName}</strong>,</p>
+        <p>Pengajuan inspeksi baru Anda untuk properti <strong>${propertyName}</strong> telah berhasil dibuat di sistem kami.</p>
+        <p>Silakan lakukan pembayaran agar tim verifikator lapangan kami dapat segera ditugaskan untuk melakukan audit fasilitas kos Anda.</p>
+        <p style="font-size: 12px; color: #64748b; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+          InspeksiKos - Layanan Audit Kos Terpercaya.
+        </p>
+      </div>
+    `;
+    await this.sendEmail(userEmail, subject, emailHtml);
+  }
+
+  async sendOrderPaidNotification(userEmail: string, userName: string, propertyName: string) {
+    const subject = `Pembayaran Diterima - ${propertyName}`;
+    const emailHtml = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <h2 style="color: #10b981; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 0;">Pembayaran Berhasil!</h2>
+        <p>Halo, <strong>${userName}</strong>,</p>
+        <p>Pembayaran untuk inspeksi properti <strong>${propertyName}</strong> telah kami terima dan diverifikasi secara otomatis.</p>
+        <p>Sistem saat ini sedang mencari verifikator lapangan terdekat untuk melakukan kunjungan audit fisik. Anda akan menerima notifikasi email berikutnya segera setelah verifikator ditemukan.</p>
+        <p style="font-size: 12px; color: #64748b; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+          InspeksiKos - Layanan Audit Kos Terpercaya.
+        </p>
+      </div>
+    `;
+    await this.sendEmail(userEmail, subject, emailHtml);
+  }
+
+  async sendInspectorAssignedNotification(
+    userEmail: string,
+    userName: string,
+    propertyName: string,
+    inspectorName: string,
+    inspectorPhone: string,
+  ) {
+    const subject = `Verifikator Ditugaskan - ${propertyName}`;
+    const emailHtml = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <h2 style="color: #003057; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-top: 0;">Verifikator Ditemukan!</h2>
+        <p>Halo, <strong>${userName}</strong>,</p>
+        <p>Kabar baik! Mitra verifikator kami telah ditugaskan untuk melakukan audit pada properti kos Anda: <strong>${propertyName}</strong>.</p>
+        <div style="background-color: #f8fafc; padding: 15px; border-radius: 8px; margin: 20px 0; border: 1px solid #e2e8f0;">
+          <p style="margin: 0 0 5px 0; font-size: 13px; font-weight: bold; color: #003057;">Profil Verifikator Lapangan:</p>
+          <p style="margin: 3px 0; font-size: 12px;">Nama: <strong>${inspectorName}</strong></p>
+          <p style="margin: 3px 0; font-size: 12px;">No. Telepon/WA: <strong>${inspectorPhone}</strong></p>
+        </div>
+        <p>Verifikator kami akan segera melakukan survei fisik langsung ke lokasi kos Anda sesuai jadwal. Pastikan ada perwakilan di lokasi untuk memudahkan akses verifikasi.</p>
+        <p style="font-size: 12px; color: #64748b; margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+          InspeksiKos - Layanan Audit Kos Terpercaya.
+        </p>
+      </div>
+    `;
+    await this.sendEmail(userEmail, subject, emailHtml);
+  }
 }
