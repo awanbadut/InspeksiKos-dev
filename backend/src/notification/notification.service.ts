@@ -192,6 +192,7 @@ export class NotificationService {
     propertyName: string,
     propertyAddress: string,
   ) {
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
     const subject = `Order Baru Tersedia: ${propertyName} - InspeksiKos`;
     const emailHtml = `
       <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
@@ -204,12 +205,12 @@ export class NotificationService {
         </div>
         <p>Segera masuk ke dasbor InspeksiKos Anda untuk mengambil tugas ini sebelum diklaim oleh verifikator lainnya!</p>
         <p style="margin: 25px 0; text-align: center;">
-          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/inspektur-dashboard" target="_blank" style="background-color: #0284c7; color: white; padding: 12px 24px; border-radius: 9999px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block;">Masuk ke Dasbor Inspektur</a>
+          <a href="${frontendUrl}/inspektur-dashboard" target="_blank" style="background-color: #0284c7; color: white; padding: 12px 24px; border-radius: 9999px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block;">Masuk ke Dasbor Inspektur</a>
         </p>
       </div>
     `;
 
-    const waMessage = `Halo *${inspectorName}*,\n\nAda order verifikasi kos baru yang siap diklaim!\n\n*Nama Kos:* ${propertyName}\n*Alamat:* ${propertyAddress}\n\nSegera masuk ke dasbor InspeksiKos Anda untuk mengambil tugas ini sebelum diklaim verifikator lain!`;
+    const waMessage = `Halo *${inspectorName}*,\n\nAda order verifikasi kos baru yang siap diklaim!\n\n*Nama Kos:* ${propertyName}\n*Alamat:* ${propertyAddress}\n\nSegera klaim tugas ini sebelum diambil verifikator lain melalui link berikut:\n${frontendUrl}/inspektur-dashboard`;
 
     try {
       await Promise.all([
