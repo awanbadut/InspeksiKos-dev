@@ -2,50 +2,20 @@ name: Backend CI/CD
 
 on:
   push:
-    branches: [main, testing]
-    paths: ['backend/**']
+    branches:
+      - testing
+    paths:
+      - 'backend/**'
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install & Test
+      - name: Pull and rebuild backend
         run: |
-          cd backend
-          npm ci
-          npm run lint || true
-
-      - name: Google Auth
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GCP_SA_KEY }}
-
-      - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v2
-        with:
-          service: inspeksikos-backend
-          region: asia-southeast2
-          source: ./backend
-          env_vars: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            JWT_SECRET=${{ secrets.JWT_SECRET }}
-            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
-            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-            SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-            SUPABASE_BUCKET=${{ secrets.SUPABASE_BUCKET }}
-            MIDTRANS_SERVER_KEY=${{ secrets.MIDTRANS_SERVER_KEY }}
-            MAIL_HOST=${{ secrets.MAIL_HOST }}
-            MAIL_PORT=${{ secrets.MAIL_PORT }}
-            MAIL_USER=${{ secrets.MAIL_USER }}
-            MAIL_PASS=${{ secrets.MAIL_PASS }}
-            MAIL_FROM=${{ secrets.MAIL_FROM }}
-            FONNTE_TOKEN=${{ secrets.FONNTE_TOKEN }}
-            NODE_ENV=production
+          cd /var/www/InspeksiKos-dev/backend
+          git pull origin testing
+          npm install
+          npm run build
+          pm2 restart inspeksikos-backend
