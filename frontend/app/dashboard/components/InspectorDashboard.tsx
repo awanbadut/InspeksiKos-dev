@@ -870,7 +870,7 @@ export default function InspectorDashboard({
                             </h4>
                             <div
                               id="task-map-container"
-                              className="w-full h-56 rounded-xl overflow-hidden bg-gray-900 border border-slate-200 z-10 shadow-inner"
+                              className="relative w-full h-56 rounded-xl overflow-hidden bg-gray-900 border border-slate-200 z-10 shadow-inner"
                               style={{ minHeight: '224px' }}
                             />
                           </div>
@@ -1276,7 +1276,7 @@ export default function InspectorDashboard({
                           <p className="text-[9px] text-slate-500 font-medium leading-relaxed">{activeTask.property.address}</p>
                           <div
                             id="task-map-container-mobile"
-                            className="w-full h-40 rounded-xl overflow-hidden bg-gray-900 border border-slate-200 z-10 shadow-inner"
+                            className="relative w-full h-40 rounded-xl overflow-hidden bg-gray-900 border border-slate-200 z-10 shadow-inner"
                             style={{ minHeight: '160px' }}
                           />
                         </div>

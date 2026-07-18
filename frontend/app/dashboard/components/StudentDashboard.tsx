@@ -337,7 +337,7 @@ export default function StudentDashboard({
             </h3>
             <div
               id="all-properties-map-container"
-              className="w-full h-64 rounded-xl border border-slate-200 overflow-hidden bg-slate-50"
+              className="relative w-full h-64 rounded-xl border border-slate-200 overflow-hidden bg-slate-50 z-10"
               style={{ minHeight: '260px' }}
             />
           </section>
