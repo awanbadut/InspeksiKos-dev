@@ -464,11 +464,11 @@ export default function RequestModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-40 backdrop-blur-sm">
+    <div className="fixed inset-0 bg-black/75 flex items-center justify-center p-4 z-[100] backdrop-blur-sm">
       <div className="bg-white rounded-2xl w-full max-w-lg p-6 shadow-2xl relative border border-slate-200 max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200">
         
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-slate-200 pb-3 mb-4 text-slate-800">
+        <div className="sticky top-0 bg-white z-20 flex items-center justify-between border-b border-slate-200 pb-3 mb-4 text-slate-800 -mx-6 px-6 pt-1 rounded-t-2xl">
           <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-[#003057]">
             <span>⚡ Pesan Verifikator Kos (Gojek-Style)</span>
           </h3>
@@ -612,7 +612,7 @@ export default function RequestModal({
                     <div className="border border-slate-200 rounded-xl p-2 bg-slate-50 space-y-2">
                       <div
                         id="map-picker-container"
-                        className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-slate-200 z-10"
+                        className="relative w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-slate-200 z-10"
                         style={{ minHeight: '192px' }}
                       />
                     </div>
@@ -766,7 +766,7 @@ export default function RequestModal({
                           <div className="border border-slate-200 rounded-xl p-2 bg-slate-50 space-y-2">
                             <div
                               id={`map-picker-container-${idx}`}
-                              className="w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-slate-200 z-10"
+                              className="relative w-full h-48 rounded-xl overflow-hidden bg-gray-950 border border-slate-200 z-10"
                               style={{ minHeight: '192px' }}
                             />
                           </div>
