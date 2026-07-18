@@ -1012,7 +1012,6 @@ export default function InspectorDashboard({
                                           <input
                                             type="file"
                                             accept="image/*"
-                                            capture="environment"
                                             disabled={isUploading}
                                             onChange={(e) => {
                                               const file = e.target.files?.[0];
@@ -1040,7 +1039,6 @@ export default function InspectorDashboard({
                                         <input
                                           type="file"
                                           accept="image/*"
-                                          capture="environment"
                                           disabled={isUploading}
                                           onChange={(e) => {
                                             const file = e.target.files?.[0];
@@ -1081,7 +1079,6 @@ export default function InspectorDashboard({
                                           <input
                                             type="file"
                                             accept="video/*"
-                                            capture="environment"
                                             disabled={isUploading}
                                             onChange={(e) => {
                                               const file = e.target.files?.[0];
@@ -1109,7 +1106,6 @@ export default function InspectorDashboard({
                                         <input
                                           type="file"
                                           accept="video/*"
-                                          capture="environment"
                                           disabled={isUploading}
                                           onChange={(e) => {
                                             const file = e.target.files?.[0];
@@ -1328,7 +1324,6 @@ export default function InspectorDashboard({
                                     <input
                                       type="file"
                                       accept="image/*"
-                                      capture="environment"
                                       className="hidden"
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
@@ -1377,7 +1372,6 @@ export default function InspectorDashboard({
                                     <input
                                       type="file"
                                       accept="image/*"
-                                      capture="environment"
                                       className="hidden"
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
@@ -1426,7 +1420,6 @@ export default function InspectorDashboard({
                                     <input
                                       type="file"
                                       accept="video/*"
-                                      capture="environment"
                                       className="hidden"
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
