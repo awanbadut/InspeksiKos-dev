@@ -1330,13 +1330,23 @@ export default function InspectorDashboard({
                                 <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono block">Unggah Foto Bukti Lapangan</label>
                                 <div className="flex items-center gap-3">
                                   <label className="flex-1 flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 cursor-pointer transition-all">
-                                    <Upload className="h-5 w-5 text-slate-400 mb-1" />
-                                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Pilih Foto</span>
+                                    {uploadLoadingState[currentActiveStep.key] ? (
+                                      <>
+                                        <Loader2 className="h-5 w-5 animate-spin text-[#0f766e] mb-1" />
+                                        <span className="text-[9px] font-bold text-[#0f766e] uppercase tracking-wider font-mono">Mengunggah...</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Upload className="h-5 w-5 text-slate-400 mb-1" />
+                                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Pilih Foto</span>
+                                      </>
+                                    )}
                                     <input
                                       type="file"
                                       accept="image/*"
                                       capture="environment"
                                       className="hidden"
+                                      disabled={uploadLoadingState[currentActiveStep.key]}
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
                                         if (file) handleUploadPhotoForCategory(currentActiveStep.key, file);
@@ -1379,13 +1389,23 @@ export default function InspectorDashboard({
                                 <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono block">Foto Alat Ukur TDS Lapangan</label>
                                 <div className="flex items-center gap-3">
                                   <label className="flex-1 flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 cursor-pointer transition-all">
-                                    <Upload className="h-5 w-5 text-slate-400 mb-1" />
-                                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Pilih Foto TDS</span>
+                                    {uploadLoadingState['kualitas_air'] ? (
+                                      <>
+                                        <Loader2 className="h-5 w-5 animate-spin text-[#0f766e] mb-1" />
+                                        <span className="text-[9px] font-bold text-[#0f766e] uppercase tracking-wider font-mono">Mengunggah...</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Upload className="h-5 w-5 text-slate-400 mb-1" />
+                                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Pilih Foto TDS</span>
+                                      </>
+                                    )}
                                     <input
                                       type="file"
                                       accept="image/*"
                                       capture="environment"
                                       className="hidden"
+                                      disabled={uploadLoadingState['kualitas_air']}
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
                                         if (file) handleUploadPhotoForCategory('kualitas_air', file);
@@ -1428,12 +1448,22 @@ export default function InspectorDashboard({
                                 <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider font-mono block">Video Bukti Speedtest Kamar</label>
                                 <div className="flex items-center gap-3">
                                   <label className="flex-1 flex flex-col items-center justify-center p-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 hover:bg-slate-100 cursor-pointer transition-all">
-                                    <Upload className="h-5 w-5 text-slate-400 mb-1" />
-                                    <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Pilih Video</span>
+                                    {uploadLoadingState['kecepatan_internet_video'] ? (
+                                      <>
+                                        <Loader2 className="h-5 w-5 animate-spin text-purple-500 mb-1" />
+                                        <span className="text-[9px] font-bold text-purple-500 uppercase tracking-wider font-mono">Mengunggah...</span>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Upload className="h-5 w-5 text-slate-400 mb-1" />
+                                        <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wider">Pilih Video</span>
+                                      </>
+                                    )}
                                     <input
                                       type="file"
                                       accept="video/*"
                                       className="hidden"
+                                      disabled={uploadLoadingState['kecepatan_internet_video']}
                                       onChange={(e) => {
                                         const file = e.target.files?.[0];
                                         if (file) handleUploadVideoForCategory('kecepatan_internet', file);
