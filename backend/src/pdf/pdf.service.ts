@@ -1,9 +1,28 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import PDFDocument from 'pdfkit';
+import axios from 'axios';
 
 @Injectable()
 export class PdfService {
   async generateAuditPDF(reportData: any): Promise<Buffer> {
+    // Download all photos first
+    const photoPromises = (reportData.photos || [])
+      .filter((p: any) => !p.category.endsWith('_video')) // Skip videos
+      .map(async (p: any) => {
+        try {
+          const res = await axios.get(p.url, { responseType: 'arraybuffer' });
+          return {
+            buffer: Buffer.from(res.data),
+            category: p.category,
+          };
+        } catch (err: any) {
+          console.error(`Gagal mengunduh foto untuk PDF: ${p.url}`, err.message);
+          return null;
+        }
+      });
+    
+    const downloadedPhotos = (await Promise.all(photoPromises)).filter((p) => p !== null);
+
     return new Promise((resolve, reject) => {
       try {
         const doc = new PDFDocument({ margin: 50, size: 'A4' });
@@ -178,6 +197,69 @@ export class PdfService {
             .stroke('#f1f5f9');
 
           yPos += 20;
+        }
+
+        // Photo Appendix Page
+        if (downloadedPhotos.length > 0) {
+          doc.addPage();
+          
+          doc
+            .fillColor('#1e293b')
+            .fontSize(14)
+            .font('Helvetica-Bold')
+            .text('LAMPIRAN FOTO BUKTI LAPANGAN', 50, 50)
+            .moveTo(50, 68)
+            .lineTo(doc.page.width - 50, 68)
+            .stroke('#e2e8f0');
+
+          let photoX = 50;
+          let photoY = 85;
+          const photoWidth = 230;
+          const photoHeight = 150;
+          const spacing = 30;
+
+          downloadedPhotos.forEach((photo: any, index: number) => {
+            // Check if photo fits on current page
+            if (photoY + photoHeight + 30 > doc.page.height - 50) {
+              doc.addPage();
+              photoY = 50;
+            }
+
+            try {
+              // Draw photo border
+              doc
+                .rect(photoX - 2, photoY - 2, photoWidth + 4, photoHeight + 4)
+                .stroke('#e2e8f0');
+
+              // Draw image
+              doc.image(photo.buffer, photoX, photoY, {
+                width: photoWidth,
+                height: photoHeight,
+              });
+
+              // Draw caption
+              doc
+                .fillColor('#475569')
+                .fontSize(8)
+                .font('Helvetica-Bold')
+                .text(
+                  photo.category.toUpperCase().replace(/_/g, ' '),
+                  photoX,
+                  photoY + photoHeight + 6,
+                  { width: photoWidth, align: 'center' }
+                );
+            } catch (err: any) {
+              console.error('Gagal menggambar foto di PDF:', err.message);
+            }
+
+            // Move to next position (2-column layout)
+            if (index % 2 === 0) {
+              photoX = 50 + photoWidth + spacing;
+            } else {
+              photoX = 50;
+              photoY += photoHeight + 40;
+            }
+          });
         }
 
         // Footer Note

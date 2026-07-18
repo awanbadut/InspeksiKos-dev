@@ -186,6 +186,10 @@ export class AuditService {
       tds_value: inspection.tds_value,
       internet_speed: inspection.internet_speed,
       generated_at: report.generated_at || new Date(),
+      photos: photos.map(p => ({
+        url: p.photo_url,
+        category: p.room_type,
+      })),
     };
 
     const pdfBuffer = await this.pdfService.generateAuditPDF(pdfData);
