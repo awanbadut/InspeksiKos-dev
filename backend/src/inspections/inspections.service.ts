@@ -308,8 +308,25 @@ export class InspectionsService {
     const isMock = !serverKey || serverKey === 'SB-Mid-server-YOUR_KEY_HERE';
 
     if (isMock) {
+      const isPaid = inspection.property?.claim_data?.payment_status === 'paid';
+      if (isPaid) {
+        const compId = inspection.property?.claim_data?.comparison_id;
+        if (compId) {
+          const allProperties = await this.propertyRepository.find();
+          const relatedProperties = allProperties.filter(p => p.claim_data?.comparison_id === compId);
+          for (const p of relatedProperties) {
+            if (p.claim_data?.payment_status !== 'paid') {
+              p.claim_data = {
+                ...p.claim_data,
+                payment_status: 'paid',
+              };
+              await this.propertyRepository.save(p);
+            }
+          }
+        }
+      }
       return {
-        paid: inspection.property?.claim_data?.payment_status === 'paid',
+        paid: isPaid,
       };
     }
 
@@ -331,14 +348,27 @@ export class InspectionsService {
       const isPaid = status === 'settlement' || status === 'capture';
 
       if (isPaid && inspection.property?.claim_data?.payment_status !== 'paid') {
-        // Automatically update payment status in database!
         const property = inspection.property;
         const currentClaimData = property.claim_data || {};
-        property.claim_data = {
-          ...currentClaimData,
-          payment_status: 'paid',
-        };
-        await this.propertyRepository.save(property);
+        const compId = currentClaimData.comparison_id;
+
+        if (compId) {
+          const allProperties = await this.propertyRepository.find();
+          const relatedProperties = allProperties.filter(p => p.claim_data?.comparison_id === compId);
+          for (const p of relatedProperties) {
+            p.claim_data = {
+              ...p.claim_data,
+              payment_status: 'paid',
+            };
+            await this.propertyRepository.save(p);
+          }
+        } else {
+          property.claim_data = {
+            ...currentClaimData,
+            payment_status: 'paid',
+          };
+          await this.propertyRepository.save(property);
+        }
       }
 
       return { paid: isPaid };

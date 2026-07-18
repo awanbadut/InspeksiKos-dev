@@ -87,6 +87,7 @@ export default function RequestModal({
   // Matchmaking states
   const [matchingStatus, setMatchingStatus] = useState<string>('');
   const [mockInspector, setMockInspector] = useState<any | null>(null);
+  const [searchTimer, setSearchTimer] = useState<number>(0);
 
   useEffect(() => {
     setOrderCategory(initialCategory);
@@ -276,7 +277,10 @@ export default function RequestModal({
   useEffect(() => {
     if (matchingStatus !== 'searching' || activeRequestInspectionIds.length === 0) return;
 
+    setSearchTimer(0);
+
     const intervalId = setInterval(async () => {
+      setSearchTimer((prev) => prev + 3);
       try {
         const res = await api.get('/inspections');
         const list: any[] = res.data;
@@ -420,6 +424,7 @@ export default function RequestModal({
     setOrderCategory('single');
     setMatchingStatus('');
     setMockInspector(null);
+    setSearchTimer(0);
     setPropertyName('');
     setPropertyAddress('');
     setPropertyDesc('');
@@ -973,11 +978,26 @@ export default function RequestModal({
                   </div>
                 </div>
 
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <h4 className="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Mencari Inspektur...</h4>
-                  <p className="text-[9px] text-slate-450 max-w-xs mx-auto leading-relaxed">
-                    Menghubungkan dengan verifikasi bersertifikat terdekat dari lokasi kosan untuk langsung mengaudit ke lapangan.
-                  </p>
+                  {searchTimer >= 15 ? (
+                    <div className="space-y-3">
+                      <p className="text-[9px] text-amber-700 bg-amber-50 border border-amber-200 p-3 rounded-xl max-w-xs mx-auto leading-relaxed font-semibold">
+                        Semua verifikator kami sedang sibuk di lapangan saat ini. Anda dapat menutup halaman ini, order Anda tetap terdaftar dan kami akan mencarikan verifikator secara otomatis. Kami akan mengirimkan notifikasi email begitu verifikator ditugaskan!
+                      </p>
+                      <button
+                        type="button"
+                        onClick={handleCloseAndReset}
+                        className="px-4 py-2.5 bg-[#003057] hover:bg-[#001e38] text-white text-[9px] font-bold uppercase rounded-xl transition-all cursor-pointer shadow-md inline-block"
+                      >
+                        Kembali ke Dashboard
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="text-[9px] text-slate-455 max-w-xs mx-auto leading-relaxed">
+                      Menghubungkan dengan verifikasi bersertifikat terdekat dari lokasi kosan untuk langsung mengaudit ke lapangan.
+                    </p>
+                  )}
                 </div>
               </div>
             ) : (
