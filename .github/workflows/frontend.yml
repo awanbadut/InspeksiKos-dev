@@ -21,7 +21,8 @@ jobs:
         run: |
           cd frontend
           npx vercel deploy --prod --token=${{ secrets.VERCEL_TOKEN }} --yes \
-            --build-env NEXT_PUBLIC_API_URL="http://103.143.71.185:3001" \
+            --build-env NEXT_PUBLIC_API_URL="/api" \
+            --build-env BACKEND_API_URL="http://103.143.71.185:3001" \
             --build-env NEXT_PUBLIC_APP_NAME="InspeksiKos"
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}

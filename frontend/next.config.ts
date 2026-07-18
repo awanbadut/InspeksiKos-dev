@@ -5,6 +5,14 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${process.env.BACKEND_API_URL || 'http://103.143.71.185:3001'}/:path*`,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
