@@ -391,6 +391,9 @@ export class InspectionsService {
         } catch (err: any) {
           console.error(`Gagal mengirim email verifikasi bayar: ${err.message}`);
         }
+
+        // Notify all inspectors about the new order!
+        await this.notifyInspectorsAboutNewOrder(property.name, property.address);
       }
 
       return {
@@ -451,6 +454,9 @@ export class InspectionsService {
         } catch (err: any) {
           console.error(`Gagal mengirim email verifikasi bayar: ${err.message}`);
         }
+
+        // Notify all inspectors about the new order!
+        await this.notifyInspectorsAboutNewOrder(property.name, property.address);
       }
 
       return { paid: isPaid };
@@ -459,6 +465,27 @@ export class InspectionsService {
       return {
         paid: inspection.property?.claim_data?.payment_status === 'paid',
       };
+    }
+  }
+
+  private async notifyInspectorsAboutNewOrder(propertyName: string, propertyAddress: string) {
+    try {
+      const inspectors = await this.inspectionRepository.manager.find(User, {
+        where: { role: UserRole.INSPEKTUR }
+      });
+      
+      for (const inspector of inspectors) {
+        const inspectorName = `${inspector.first_name || ''} ${inspector.last_name || ''}`.trim() || inspector.email;
+        await this.notificationService.sendNewOrderAvailableNotification(
+          inspector.email,
+          inspector.phone_number,
+          inspectorName,
+          propertyName,
+          propertyAddress,
+        );
+      }
+    } catch (err: any) {
+      console.error(`Gagal mengirim notifikasi order baru ke para inspektur: ${err.message}`);
     }
   }
 }
