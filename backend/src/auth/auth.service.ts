@@ -264,4 +264,37 @@ export class AuthService {
 
     return { message: 'Kata sandi berhasil diatur ulang' };
   }
+
+  async dbDiagnostic() {
+    const connection = this.userRepository.metadata.connection;
+    const options = connection.options as any;
+    
+    // Mask password in DB URL or connection options
+    const url = options.url || '';
+    const maskedUrl = url.replace(/:([^@]+)@/, ':***@');
+    
+    // Check columns
+    const queryRunner = connection.createQueryRunner();
+    let columns: any[] = [];
+    try {
+      columns = await queryRunner.query(`
+        SELECT column_name, is_nullable, data_type 
+        FROM information_schema.columns 
+        WHERE table_name = 'USERS';
+      `);
+    } catch (e: any) {
+      columns = [{ error: e.message }];
+    } finally {
+      await queryRunner.release();
+    }
+    
+    return {
+      databaseType: options.type,
+      databaseUrl: maskedUrl,
+      databaseHost: options.host,
+      databaseName: options.database,
+      columns,
+    };
+  }
 }
+

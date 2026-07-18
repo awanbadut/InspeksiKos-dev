@@ -84,4 +84,10 @@ export class AuthController {
   async resetPassword(@Body() resetDto: any) {
     return this.authService.resetPassword(resetDto);
   }
+
+  @Get('db-diagnostic')
+  async dbDiagnostic() {
+    return this.authService.dbDiagnostic();
+  }
 }
+
