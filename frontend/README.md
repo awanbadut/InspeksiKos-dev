@@ -1,5 +1,5 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-<!-- Trigger Vercel Cloud Build CI/CD optimization -->
+<!-- Trigger Vercel deploy after environment variable updates -->
 
 ## Getting Started
 
