@@ -18,8 +18,9 @@ jobs:
     steps:
       - name: Pull and rebuild backend
         run: |
-          cd /var/www/InspeksiKos-dev/backend
+          cd /var/www/InspeksiKos-dev
           git pull origin testing
+          cd backend
           npm install --prefer-offline --no-audit --no-fund
           npm run build
           pm2 restart inspeksikos-backend
