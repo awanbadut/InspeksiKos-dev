@@ -108,16 +108,23 @@ export default function RequestModal({
 
         const mapInstance = L.map('map-picker-container').setView([initialLat, initialLng], 13);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         }).addTo(mapInstance);
 
-        const customIcon = L.icon({
-          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
+        const customIcon = L.divIcon({
+          className: 'custom-theme-pin',
+          html: `
+            <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+              <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #003057 0%, #0f766e 100%); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(15, 118, 110, 0.4); border: 2.5px solid #ffffff;">
+                <div style="transform: rotate(45deg); width: 12px; height: 12px; background: #ffffff; border-radius: 50%;"></div>
+              </div>
+              <div style="width: 14px; height: 4px; background: rgba(0, 48, 87, 0.35); border-radius: 50%; margin-top: 2px; filter: blur(1px);"></div>
+            </div>
+          `,
+          iconSize: [36, 42],
+          iconAnchor: [18, 42],
+          popupAnchor: [0, -42]
         });
 
         let markerInstance = L.marker([initialLat, initialLng], { icon: customIcon }).addTo(mapInstance);
@@ -179,16 +186,23 @@ export default function RequestModal({
 
         const mapInstance = L.map(containerId).setView([initialLat, initialLng], 13);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
           attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         }).addTo(mapInstance);
 
-        const customIcon = L.icon({
-          iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-          shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-          iconSize: [25, 41],
-          iconAnchor: [12, 41],
-          popupAnchor: [1, -34],
+        const customIcon = L.divIcon({
+          className: 'custom-theme-pin',
+          html: `
+            <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+              <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #003057 0%, #0f766e 100%); border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(15, 118, 110, 0.4); border: 2.5px solid #ffffff;">
+                <div style="transform: rotate(45deg); width: 12px; height: 12px; background: #ffffff; border-radius: 50%;"></div>
+              </div>
+              <div style="width: 14px; height: 4px; background: rgba(0, 48, 87, 0.35); border-radius: 50%; margin-top: 2px; filter: blur(1px);"></div>
+            </div>
+          `,
+          iconSize: [36, 42],
+          iconAnchor: [18, 42],
+          popupAnchor: [0, -42]
         });
 
         let markerInstance = L.marker([initialLat, initialLng], { icon: customIcon }).addTo(mapInstance);
