@@ -12,13 +12,25 @@ export class GeminiService {
     'gemini-3-flash',
   ];
 
+  private currentKeyIndex = 0;
+
   constructor(private configService: ConfigService) {}
 
-  async extractFasilitas(photos: { url: string; category: string }[]): Promise<Record<string, any>> {
-    const apiKey = this.configService.get<string>('GEMINI_API_KEY');
-    if (!apiKey) {
-      throw new InternalServerErrorException('GEMINI_API_KEY belum terkonfigurasi');
+  private getApiKeys(): string[] {
+    const keysStr = this.configService.get<string>('GEMINI_API_KEYS');
+    if (keysStr) {
+      const keys = keysStr.split(',').map((k) => k.trim()).filter(Boolean);
+      if (keys.length > 0) return keys;
     }
+    const singleKey = this.configService.get<string>('GEMINI_API_KEY');
+    if (singleKey) {
+      return [singleKey];
+    }
+    throw new InternalServerErrorException('GEMINI_API_KEY belum terkonfigurasi');
+  }
+
+  async extractFasilitas(photos: { url: string; category: string }[]): Promise<Record<string, any>> {
+    const apiKeys = this.getApiKeys();
 
     const categoryLabels: Record<string, string> = {
       kasur: 'Kasur',
@@ -65,37 +77,45 @@ export class GeminiService {
 
     let lastError: any = null;
 
-    // Multi-model Fallback Rotation: try models sequentially if one fails or hits rate limits
+    // Round-Robin API Key & Multi-Model Fallback Rotation
     for (const modelName of this.fallbackModels) {
-      try {
-        console.log(`[Gemini AI] Memproses AI Vision menggunakan model: ${modelName}`);
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-        const response = await axios.post(
-          url,
-          { contents: [{ parts }] },
-          { headers: { 'Content-Type': 'application/json' }, timeout: 30000 }
-        );
+      const startKeyIdx = this.currentKeyIndex;
+      for (let i = 0; i < apiKeys.length; i++) {
+        const keyIdx = (startKeyIdx + i) % apiKeys.length;
+        const apiKey = apiKeys[keyIdx];
 
-        const candidate = response.data?.candidates?.[0];
-        if (!candidate) {
-          throw new Error(`Respons dari model ${modelName} tidak berisi candidate`);
+        try {
+          console.log(`[Gemini AI] Memproses AI Vision -> Model: ${modelName} | Key #${keyIdx + 1}/${apiKeys.length}`);
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+          const response = await axios.post(
+            url,
+            { contents: [{ parts }] },
+            { headers: { 'Content-Type': 'application/json' }, timeout: 30000 }
+          );
+
+          const candidate = response.data?.candidates?.[0];
+          if (!candidate) {
+            throw new Error(`Respons dari model ${modelName} tidak berisi candidate`);
+          }
+
+          const rawText = candidate.content?.parts?.[0]?.text;
+          if (!rawText) {
+            throw new Error(`Respons dari model ${modelName} tidak berisi text`);
+          }
+
+          // Advance round-robin pointer for next incoming request
+          this.currentKeyIndex = (keyIdx + 1) % apiKeys.length;
+          console.log(`[Gemini AI] Sukses diproses -> Model: ${modelName} | Key #${keyIdx + 1}`);
+          return this.parseResponse(rawText);
+        } catch (err: any) {
+          lastError = err;
+          console.warn(`[Gemini AI Fallback] Model ${modelName} + Key #${keyIdx + 1} gagal: ${err.response?.data?.error?.message || err.message}. Mencoba alternatif...`);
         }
-
-        const rawText = candidate.content?.parts?.[0]?.text;
-        if (!rawText) {
-          throw new Error(`Respons dari model ${modelName} tidak berisi text`);
-        }
-
-        console.log(`[Gemini AI] Berhasil diproses dengan model: ${modelName}`);
-        return this.parseResponse(rawText);
-      } catch (err: any) {
-        lastError = err;
-        console.warn(`[Gemini AI Fallback] Model ${modelName} gagal: ${err.response?.data?.error?.message || err.message}. Mencoba model alternatif...`);
       }
     }
 
-    console.error('Semua fallback model Gemini AI gagal:', lastError?.message);
-    throw new InternalServerErrorException('AI Service Tidak Tersedia (Semua model kuota habis/error)');
+    console.error('Semua fallback model & API keys Gemini AI gagal:', lastError?.message);
+    throw new InternalServerErrorException('AI Service Tidak Tersedia (Semua model/key kuota habis)');
   }
 
   private buildPrompt(): string {
@@ -127,10 +147,7 @@ export class GeminiService {
     userMessage: string,
     chatHistory: any[] = [],
   ): Promise<string> {
-    const apiKey = this.configService.get<string>('GEMINI_API_KEY');
-    if (!apiKey) {
-      throw new InternalServerErrorException('GEMINI_API_KEY belum terkonfigurasi');
-    }
+    const apiKeys = this.getApiKeys();
 
     const contents = [
       {
@@ -147,32 +164,39 @@ export class GeminiService {
     let lastError: any = null;
 
     for (const modelName of this.fallbackModels) {
-      try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-        const response = await axios.post(
-          url,
-          { contents },
-          { headers: { 'Content-Type': 'application/json' }, timeout: 20000 }
-        );
+      const startKeyIdx = this.currentKeyIndex;
+      for (let i = 0; i < apiKeys.length; i++) {
+        const keyIdx = (startKeyIdx + i) % apiKeys.length;
+        const apiKey = apiKeys[keyIdx];
 
-        const candidate = response.data?.candidates?.[0];
-        if (!candidate) {
-          throw new Error(`Respons Chat dari model ${modelName} tidak valid`);
+        try {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+          const response = await axios.post(
+            url,
+            { contents },
+            { headers: { 'Content-Type': 'application/json' }, timeout: 20000 }
+          );
+
+          const candidate = response.data?.candidates?.[0];
+          if (!candidate) {
+            throw new Error(`Respons Chat dari model ${modelName} tidak valid`);
+          }
+
+          const rawText = candidate.content?.parts?.[0]?.text;
+          if (!rawText) {
+            throw new Error(`Respons Chat dari model ${modelName} tidak berisi text`);
+          }
+
+          this.currentKeyIndex = (keyIdx + 1) % apiKeys.length;
+          return rawText;
+        } catch (err: any) {
+          lastError = err;
+          console.warn(`[Gemini Chat Fallback] Model ${modelName} + Key #${keyIdx + 1} gagal: ${err.message}. Mencoba alternatif...`);
         }
-
-        const rawText = candidate.content?.parts?.[0]?.text;
-        if (!rawText) {
-          throw new Error(`Respons Chat dari model ${modelName} tidak berisi text`);
-        }
-
-        return rawText;
-      } catch (err: any) {
-        lastError = err;
-        console.warn(`[Gemini Chat Fallback] Model ${modelName} gagal: ${err.message}. Mencoba model alternatif...`);
       }
     }
 
-    console.error('Chat Gemini semua model gagal:', lastError?.message);
+    console.error('Chat Gemini semua model/keys gagal:', lastError?.message);
     throw new InternalServerErrorException('Gagal berkomunikasi dengan AI');
   }
 
