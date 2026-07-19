@@ -265,8 +265,11 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
                 <span className="text-base font-black text-slate-800">
                   {inspection.tds_value} ppm
                 </span>
-                <span className="text-[8px] text-slate-400 block mt-1 font-mono">
+                <span className="text-[8px] text-slate-500 block mt-1 font-mono">
                   Klaim Maks: {inspection.property?.claim_data?.fasilitas?.kualitas_air?.nilai || 500} ppm
+                </span>
+                <span className="inline-block mt-1.5 px-2 py-0.5 rounded-md text-[8px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  Standard Permenkes RI (&lt; 300 PPM Layak)
                 </span>
               </div>
               <div className="p-3 bg-slate-50/50 rounded-2xl border border-slate-200">
@@ -276,8 +279,11 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
                 <span className="text-base font-black text-slate-800">
                   {inspection.internet_speed} Mbps
                 </span>
-                <span className="text-[8px] text-slate-400 block mt-1 font-mono">
+                <span className="text-[8px] text-slate-500 block mt-1 font-mono">
                   Klaim Min: {inspection.property?.claim_data?.fasilitas?.kecepatan_internet?.nilai || 10} Mbps
+                </span>
+                <span className="inline-block mt-1.5 px-2 py-0.5 rounded-md text-[8px] font-bold bg-teal-100 text-teal-800 border border-teal-200">
+                  Standard Speedtest Stream HD (&gt; 15 Mbps)
                 </span>
               </div>
             </div>
@@ -291,10 +297,21 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
             </div>
           </div>
 
-          <div className="flex justify-end border-t border-slate-200 pt-4">
+          <div className="flex items-center justify-between border-t border-slate-200 pt-4">
+            <button
+              type="button"
+              onClick={() => {
+                const text = `Halo! Ini hasil Laporan Audit Scorecard Kos untuk "${inspection.property?.name}":\n- Skor Validitas: ${inspection.audit_report?.score}%\n- Tingkat Kepercayaan: ${inspection.audit_report?.confidence_level}\n- TDS Air: ${inspection.tds_value} PPM\n- Speed Wifi: ${inspection.internet_speed} Mbps\n\nCek selengkapnya di: https://www.inspeksikos.web.id`;
+                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+              }}
+              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-full text-xs flex items-center gap-1.5 transition-all cursor-pointer shadow-md active:scale-95"
+            >
+              <Send className="h-3.5 w-3.5" /> Bagikan Laporan ke WhatsApp
+            </button>
+
             <button
               onClick={onClose}
-              className="px-6 py-3 bg-gradient-to-r from-[#003057] to-[#0f766e] hover:from-[#001e38] hover:to-[#115e59] text-white font-bold rounded-full text-xs transition-all cursor-pointer uppercase tracking-wider grab-btn-transition active:scale-[0.95] hover:scale-[1.02]"
+              className="px-6 py-2.5 bg-gradient-to-r from-[#003057] to-[#0f766e] hover:from-[#001e38] hover:to-[#115e59] text-white font-bold rounded-full text-xs transition-all cursor-pointer uppercase tracking-wider grab-btn-transition active:scale-[0.95] hover:scale-[1.02]"
             >
               Selesai
             </button>
