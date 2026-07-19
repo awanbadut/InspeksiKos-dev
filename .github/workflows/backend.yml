@@ -22,5 +22,6 @@ jobs:
           git pull origin testing
           cd backend
           npm install --prefer-offline --no-audit --no-fund
+          rm -rf dist
           npm run build
           pm2 restart inspeksikos-backend
