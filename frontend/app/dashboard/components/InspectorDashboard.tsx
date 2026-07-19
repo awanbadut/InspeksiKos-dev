@@ -22,6 +22,8 @@ import {
   Droplets,
   Camera,
   Video,
+  Download,
+  X,
 } from 'lucide-react';
 import api from '@/lib/api';
 
@@ -73,6 +75,7 @@ export default function InspectorDashboard({
   const [auditError, setAuditError] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
   const [evaluations, setEvaluations] = useState<Record<string, boolean>>({});
+  const [previewImgUrl, setPreviewImgUrl] = useState<string | null>(null);
 
   // Active steps parser
   const activeSteps = (() => {
@@ -1007,7 +1010,7 @@ export default function InspectorDashboard({
                                     return (
                                       <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between gap-3">
                                         <div className="flex items-center gap-2.5">
-                                          <div className="relative h-10 w-10 rounded-lg border border-slate-200 overflow-hidden bg-gray-900 group cursor-pointer" onClick={() => window.open(uploadedPhoto.photo_url, '_blank')}>
+                                          <div className="relative h-10 w-10 rounded-lg border border-slate-200 overflow-hidden bg-gray-900 group cursor-pointer" onClick={() => setPreviewImgUrl(uploadedPhoto.photo_url)}>
                                             <img src={uploadedPhoto.photo_url} alt={currentActiveStep.label} className="h-full w-full object-cover" />
                                           </div>
                                           <div>
@@ -1770,6 +1773,37 @@ export default function InspectorDashboard({
           </button>
         </nav>
       </div>
+
+      {/* Full-Screen Image Preview Modal */}
+      {previewImgUrl && (
+        <div
+          className="fixed inset-0 bg-black/90 z-[100] flex flex-col items-center justify-center p-4 backdrop-blur-md animate-in fade-in duration-200"
+          onClick={() => setPreviewImgUrl(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setPreviewImgUrl(null)}
+            className="absolute top-5 right-5 p-3 bg-white/10 hover:bg-white/20 text-white rounded-full transition-all cursor-pointer border border-white/20"
+          >
+            <X className="h-6 w-6" />
+          </button>
+          <img
+            src={previewImgUrl}
+            alt="Preview Foto Inspeksi"
+            className="max-h-[85vh] max-w-[90vw] object-contain rounded-2xl border border-white/20 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <a
+            href={previewImgUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            className="mt-4 px-5 py-2.5 bg-[#0f766e] hover:bg-[#115e59] text-white font-bold rounded-full text-xs flex items-center gap-2 transition-all cursor-pointer shadow-lg"
+          >
+            <Download className="h-4 w-4" /> Buka / Unduh Gambar Asli
+          </a>
+        </div>
+      )}
     </>
   );
 }
