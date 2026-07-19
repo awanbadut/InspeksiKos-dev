@@ -14,18 +14,78 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "InspeksiKos - Platform Verifikasi Kos",
-  description: "Validasi fasilitas kos secara real-time terintegrasi AI",
-  manifest: "/manifest.json",
+  metadataBase: new URL('https://www.inspeksikos.web.id'),
+  title: {
+    default: 'InspeksiKos - Platform Verifikasi & Audit Kejujuran Iklan Kos Padang',
+    template: '%s | InspeksiKos Padang',
+  },
+  description:
+    'Platform terverifikasi pertama di Padang yang memvalidasi kejujuran iklan kos secara nyata terintegrasi AI Vision Gemini, pengujian TDS kualitas air, speedtest internet, dan watermark lokasi GPS.',
+  keywords: [
+    'InspeksiKos',
+    'Kos Padang',
+    'Info Kos Padang',
+    'Sewa Kos Padang',
+    'Politeknik Negeri Padang',
+    'UNAND',
+    'Kos dekat PNP',
+    'Audit Kos AI',
+    'Verifikasi Kos Terpercaya',
+  ],
+  authors: [{ name: 'Tim InspeksiKos PNP' }],
+  creator: 'InspeksiKos Team',
+  publisher: 'InspeksiKos Padang',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  alternates: {
+    canonical: 'https://www.inspeksikos.web.id',
+  },
+  manifest: '/manifest.json',
   icons: {
-    icon: "/icon.png",
-    shortcut: "/favicon.ico",
-    apple: "/icon.png",
+    icon: '/icon.png',
+    shortcut: '/favicon.ico',
+    apple: '/icon.png',
+  },
+  openGraph: {
+    title: 'InspeksiKos - Audit Kejujuran Iklan Kos Terintegrasi AI',
+    description: 'Cegah penipuan iklan kos di Padang. Validasi foto fisik ter-watermark GPS, kualitas air keran TDS, dan kecepatan wifi nyata.',
+    url: 'https://www.inspeksikos.web.id',
+    siteName: 'InspeksiKos',
+    images: [
+      {
+        url: '/hero_hero-image.webp',
+        width: 1200,
+        height: 630,
+        alt: 'InspeksiKos Padang',
+      },
+    ],
+    locale: 'id_ID',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'InspeksiKos - Platform Verifikasi Kos Terpercaya Padang',
+    description: 'Validasi fasilitas kos secara real-time terintegrasi AI Vision Gemini & Watermark GPS.',
+    images: ['/hero_hero-image.webp'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
   },
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
-    title: "InspeksiKos",
+    statusBarStyle: 'default',
+    title: 'InspeksiKos',
   },
 };
 
