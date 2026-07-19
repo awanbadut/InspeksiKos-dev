@@ -13,8 +13,11 @@ export default function LoginPage() {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('access_token');
-      if (token) {
-        router.push('/dashboard');
+      const role = localStorage.getItem('user_role');
+      if (token && role) {
+        if (role === 'admin') router.push('/admin/dashboard');
+        else if (role === 'inspektur') router.push('/inspektur-dashboard');
+        else router.push('/mahasiswa-dashboard');
       }
     }
   }, [router]);
@@ -82,8 +85,10 @@ export default function LoginPage() {
 
       if (role === 'admin') {
         router.push('/admin/dashboard');
+      } else if (role === 'inspektur') {
+        router.push('/inspektur-dashboard');
       } else {
-        router.push('/dashboard');
+        router.push('/mahasiswa-dashboard');
       }
     } catch (err: any) {
       console.error(err);
