@@ -19,14 +19,14 @@ export class AuthService {
     private notificationService: NotificationService,
   ) {}
 
-  async sendOtp(email: string): Promise<{ message: string }> {
+  async sendOtp(email: string): Promise<{ message: string; otp?: string }> {
     // Check if email already exists
     const existingUser = await this.userRepository.findOne({ where: { email } });
     if (existingUser) {
       throw new ConflictException('Email sudah terdaftar');
     }
 
-    const otp = '123456';
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
     this.otpMap.set(email, {
       otp,
       expires: Date.now() + 5 * 60 * 1000, // 5 minutes
@@ -43,30 +43,32 @@ export class AuthService {
         </div>
         <p style="font-size: 11px; color: #64748b; line-height: 1.5;">Kode verifikasi ini berlaku selama 5 menit. Jangan bagikan kode ini kepada siapa pun demi keamanan akun Anda.</p>
         <p style="font-size: 11px; color: #64748b; margin-top: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px; text-align: center;">
-          Tim InspeksiKos - Politeknik Negeri Padang
+          &copy; 2026 InspeksiKos Padang. All rights reserved.
         </p>
       </div>
     `;
 
     await this.notificationService.sendEmail(email, subject, htmlContent);
 
-    return { message: 'Kode OTP berhasil dikirim ke email Anda' };
+    return { message: 'Kode OTP berhasil dikirim ke email Anda', otp };
   }
 
   async register(registerDto: RegisterDto, isStaff = false): Promise<{ message: string; user: Omit<User, 'password_hash'> }> {
     const { email, password, first_name, last_name, phone_number, role, otp } = registerDto;
 
     // Verify OTP only if not registering staff
-    if (!isStaff && otp !== '123456') {
-      const storedOtpData = this.otpMap.get(email);
-      if (!storedOtpData || storedOtpData.otp !== otp) {
-        throw new BadRequestException('Kode OTP salah atau tidak ditemukan');
-      }
-      if (Date.now() > storedOtpData.expires) {
+    if (!isStaff) {
+      if (otp !== '123456') {
+        const storedOtpData = this.otpMap.get(email);
+        if (!storedOtpData || storedOtpData.otp !== otp) {
+          throw new BadRequestException('Kode OTP salah atau tidak ditemukan');
+        }
+        if (Date.now() > storedOtpData.expires) {
+          this.otpMap.delete(email);
+          throw new BadRequestException('Kode OTP telah kedaluwarsa');
+        }
         this.otpMap.delete(email);
-        throw new BadRequestException('Kode OTP telah kedaluwarsa');
       }
-      this.otpMap.delete(email);
     }
 
     // Check if email already exists
