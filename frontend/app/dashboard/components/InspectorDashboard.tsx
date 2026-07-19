@@ -740,7 +740,7 @@ export default function InspectorDashboard({
                                   </span>
                                   {isUnassigned ? (
                                     <span className="text-[8px] font-bold px-2 py-0.5 rounded-md uppercase tracking-wider bg-teal-50 text-teal-800 border border-teal-200 animate-pulse">
-                                      Tersedia (Gojek Match)
+                                      Tersedia (Siap Diklaim)
                                     </span>
                                   ) : (
                                     <span

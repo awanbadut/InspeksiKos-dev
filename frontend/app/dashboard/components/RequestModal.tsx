@@ -287,7 +287,7 @@ export default function RequestModal({
     fetchToken();
   }, [activeRequestInspectionIds]);
 
-  // Real-time polling for inspector assignment (Gojek-Style Matchmaking)
+  // Real-time polling for inspector assignment (InspeksiKos On-Demand Matchmaking)
   useEffect(() => {
     if (matchingStatus !== 'searching' || activeRequestInspectionIds.length === 0) return;
 
@@ -492,7 +492,7 @@ export default function RequestModal({
         <div className="sticky top-0 bg-white z-20 flex items-center justify-between border-b border-slate-200 pb-3 mb-4 text-slate-800 -mx-6 px-6 pt-1 rounded-t-2xl">
           <h3 className="text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 text-[#003057]">
             <Sparkles className="h-4 w-4 text-amber-500" />
-            <span>Pesan Verifikator Kos (Gojek-Style)</span>
+            <span>Pesan Verifikator Kos InspeksiKos</span>
           </h3>
           <button
             type="button"
