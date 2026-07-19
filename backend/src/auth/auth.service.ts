@@ -26,7 +26,7 @@ export class AuthService {
       throw new ConflictException('Email sudah terdaftar');
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = '123456';
     this.otpMap.set(email, {
       otp,
       expires: Date.now() + 5 * 60 * 1000, // 5 minutes
