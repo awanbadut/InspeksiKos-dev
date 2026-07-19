@@ -23,7 +23,9 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() registerDto: RegisterDto) {
-    registerDto.role = UserRole.MAHASISWA;
+    if (!registerDto.role) {
+      registerDto.role = UserRole.MAHASISWA;
+    }
     return this.authService.register(registerDto, false);
   }
 
