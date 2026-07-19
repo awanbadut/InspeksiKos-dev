@@ -594,7 +594,37 @@ export default function RequestModal({
         {/* STEP 2: FILL FORMS */}
         {currentStepModal === 2 && (
           <div className="space-y-4 py-2 text-slate-800 text-left">
-            
+            <div className="flex items-center justify-between bg-[#F0F7FD] border border-[#C0D8EF] p-2.5 rounded-xl">
+              <span className="text-[10px] font-bold text-[#003057] flex items-center gap-1">
+                <Sparkles className="h-3.5 w-3.5 text-amber-500" /> Mode Presentasi Live Demo
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  const randomNum = Math.floor(Math.random() * 900) + 100;
+                  setPropertyName(`Kos Cendrawasih Syariah #${randomNum}`);
+                  setPropertyAddress('Jl. Limau Manis No. 88, Pauh, Padang');
+                  setPropertyDesc('Kos nyaman dekat Politeknik Negeri Padang & UNAND. AC, Wifi kencang, Kamar mandi dalam.');
+                  setSelectedLat(-0.9142);
+                  setSelectedLng(100.4661);
+                  setClaims({
+                    kasur: true,
+                    lemari: true,
+                    ac: true,
+                    wifi: true,
+                    kamar_mandi_dalam: true,
+                    kualitas_air: true,
+                    kecepatan_internet: true,
+                  });
+                  setTdsClaim('150');
+                  setInternetClaim('25');
+                }}
+                className="px-3 py-1 bg-[#003057] hover:bg-[#001e38] text-white rounded-lg text-[10px] font-bold shadow-sm transition-all cursor-pointer flex items-center gap-1"
+              >
+                Isi Data Demo Otomatis
+              </button>
+            </div>
+
             {orderCategory === 'single' ? (
               /* Form Single Kos */
               <form onSubmit={(e) => { e.preventDefault(); handleCreateOrderInvoice(); }} className="space-y-4">

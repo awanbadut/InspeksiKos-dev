@@ -961,37 +961,55 @@ export default function InspectorDashboard({
                                     Tidak Ada
                                   </button>
                                 </div>
-                              ) : (
-                                <div>
-                                  {currentActiveStep.key === 'kualitas_air' ? (
-                                    <div className="relative">
-                                      <Droplets className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[#003057]" />
-                                      <input
-                                        type="number"
-                                        required
-                                        value={tdsInput}
-                                        onChange={(e) => setTdsInput(e.target.value)}
-                                        placeholder="Masukkan kadar air TDS (contoh: 120)"
-                                        className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-[#0f766e] focus:ring-1 focus:ring-[#0f766e] rounded-xl text-xs text-slate-800 focus:outline-none"
-                                      />
-                                      <span className="absolute right-3 top-2.5 text-[9px] font-bold text-slate-400">ppm</span>
+                              ) : currentActiveStep.key === 'kualitas_air' ? (
+                                    <div>
+                                      <div className="relative">
+                                        <Droplets className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[#003057]" />
+                                        <input
+                                          type="number"
+                                          required
+                                          value={tdsInput}
+                                          onChange={(e) => setTdsInput(e.target.value)}
+                                          placeholder="Masukkan kadar air TDS (contoh: 120)"
+                                          className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-[#0f766e] focus:ring-1 focus:ring-[#0f766e] rounded-xl text-xs text-slate-800 focus:outline-none"
+                                        />
+                                        <span className="absolute right-3 top-2.5 text-[9px] font-bold text-slate-400">ppm</span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 mt-1.5">
+                                        <span className="text-[8px] text-slate-400 font-mono">Quick Preset:</span>
+                                        <button type="button" onClick={() => setTdsInput('135')} className="px-2 py-0.5 bg-[#F0F7FD] hover:bg-[#D6E8F7] text-[#003057] rounded text-[8px] font-bold border border-[#C0D8EF] transition-all cursor-pointer">
+                                          135 ppm (Air Layak)
+                                        </button>
+                                        <button type="button" onClick={() => setTdsInput('520')} className="px-2 py-0.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded text-[8px] font-bold border border-rose-200 transition-all cursor-pointer">
+                                          520 ppm (Tinggi Penalti)
+                                        </button>
+                                      </div>
                                     </div>
                                   ) : (
-                                    <div className="relative">
-                                      <Wifi className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[#0f766e]" />
-                                      <input
-                                        type="number"
-                                        required
-                                        value={internetInput}
-                                        onChange={(e) => setInternetInput(e.target.value)}
-                                        placeholder="Masukkan internet speedtest (contoh: 30)"
-                                        className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-[#0f766e] focus:ring-1 focus:ring-[#0f766e] rounded-xl text-xs text-slate-800 focus:outline-none"
-                                      />
-                                      <span className="absolute right-3 top-2.5 text-[9px] font-bold text-slate-400">Mbps</span>
+                                    <div>
+                                      <div className="relative">
+                                        <Wifi className="absolute left-3 top-2.5 h-3.5 w-3.5 text-[#0f766e]" />
+                                        <input
+                                          type="number"
+                                          required
+                                          value={internetInput}
+                                          onChange={(e) => setInternetInput(e.target.value)}
+                                          placeholder="Masukkan internet speedtest (contoh: 30)"
+                                          className="w-full pl-9 pr-12 py-2 bg-white border border-slate-200 focus:border-[#0f766e] focus:ring-1 focus:ring-[#0f766e] rounded-xl text-xs text-slate-800 focus:outline-none"
+                                        />
+                                        <span className="absolute right-3 top-2.5 text-[9px] font-bold text-slate-400">Mbps</span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 mt-1.5">
+                                        <span className="text-[8px] text-slate-400 font-mono">Quick Preset:</span>
+                                        <button type="button" onClick={() => setInternetInput('28')} className="px-2 py-0.5 bg-[#F0F7FD] hover:bg-[#D6E8F7] text-[#003057] rounded text-[8px] font-bold border border-[#C0D8EF] transition-all cursor-pointer">
+                                          28 Mbps (Wifi Kencang)
+                                        </button>
+                                        <button type="button" onClick={() => setInternetInput('6')} className="px-2 py-0.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded text-[8px] font-bold border border-rose-200 transition-all cursor-pointer">
+                                          6 Mbps (Lambat Penalti)
+                                        </button>
+                                      </div>
                                     </div>
                                   )}
-                                </div>
-                              )}
                             </div>
 
                             {/* Foto & Video Upload */}
