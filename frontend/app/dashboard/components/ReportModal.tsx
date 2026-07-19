@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Download, ClipboardList, Gauge, Sparkles, Send, Loader2, Image as ImageIcon, ChevronLeft, ChevronRight, Eye, X } from 'lucide-react';
+import { Download, ClipboardList, Gauge, Sparkles, Send, Loader2, Image as ImageIcon, ChevronLeft, ChevronRight, Eye, X, CheckCircle2, XCircle, Check } from 'lucide-react';
 import api from '@/lib/api';
 
 interface ReportModalProps {
@@ -150,7 +150,8 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
                       {photos[currentPhotoIdx]?.room_type?.toUpperCase().replace(/_/g, ' ')}
                     </span>
                     <p className="text-[10px] text-slate-200 mt-1.5 font-medium flex items-center gap-1">
-                      <span>✓ Foto Ter-Watermark GPS & Waktu Inspeksi</span>
+                      <Check className="h-3 w-3 text-emerald-400 shrink-0" />
+                      <span>Foto Ter-Watermark GPS & Waktu Inspeksi</span>
                     </p>
                   </div>
                   <button
@@ -230,13 +231,13 @@ export default function ReportModal({ isOpen, onClose, inspection }: ReportModal
                     </div>
                     <div className="flex items-center gap-2">
                       {item.status === 'MATCH' && (
-                        <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-805 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 tracking-wider">
-                          ✓ SESUAI
+                        <span className="inline-flex items-center gap-1 text-[9px] font-bold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200 tracking-wider">
+                          <CheckCircle2 className="h-3 w-3 text-emerald-600 shrink-0" /> SESUAI
                         </span>
                       )}
                       {item.status === 'MISMATCH' && (
-                        <span className="inline-flex items-center gap-1 text-[9px] font-bold text-rose-805 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200 tracking-wider">
-                          ✗ TIDAK SESUAI
+                        <span className="inline-flex items-center gap-1 text-[9px] font-bold text-rose-800 bg-rose-50 px-2.5 py-1 rounded-full border border-rose-200 tracking-wider">
+                          <XCircle className="h-3 w-3 text-rose-600 shrink-0" /> TIDAK SESUAI
                         </span>
                       )}
                       {item.status === 'NEUTRAL' && (
